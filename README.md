@@ -3,8 +3,8 @@
 Scrum Master - Elliot Han
 
 Contributors:
-Bella Garzonie
-Aurora Jitrskul
-Venkat Nallam
-Ethan Nguyen
-Gretta Weich
+- Bella Garzonie
+- Aurora Jitrskul
+- Venkat Nallam
+- Ethan Nguyen
+- Gretta Weich
