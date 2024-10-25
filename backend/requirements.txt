@@ -1,0 +1,5 @@
+# On Windows
+server\venv\Scripts\activate
+
+# On macOS/Linux
+source server/venv/bin/activate
