@@ -20,7 +20,7 @@ function AuthMain() {
   }, []);
 
   return (
-    <div>
+    <div className="container-fluid">
       <h1>Auth</h1>
       {authData ? (
         <p>{authData.message}</p> // Display the "message" from the API response

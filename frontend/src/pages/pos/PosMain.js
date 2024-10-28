@@ -20,7 +20,7 @@ function PosMain() {
   }, []);
 
   return (
-    <div>
+    <div className="container-fluid">
       <h1>Cashier POS</h1>
       {posData ? (
         <p>{posData.message}</p> // Display the "message" from the API response

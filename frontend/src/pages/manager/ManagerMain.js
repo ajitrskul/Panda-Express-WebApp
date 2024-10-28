@@ -20,7 +20,7 @@ function ManagerMain() {
   }, []);
 
   return (
-    <div>
+    <div className="container-fluid">
       <h1>Manager View</h1>
       {managerData ? (
         <p>{managerData.message}</p> // Display the "message" from the API response

@@ -20,7 +20,7 @@ function KioskMain() {
   }, []);
 
   return (
-    <div>
+    <div className="container-fluid">
       <h1>Customer Kiosk</h1>
       {kioskData ? (
         <p>{kioskData.message}</p> // Display the "message" from the API response
