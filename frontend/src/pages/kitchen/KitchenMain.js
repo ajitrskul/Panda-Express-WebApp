@@ -20,7 +20,7 @@ function KitchenMain() {
   }, []);
 
   return (
-    <div>
+    <div className="container-fluid">
       <h1>Kitchen View</h1>
       {kitchenData ? (
         <p>{kitchenData.message}</p> // Display the "message" from the API response

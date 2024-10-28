@@ -17,7 +17,7 @@ function MenuMain() {
   }, []);
 
   return (
-    <div>
+    <div className="container-fluid">
       <h1>Menu Board</h1>
       {menuData ? (
         <p>{menuData.message}</p> // Display the "message" from the API response
