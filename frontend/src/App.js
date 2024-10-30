@@ -11,18 +11,6 @@ import { PosMain } from './pages/pos';
 import { AuthMain } from './pages/auth';
 
 function App() {
-  const [array, setArray] = useState([]);
-
-  // Fetch API data
-  const fetchAPI = async () => {
-    const response = await api.get("/api/users"); 
-    setArray(response.data.users);
-  };
-
-  useEffect(() => {
-    fetchAPI();
-  }, []);
-
   return (
     <Router>
         <Routes>
@@ -30,19 +18,15 @@ function App() {
             path="/"
             element={
               <>
-                <header className="App-header">
-                  <nav>
-                    <Link to="/">Home</Link>
-                  </nav>
-                  <nav>
-                    <Link to="/menu">Menu Board</Link> - <Link to="/kitchen">Kitchen</Link> - <Link to="/manager">Manager</Link>
-                  </nav>
-                  <nav>
-                    <Link to="/kiosk">Customer Kiosk</Link> - <Link to="/pos">Cashier POS</Link> - <Link to="/auth">Login</Link>
-                  </nav>
-                </header>
-                <div>
-                  <p>{array.join(", ")}</p>
+                <div className="container-fluid d-flex justify-content-center vh-100 pt-5">
+                  <header className="App-header">
+                    <nav><Link to="/menu">Menu Board</Link></nav>
+                    <nav><Link to="/kitchen">Kitchen</Link></nav>
+                    <nav><Link to="/manager">Manager</Link></nav>
+                    <nav><Link to="/kiosk">Customer Kiosk</Link></nav>
+                    <nav><Link to="/pos">Cashier POS</Link></nav>
+                    <nav><Link to="/auth">Login</Link></nav>
+                  </header>
                 </div>
               </>
             }

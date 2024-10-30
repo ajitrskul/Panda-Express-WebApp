@@ -13,20 +13,6 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
     cors = CORS(app, origins='*')
-
-    # example api get method
-    @app.route("/api/users", methods=['GET'])
-    def users():
-        return jsonify({
-            "users": [
-                'Ethan',
-                'Elliot',
-                'Venkat',
-                'Aurora',
-                'Gretta',
-                'Bella'
-            ]
-        })
     
     # Initialize the database with the app
     db.init_app(app)
