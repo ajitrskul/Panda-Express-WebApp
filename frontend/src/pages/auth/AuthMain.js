@@ -2,6 +2,7 @@ import { useState } from "react";
 import api from '../../services/api'; // Axios instance with base URL
 import '../../styles/auth.css';
 import logo from '../../assets/beast_mode_logo.png'
+import google_logo from '../../assets/google_logo.png'
 
 function AuthMain() {
   const [username, setUsername] = useState('');
@@ -24,9 +25,9 @@ function AuthMain() {
     <div className="login-page">
       <div className="container-fluid d-flex vh-100 align-items-center justify-content-center">
         <div className="row align-items-center justify-content-center w-100">
-          {/* <div className="col-md-4 col-sm-8">
-          </div> */}
-          <div className="col-md-4 col-sm-8 align-self-center">
+          <div className="col-md-4 col-sm-8">
+          </div>
+          <div className="col-md-4 offset-md-2 col-sm-8 align-self-center">
             <div className="login-container">
               <img src={logo} alt="Logo" className="img-fluid mb-3 w-10 h-10" />
               <h1>Welcome</h1>
@@ -45,9 +46,14 @@ function AuthMain() {
                   onChange={(e) => setPassword(e.target.value)}
                   className="form-control my-2"
                 />
-                <button type="submit" className="btn btn-primary mt-3">Login</button>
+                <button type="submit" className="btn-primary mt-3">Login</button>
               </form>
               {loginMessage && <p>{loginMessage}</p>}
+              <h2>or</h2>
+              <button type="button" className="google-login-btn">
+                <img src={google_logo} alt="Google logo" className="google-icon" />
+                Login With Google
+              </button>
             </div>
           </div>
         </div>

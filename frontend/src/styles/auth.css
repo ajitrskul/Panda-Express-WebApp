@@ -4,7 +4,7 @@
     justify-content: center;
     align-items: center;
     border: 1px solid #ccc;
-    border-radius: 10px;
+    border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background-color: #f8f8f8;
     text-align: center;
@@ -16,6 +16,12 @@
     color: #333;
 }
 
+.login-container h2 {
+    font-size: 1.0em;
+    color: #333;
+    font-weight: bold;
+}
+
 .login-container .form-control {
     background-color: #d3d3d3;
     border: none;
@@ -23,10 +29,20 @@
 }
 
 .login-container .btn-primary {
-    border-radius: 20px;
-    width: 100px;
     background-color: #a52a2a;
+    color: white;
+    width: 100px;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
     border: none;
+    border-radius: 20px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.login-container .btn-primary:hover {
+    background-color: #8d2323;
 }
 
 .login-container p {
@@ -50,3 +66,26 @@
     background-repeat: no-repeat;
     height: 100vh;
 }
+
+.login-container .google-login-btn {
+    background-color: #a52a2a;
+    color: white;
+    width: 200px;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border: none;
+    border-radius: 20px;
+    font-size: 16px;
+    font-weight: 500;
+  }
+  
+  .login-container .google-login-btn:hover {
+    background-color:  #8d2323;;
+  }
+  
+  .login-container .google-icon {
+    margin-right: 8px;
+    width: 25px;
+    height: 25px;
+  }
