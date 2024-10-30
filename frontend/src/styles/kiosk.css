@@ -21,7 +21,8 @@
 }
 
 .kiosk-landing-order {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('https://t4.ftcdn.net/jpg/04/81/88/03/360_F_481880392_qj1h5f1QVbYlzwh2n1yiJHM5L4KOUMSN.jpg');
+    /* background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('https://t4.ftcdn.net/jpg/04/81/88/03/360_F_481880392_qj1h5f1QVbYlzwh2n1yiJHM5L4KOUMSN.jpg'); */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('../assets/order-background.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -30,8 +31,6 @@
     min-height: 100vh; 
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
 }
 
 .card {
@@ -39,6 +38,17 @@
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: transform 0.2s;
+    font-size: 1.5rem;
+}
+
+.card-text {
+    margin-bottom: 0px;
+    font-weight: bold;
+}
+
+.card-description {
+    font-size: 0.8rem;
+    color: grey;
 }
 
 .card:hover {
@@ -84,4 +94,48 @@
     font-size: 14px;
 }
 
-  
+.selection-card {
+    width: 150px;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.3s;
+    text-align: center;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.selection-card:hover {
+    transform: scale(1.05);
+}
+
+.selection-card.selected {
+    background-color: #a3080c;
+    color: white;
+}
+
+.selection-card-content .plus-sign {
+    font-size: 2rem;
+    display: block;
+}
+
+.selection-text {
+    margin-top: 10px;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.selection-grid {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.sides-section, .entrees-section {
+    display: flex;
+    gap: 10px;
+}
