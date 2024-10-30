@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import api from '../../services/api'; // Axios instance with base URL
+import {NavBar} from "./components/NavBar.js";
 
 function KioskMain() {
   const [kioskData, setKioskData] = useState(null); // State to hold data
@@ -21,12 +22,14 @@ function KioskMain() {
 
   return (
     <div className="container-fluid">
+      {NavBar()}
       <h1>Customer Kiosk</h1>
       {kioskData ? (
         <p>{kioskData.message}</p> // Display the "message" from the API response
       ) : (
         <p>Loading...</p> // Show loading text while data is being fetched
       )}
+      
     </div>
   );
 }
