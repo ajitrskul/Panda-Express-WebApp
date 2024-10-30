@@ -1,14 +1,17 @@
 import React from 'react';
 import MenuItemCard from './MenuItemCard'; 
 
+import ChowMein from '../../../assets/chow-mein.png';
+import FriedRice from '../../../assets/fried-rice.png';
+import WhiteRice from '../../../assets/white-rice.png';
+import SuperGreens from '../../../assets/super-greens.png';
+
 const SideSelection = () => {
-  // Define the available sides
   const sides = [
-    { name: "Fried Rice", image: "/path/to/fried-rice.jpg", description: "A classic side" },
-    { name: "Chow Mein", image: "/path/to/chow-mein.jpg", description: "Stir-fried noodles" },
-    { name: "White Rice", image: "/path/to/white-rice.jpg", description: "Steamed white rice" },
-    { name: "Brown Rice", image: "/path/to/brown-rice.jpg", description: "Healthy brown rice" },
-    { name: "Super Greens", image: "/path/to/super-greens.jpg", description: "Mixed vegetables" }
+    { name: "Chow Mein", image: ChowMein, description: "600 Calories" },
+    { name: "Fried Rice", image: FriedRice, description: "620 Calories" },
+    { name: "White Rice", image: WhiteRice, description: "520 Calories" },
+    { name: "Super Greens", image: SuperGreens, description: "130 Calories" }
   ];
 
   const handleSideSelect = (sideName) => {

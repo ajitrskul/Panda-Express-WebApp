@@ -1,8 +1,8 @@
 import { React, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import '../../styles/kiosk.css';
 import SelectionGrid from './components/SelectionGrid';
 import SideSelection from './components/SideSelection';
+import EntreeSelection from './components/EntreeSelection';
 
 function BowlMain() {
   const [selectedSection, setSelectedSection] = useState(null);
@@ -23,9 +23,10 @@ function BowlMain() {
       
       <div className="container-fluid mt-4">
         {selectedSection === "side" && <SideSelection />}
+        {selectedSection === "entree" && <EntreeSelection />}
       </div>
     </div>
   );
 }
-  
+
 export default BowlMain;
