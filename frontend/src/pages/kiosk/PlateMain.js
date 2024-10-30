@@ -5,7 +5,7 @@ import SideSelection from './components/SideSelection';
 import EntreeSelection from './components/EntreeSelection';
 import CheckoutButton from "./components/CheckoutButton";
 
-function BowlMain() {
+function PlateMain() {
   const [selectedSection, setSelectedSection] = useState(null);
 
   const handleSelection = (type) => {
@@ -19,7 +19,7 @@ function BowlMain() {
   return (
     <div className="kiosk-landing-order container-fluid">
       <div className="container-fluid align-items-center">
-        <SelectionGrid numSides={1} numEntrees={1} onSelect={handleSelection} />
+        <SelectionGrid numSides={1} numEntrees={2} onSelect={handleSelection} />
       </div>
       
       <div className="container-fluid mt-4">
@@ -32,4 +32,4 @@ function BowlMain() {
   );
 }
 
-export default BowlMain;
+export default PlateMain;

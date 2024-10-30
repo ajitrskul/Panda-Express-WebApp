@@ -8,9 +8,11 @@ const SelectionGrid = ({ numSides, numEntrees, onSelect }) => {
   const handleCardClick = (type, index) => {
     if (type === 'side') {
       setSelectedSideIndex(index);
+      setSelectedEntreeIndex(null); // Clear the entree selection when a side is selected
       onSelect(type); 
     } else if (type === 'entree') {
       setSelectedEntreeIndex(index);
+      setSelectedSideIndex(null); // Clear the side selection when an entree is selected
       onSelect(type);
     }
   };

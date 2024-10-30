@@ -28,7 +28,8 @@ function KioskMain() {
   const navigate = useNavigate();
 
   const handleItemClick = (itemName) => {
-    navigate("/kiosk/order/bowl"); 
+    const formattedName = itemName.toLowerCase().replace(/\s+/g, '-');
+    navigate(`/kiosk/order/${formattedName}`);
   };
 
   return (
