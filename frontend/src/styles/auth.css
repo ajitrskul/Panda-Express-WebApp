@@ -29,7 +29,7 @@
 }
 
 .login-container .btn-primary {
-    background-color: #a52a2a;
+    background-color: #A3080C;
     color: white;
     width: 100px;
     align-items: center;
@@ -46,7 +46,7 @@
 }
 
 .login-container p {
-    color: #a52a2a;
+    color: #A3080C;
     margin-top: 10px;
 }
 
@@ -68,7 +68,7 @@
 }
 
 .login-container .google-login-btn {
-    background-color: #a52a2a;
+    background-color: #A3080C;
     color: white;
     width: 200px;
     align-items: center;

@@ -24,10 +24,8 @@ function AuthMain() {
   return (
     <div className="login-page">
       <div className="container-fluid d-flex vh-100 align-items-center justify-content-center">
-        <div className="row align-items-center justify-content-center w-100">
-          <div className="col-md-4 col-sm-8">
-          </div>
-          <div className="col-md-4 offset-md-2 col-sm-8 align-self-center">
+        <div className="row justify-content-center">
+          <div className="col text-center">
             <div className="login-container">
               <img src={logo} alt="Logo" className="img-fluid mb-3 w-10 h-10" />
               <h1>Welcome</h1>
