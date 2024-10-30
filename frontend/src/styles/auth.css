@@ -1,6 +1,8 @@
 .login-container {
-    width: 450px;
+    width: 500px;
     padding: 20px;
+    justify-content: center;
+    align-items: center;
     border: 1px solid #ccc;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -39,4 +41,12 @@
 
 .login-container .mt-3 {
     margin-top: 15px;
+}
+
+body, .background-image {
+    background-image: url('../assets/sigin_background.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100vh;
 }
