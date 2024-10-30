@@ -10,6 +10,9 @@ import { KioskMain } from './pages/kiosk';
 import { PosMain } from './pages/pos';
 import { AuthMain } from './pages/auth';
 
+//Import secondary pages
+import { SignUpPage } from './pages/auth/SignUpPage.js';
+
 function App() {
   const [array, setArray] = useState([]);
 
@@ -25,35 +28,37 @@ function App() {
 
   return (
     <Router>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <>
-                <header className="App-header">
-                  <nav>
-                    <Link to="/">Home</Link>
-                  </nav>
-                  <nav>
-                    <Link to="/menu">Menu Board</Link> - <Link to="/kitchen">Kitchen</Link> - <Link to="/manager">Manager</Link>
-                  </nav>
-                  <nav>
-                    <Link to="/kiosk">Customer Kiosk</Link> - <Link to="/pos">Cashier POS</Link> - <Link to="/auth">Login</Link>
-                  </nav>
-                </header>
-                <div>
-                  <p>{array.join(", ")}</p>
-                </div>
-              </>
-            }
-          />
-          <Route path="/menu" element={<MenuMain />} />
-          <Route path="/kitchen" element={<KitchenMain />} />
-          <Route path="/manager" element={<ManagerMain />} />
-          <Route path="/kiosk" element={<KioskMain />} />
-          <Route path="/pos" element={<PosMain />} />
-          <Route path="/auth" element={<AuthMain />} />
-        </Routes>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <>
+              <header className="App-header">
+                <nav>
+                  <Link to="/">Home</Link>
+                </nav>
+                <nav>
+                  <Link to="/menu">Menu Board</Link> - <Link to="/kitchen">Kitchen</Link> - <Link to="/manager">Manager</Link>
+                </nav>
+                <nav>
+                  <Link to="/kiosk">Customer Kiosk</Link> - <Link to="/pos">Cashier POS</Link> - <Link to="/auth">Login</Link>
+                </nav>
+              </header>
+              <div>
+                <p>{array.join(", ")}</p>
+              </div>
+            </>
+          }
+        />
+        <Route path="/menu" element={<MenuMain />} />
+        <Route path="/kitchen" element={<KitchenMain />} />
+        <Route path="/manager" element={<ManagerMain />} />
+        <Route path="/kiosk" element={<KioskMain />} />
+        <Route path="/pos" element={<PosMain />} />
+        <Route path="auth" element={<AuthMain />}>
+          <Route path="SignUp" element={<SignUpPage />}></Route>
+        </Route>
+      </Routes>
     </Router>
   );
 }

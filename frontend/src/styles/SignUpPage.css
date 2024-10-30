@@ -1,0 +1,82 @@
+@import url('https://fonts.googleapis.com/css2?family=Jomhuria&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Julius+Sans+One&display=swap');
+
+
+.signup-title {
+  font-family:'Jomhuria', Garamond;
+  /* font-size:86px; */
+  color:white;
+}
+
+.signup-bg {
+  background: url(../assets/SignInBackground.jpg) no-repeat center center fixed;
+  background-size: cover;
+
+  /* Set rules to fill background */
+  min-height: 100%;
+  min-width: 1024px;
+	
+  /* Set up proportionate scaling */
+  width: 100%;
+  height: auto;
+	
+  /* Set up positioning */
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  z-index:100;
+}
+
+.signup-form {
+  position:absolute;
+  z-index:200;
+  
+  top:50%;
+  transform: translateY(-50%);
+}
+
+.signup-input {
+  border:solid;
+  border-radius:5px;
+  border-color:black;
+  border-width:1px;
+
+  background-color: rgba(255,255,255,0.8);
+  margin-bottom:25px;
+  width:100%;
+}
+
+@media (width >= 576px) {
+  .signup-first-name {
+    padding-left:0px !important;
+  }
+  
+  .signup-last-name {
+    padding-right:0px !important;
+  }
+}
+
+.signup-required-fields {
+  color:white;
+  font-family: 'Julius Sans One';
+}
+
+.signup-submit {
+  background-color: #B44949;
+  font-family: 'Julius Sans One', Copperplate;
+  border:none;
+  border-radius:25px;
+  padding:5px 15px;
+  font-size:20px;
+
+  border:solid;
+  border-color: #B44949;
+  border-width:1px;
+}
+
+.signup-submit:hover {
+  color:white;
+  opacity:0.8;
+}
+

@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
+import { Route, Routes, Link } from "react-router-dom";
+import { SignUpPage } from "./SignUpPage.js";
 import api from '../../services/api'; // Axios instance with base URL
 
-function AuthMain() {
+export default function AuthMain() {
   const [authData, setAuthData] = useState(null); // State to hold data
 
   // Fetch data from /auth
@@ -19,16 +21,32 @@ function AuthMain() {
     fetchAPI();
   }, []);
 
-  return (
-    <div className="container-fluid">
-      <h1>Auth</h1>
-      {authData ? (
-        <p>{authData.message}</p> // Display the "message" from the API response
-      ) : (
-        <p>Loading...</p> // Show loading text while data is being fetched
-      )}
-    </div>
+  return ( 
+    <Routes>
+      <Route 
+        path="/"
+        element = {
+        <>
+          <div className="container-fluid">
+            <h1>Auth</h1>
+            {authData ? (
+              <p>{authData.message}</p> // Display the "message" from the API response
+            ) : (
+              <p>Loading...</p> // Show loading text while data is being fetched
+            )}
+            <nav>
+              <Link to="SignUp">No Account? Sign Up.</Link>
+            </nav>
+            <nav>
+              <Link to="/">Go Home!</Link>
+            </nav>
+          </div>
+        </>
+        }
+      />
+      <Route path="SignUp" element={<SignUpPage />} />
+    </Routes>
   );
 }
 
-export default AuthMain;
+
