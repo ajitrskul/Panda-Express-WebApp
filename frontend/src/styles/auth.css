@@ -1,0 +1,42 @@
+.login-container {
+    width: 450px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #f8f8f8;
+    text-align: center;
+}
+
+.login-container h1 {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #333;
+}
+
+.login-container .form-control {
+    background-color: #d3d3d3;
+    border: none;
+    border-radius: 20px;
+}
+
+.login-container .btn-primary {
+    border-radius: 20px;
+    width: 100px;
+    background-color: #a52a2a;
+    border: none;
+}
+
+.login-container p {
+    color: #a52a2a;
+    margin-top: 10px;
+}
+
+.login-container .my-2 {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.login-container .mt-3 {
+    margin-top: 15px;
+}
