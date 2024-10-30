@@ -7,7 +7,7 @@ function ManagerMain() {
   // Fetch data from /manager
   const fetchAPI = async () => {
     try {
-      const response = await api.get("/manager"); 
+      const response = await api.get("/api/manager"); 
       setManagerData(response.data); 
     } catch (error) {
       console.error("Error fetching manager data:", error);

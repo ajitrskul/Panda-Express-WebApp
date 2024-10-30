@@ -7,7 +7,7 @@ function PosMain() {
   // Fetch data from /pos
   const fetchAPI = async () => {
     try {
-      const response = await api.get("/pos"); 
+      const response = await api.get("/api/pos"); 
       setPosData(response.data); 
     } catch (error) {
       console.error("Error fetching POS data:", error);

@@ -7,7 +7,7 @@ function KitchenMain() {
   // Fetch data from /kitchen
   const fetchAPI = async () => {
     try {
-      const response = await api.get("/kitchen"); 
+      const response = await api.get("/api/kitchen"); 
       setKitchenData(response.data); 
     } catch (error) {
       console.error("Error fetching kitchen data:", error);

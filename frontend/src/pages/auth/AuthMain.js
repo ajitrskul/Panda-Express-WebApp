@@ -7,7 +7,7 @@ function AuthMain() {
   // Fetch data from /auth
   const fetchAPI = async () => {
     try {
-      const response = await api.get("/auth"); 
+      const response = await api.get("/api/auth"); 
       setAuthData(response.data); 
     } catch (error) {
       console.error("Error fetching auth data:", error);

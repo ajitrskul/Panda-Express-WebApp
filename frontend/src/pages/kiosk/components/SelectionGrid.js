@@ -29,7 +29,7 @@ const SelectionGrid = ({ numSides, numEntrees, onSelect }) => {
   };
 
   return (
-    <div className="selection-grid mt-4">
+    <div className="selection-grid mt-4 d-flex flex-wrap justify-content-center">
       <div className="sides-section">
         {renderCards(numSides, 'side')}
       </div>
@@ -37,6 +37,7 @@ const SelectionGrid = ({ numSides, numEntrees, onSelect }) => {
         {renderCards(numEntrees, 'entree')}
       </div>
     </div>
+
   );
 };
 

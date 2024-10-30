@@ -32,11 +32,11 @@ def create_app():
     db.init_app(app)
 
     # Register Blueprints
-    app.register_blueprint(menu_bp, url_prefix='/menu')
-    app.register_blueprint(kitchen_bp, url_prefix='/kitchen')
-    app.register_blueprint(manager_bp, url_prefix='/manager')
-    app.register_blueprint(kiosk_bp, url_prefix='/kiosk')
-    app.register_blueprint(pos_bp, url_prefix='/pos')
-    app.register_blueprint(auth_bp, url_prefix='/auth')
+    app.register_blueprint(menu_bp, url_prefix='/api/menu')
+    app.register_blueprint(kitchen_bp, url_prefix='/api/kitchen')
+    app.register_blueprint(manager_bp, url_prefix='/api/manager')
+    app.register_blueprint(kiosk_bp, url_prefix='/api/kiosk')
+    app.register_blueprint(pos_bp, url_prefix='/api/pos')
+    app.register_blueprint(auth_bp, url_prefix='/api/auth')
 
     return app
