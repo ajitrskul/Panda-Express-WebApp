@@ -43,7 +43,7 @@
     margin-top: 15px;
 }
 
-body, .background-image {
+.login-page {
     background-image: url('../assets/sigin_background.png');
     background-size: cover;
     background-position: center;
