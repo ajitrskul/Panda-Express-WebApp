@@ -6,7 +6,7 @@ import api from './services/api';
 import { MenuMain } from './pages/menu';
 import { KitchenMain } from './pages/kitchen';
 import { ManagerMain } from './pages/manager';
-import { KioskMain } from './pages/kiosk';
+import { KioskMain, KioskLanding } from './pages/kiosk';
 import { PosMain } from './pages/pos';
 import { AuthMain } from './pages/auth';
 
@@ -50,7 +50,8 @@ function App() {
           <Route path="/menu" element={<MenuMain />} />
           <Route path="/kitchen" element={<KitchenMain />} />
           <Route path="/manager" element={<ManagerMain />} />
-          <Route path="/kiosk" element={<KioskMain />} />
+          <Route path="/kiosk" element={<KioskLanding />} />
+          <Route path="/kiosk/order" element={<KioskMain />} />
           <Route path="/pos" element={<PosMain />} />
           <Route path="/auth" element={<AuthMain />} />
         </Routes>
