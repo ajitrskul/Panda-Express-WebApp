@@ -156,9 +156,21 @@ export function SignUpPage() {
       isInvalid = true;
     }
 
-    setSignUpError(currentError);
-    if (!isInvalid) {
+    //should only be not equal when there is an error present
+    if (currentError !== signupError){ 
+      setSignUpError(currentError);
+    }
+    else if (!isInvalid) {
       //send request to server
+
+      //clear form
+      setSignUpInput({
+        email: "",
+        first_name: "",
+        last_name: "",
+        password: "",
+        confirm_password: ""
+      });
     }
     return;
   }
