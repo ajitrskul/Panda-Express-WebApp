@@ -1,11 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=Jomhuria&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Julius+Sans+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Jaldi:wght@400;700&family=Jomhuria&family=Julius+Sans+One&display=swap');
 
 
 .signup-title {
   font-family:'Jomhuria', Garamond;
-  /* font-size:86px; */
-  color:white;
+  color:black;
+}
+
+.signup-label {
+  font-family:Jaldi, Arial;
+  font-size:18px;
 }
 
 .signup-bg {
@@ -28,9 +31,31 @@
   z-index:100;
 }
 
+.signup-bg2-container {
+  position:fixed;
+  z-index:200;
+  top:0px;
+  bottom:0px;
+
+  opacity:0.9;
+}
+
+.signup-bg2-row {
+  height:100%
+}
+
+.signup-bg2 {
+  height:100%;
+  background-color:white;
+
+  box-shadow: 
+    5px 5px 15px rgb(206,157,55,0.8),
+    -5px -5px 15px rgb(206,157,55,0.8);
+}
+
 .signup-form {
   position:absolute;
-  z-index:200;
+  z-index:300;
   
   top:50%;
   transform: translateY(-50%);
@@ -42,13 +67,15 @@
   border-color:black;
   border-width:1px;
 
-  background-color: rgba(255,255,255,0.8);
-  margin-bottom:25px;
-  width:100%;
+  background-color: rgb(255,255,255);
+}
+
+.signup-names {
+  width: 100%;
 }
 
 @media (width >= 576px) {
-  .signup-first-name {
+  .signup-remove-padding {
     padding-left:0px !important;
   }
   
@@ -57,26 +84,57 @@
   }
 }
 
+@media (width < 576px) {
+  .signup-remove-padding, .signup-last-name {
+    padding-left:0px !important;
+    padding-right:0px !important;
+  }
+}
+
 .signup-required-fields {
-  color:white;
+  color:black;
   font-family: 'Julius Sans One';
+  margin-bottom:0px;
 }
 
 .signup-submit {
-  background-color: #B44949;
+  background-color: #A3080C;
   font-family: 'Julius Sans One', Copperplate;
   border:none;
   border-radius:25px;
-  padding:5px 15px;
+  padding:4px 50px !important;
   font-size:20px;
 
   border:solid;
-  border-color: #B44949;
+  border-color: #A3080C;
   border-width:1px;
+
+  color:black;
 }
 
 .signup-submit:hover {
   color:white;
-  opacity:0.8;
+  background-color: #cd0c13;
 }
 
+.signup-submit:active {
+  background-color:#fe0b13;
+  opacity:0.8
+}
+
+.signup-navigate-login {
+  color:black;
+  font-family: Julius Sans One;
+}
+
+.error-message {
+  color:red;
+  font-family: Joldi, Arial;
+  font-size:14px;
+
+  margin-bottom:5px !important;
+}
+
+.invalid-input {
+  border-color:red;
+}

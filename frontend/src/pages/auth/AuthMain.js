@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Route, Routes, Link } from "react-router-dom";
-import { SignUpPage } from "./SignUpPage.js";
 import api from '../../services/api'; // Axios instance with base URL
 
 export default function AuthMain() {
@@ -35,7 +34,7 @@ export default function AuthMain() {
               <p>Loading...</p> // Show loading text while data is being fetched
             )}
             <nav>
-              <Link to="SignUp">No Account? Sign Up.</Link>
+              <Link to="signup">No Account? Sign Up.</Link>
             </nav>
             <nav>
               <Link to="/">Go Home!</Link>
@@ -44,7 +43,6 @@ export default function AuthMain() {
         </>
         }
       />
-      <Route path="SignUp" element={<SignUpPage />} />
     </Routes>
   );
 }
