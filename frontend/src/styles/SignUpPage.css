@@ -138,3 +138,9 @@
 .invalid-input {
   border-color:red;
 }
+
+.signup-submission-loading {
+  opacity:0.8;
+  cursor:default;
+  background-color: #fe0b13;
+}
