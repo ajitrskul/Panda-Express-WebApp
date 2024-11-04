@@ -15,11 +15,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Set up Node.js to version 20 or higher
+      # Set up Node.js to version 22 or higher
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'  # Ensure Node.js version 20 or higher is used
+          node-version: '22'
 
       # Navigate to the frontend directory, install dependencies, and build
       - name: Install frontend dependencies and build
@@ -34,8 +34,8 @@ jobs:
           rm -rf backend/build
           mv frontend/build backend/
 
-      # Set up Git and deploy to Heroku
-      - name: Set up Git
+      # Set up Git in the backend directory if not already set up
+      - name: Initialize Git in backend
         working-directory: ./backend
         run: |
           if [ ! -d ".git" ]; then
@@ -46,16 +46,24 @@ jobs:
       - name: Deploy to Heroku
         working-directory: ./backend
         env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}  # Add your Heroku API key to GitHub Secrets
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: |
+          # Check if Heroku remote exists, add if missing
           heroku_remote=$(git remote | grep heroku)
           if [ -z "$heroku_remote" ]; then
             heroku git:remote -a project-3-01-beastmode
           fi
-          git add .
-          git commit -m "Deploying with new frontend build" || echo "Nothing to commit"
-          git push -f heroku master
 
-      # Clean up frontend build directory
+          # Stage and commit changes if there are any
+          git add .
+          if git diff --cached --quiet; then
+            echo "Nothing to commit, skipping deployment."
+          else
+            git commit -m "Deploying with new frontend build"
+            git push -f heroku master
+          fi
+
+      # Clean up frontend build directory if deployment succeeded
       - name: Cleanup frontend build
+        if: success()
         run: rm -rf frontend/build
