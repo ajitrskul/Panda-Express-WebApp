@@ -1,0 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=Jaldi:wght@400;700&family=Jomhuria&family=Julius+Sans+One&display=swap');
+
+.signup-success-bg {
+  background: url(../assets/SignUpBg2.jpg) no-repeat center center fixed;
+  background-size: cover;
+
+  /* Set rules to fill background */
+  min-height: 100%;
+  min-width: 1024px;
+	
+  /* Set up proportionate scaling */
+  width: 100%;
+  height: auto;
+	
+  /* Set up positioning */
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  z-index:100;
+}
+
+
+.signup-success-text {
+  position:absolute;
+  top:50%;
+  transform: translateY(-50%);
+
+  z-index: 300;
+  border-radius:20px;
+  background-color:white;
+  padding:25px 0px;
+}
+
+.signup-success-title {
+  font-family:'Jomhuria', Garamond;
+  color:black;
+  font-size:70px;
+}
+
+.signup-success-links {
+  font-family: Jaldi, Arial;
+  font-size:20px;
+}
+
+.signup-success-check {
+  background: url(../assets/checkMarkIcon.webp) no-repeat center;
+  background-size: cover;
+  width: 80px;
+  height: 80px;
+  border-radius:40px;
+  border:solid;
+  border-color:black;
+  border-width:2px;
+
+  margin-left:auto;
+  margin-right:auto;
+}

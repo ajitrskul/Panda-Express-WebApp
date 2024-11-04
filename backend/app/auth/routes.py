@@ -1,5 +1,6 @@
 from . import auth_bp
 from flask import request, jsonify
+from sqlalchemy import text
 from app.extensions import db
 from app.models import User
 
@@ -14,6 +15,9 @@ def handle_signup():
 
     #user_id auto incremented
     new_user = User(points=0, email=data['email'], password=data['password'], first_name=data['first_name'], last_name=data['last_name'], role='customer')
+
+    with db.engine.connect() as conn:
+        conn.execute(text("SELECT setval('user_info_user_id_seq', COALESCE((SELECT MAX(user_id) FROM user_info), 1), FALSE);"))
 
     with db.session.begin():
         db.session.add(new_user)

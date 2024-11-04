@@ -12,6 +12,8 @@ import { AuthMain } from './pages/auth';
 
 //Import secondary pages
 import { SignUpPage } from './pages/auth/SignUpPage.js';
+import { SignUpError } from './pages/auth/SignUpError.js';
+import { SignUpSuccess } from './pages/auth/SignUpSuccess.js';
 
 function App() {
   const [array, setArray] = useState([]);
@@ -57,6 +59,8 @@ function App() {
         <Route path="/pos" element={<PosMain />} />
         <Route path="/auth" element={<AuthMain />} />
         <Route path="/auth/signup" element={<SignUpPage />}></Route>
+        <Route path="/auth/signup/error" element={<SignUpError />}></Route>
+        <Route path="/auth/signup/success" element={<SignUpSuccess />}></Route>
       </Routes>
     </Router>
   );

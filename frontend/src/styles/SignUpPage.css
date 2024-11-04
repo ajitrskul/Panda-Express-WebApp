@@ -12,7 +12,7 @@
 }
 
 .signup-bg {
-  background: url(../assets/SignInBackground.jpg) no-repeat center center fixed;
+  background: url(../assets/SignUpBg.jpg) no-repeat center center fixed;
   background-size: cover;
 
   /* Set rules to fill background */
@@ -110,6 +110,7 @@
   border-width:1px;
 
   color:black;
+  position:relative;
 }
 
 .signup-submit:hover {
@@ -144,3 +145,16 @@
   cursor:default;
   background-color: #fe0b13;
 }
+
+.signup-spinning-loader {
+  position:absolute;
+  left:76.9125px;
+  color:white;
+  opacity:0;
+}
+
+.signup-loader-opacity {
+  opacity:1;
+}
+
+

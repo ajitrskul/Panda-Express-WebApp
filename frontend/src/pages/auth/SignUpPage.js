@@ -1,4 +1,4 @@
-import { Route, Routes, Link } from "react-router-dom";
+import { Route, Routes, Link, useNavigate } from "react-router-dom";
 import { useState } from 'react';
 import "../../styles/SignUpPage.css";
 import api from '../../services/api';
@@ -6,6 +6,8 @@ import api from '../../services/api';
 //function that handles signup page logic & frontend
 export function SignUpPage() {
   //set up useState object and functions to hold current input states
+  const navigate = useNavigate();
+
   const [signupInput, setSignUpInput] = useState({
     email: "",
     first_name: "",
@@ -43,12 +45,12 @@ export function SignUpPage() {
   });
 
   const [submitClass, setSubmitClass] = useState({
-    class: "signup-submit",
+    button_class: "signup-submit",
+    loading_class: "spinner-border signup-spinning-loader"
   });
 
   //when an input is changed, set the usestate object to that state
   const handleSignUpInput = (name, value) => {
-    console.log('here');
     setSignUpInput({
       ...signupInput,
       [name]: value
@@ -65,7 +67,7 @@ export function SignUpPage() {
     });
   }
 
-  const checkEmail = async () => {
+  const createAccount = async () => {
     try {
       const response = await api.post("/auth/signup/email", signupInput.email);
       if (!response.data) { //email already exists in database
@@ -84,22 +86,25 @@ export function SignUpPage() {
           await api.post("/auth/signup", signupInput);
           //adding to database successful
           clear();
+          navigate("/auth/signup/success");
         } catch (error) {
           //issue adding signup info to database
           clear();
+          navigate("/auth/signup/error");
         }
       }
     } catch (error) {
       //issue checking for redundant email in database
       clear();
-
+      navigate("/auth/signup/error");
     }
   }
 
-  const validateSignUpInput = (event) => {
+  const validateSignUpInput = async (event) => {
     setSubmitClass({
       ...submitClass,
-      class: "signup-submit signup-submission-loading"
+      button_class: "signup-submit signup-submission-loading",
+      loading_class: "spinner-border signup-spinning-loader signup-loader-opacity"
     });
 
     let isInvalid = false;
@@ -206,6 +211,15 @@ export function SignUpPage() {
       isInvalid = true;
     }
 
+    if (!signupInput.confirm_password) {
+      currentError.confirm_password = "Password confirmation is required";
+      if (!currentError.valid_confirm_password.isHighlighted) {
+        currentError.valid_confirm_password.confirm_password_class += " invalid-input";
+      }
+      currentError.valid_confirm_password.isHighlighted = true;
+      isInvalid = true;
+    }
+
     if (signupInput.password !== signupInput.confirm_password) {
       currentError.confirm_password = "Passwords should match";
       if (!currentError.valid_confirm_password.isHighlighted) {
@@ -231,7 +245,11 @@ export function SignUpPage() {
       if (!currentError.valid_password.isHighlighted) {
         currentError.valid_password.password_class += " invalid-input";
       }
+      if (!currentError.valid_confirm_password.isHighlighted) {
+        currentError.valid_confirm_password.confirm_password_class += " invalid-input";
+      }
       currentError.valid_password.isHighlighted = true;
+      currentError.valid_confirm_password.isHighlighted = true;
       isInvalid = true;
     }
     
@@ -242,12 +260,13 @@ export function SignUpPage() {
     
     if (!isInvalid) {
       //send request to server
-      checkEmail();
-      setSubmitClass({
-        ...submitClass,
-        class: "signup-submit"
-      });
+      await createAccount();
     }
+    setSubmitClass({
+      ...submitClass,
+      button_class: "signup-submit",
+      loading_class: "spinner-border signup-spinning-loader"
+    });
   }
 
   return (
@@ -333,7 +352,10 @@ export function SignUpPage() {
               </div>
               <div className="row justify-content-center">
                 <div className="col-sm-5 text-center">
-                  <button type="submit" className={submitClass.class} tabIndex="7">SUBMIT</button>
+                  <button type="submit" className={submitClass.button_class} tabIndex="7">
+                    SUBMIT
+                    <div class={submitClass.loading_class} role="status"></div>
+                  </button>
                 </div>
               </div>
             </form>
