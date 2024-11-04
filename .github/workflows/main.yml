@@ -34,6 +34,13 @@ jobs:
           rm -rf backend/build
           mv frontend/build backend/
 
+      # Set Git user information explicitly for GitHub Actions
+      - name: Configure Git user
+        working-directory: ./backend
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
       # Configure Git to push to Heroku using the main branch
       - name: Set up Heroku remote
         working-directory: ./backend
