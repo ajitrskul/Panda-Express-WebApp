@@ -53,6 +53,7 @@ jobs:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: |
           echo "$HEROKU_API_KEY" | heroku auth:token
+          heroku auth:whoami  # Verify that authentication is successful
 
       # Set up Heroku remote and deploy
       - name: Deploy to Heroku
@@ -70,7 +71,7 @@ jobs:
             echo "Nothing to commit, skipping deployment."
           else
             git commit -m "Deploying with new frontend build"
-            git push -f heroku main  # Change 'master' to 'main' if deploying from main
+            git push -f heroku main  # Adjust to 'main' if deploying from main branch
           fi
 
       # Clean up frontend build directory if deployment succeeded
