@@ -1,48 +1,60 @@
+
+
 .navbar{
-background-color:#B44949 ;
-align-content: center;
-box-shadow: 0 1vh 1vh 0 rgb(66, 51, 51);
+    background-color:#A3080C ;
+    align-content: center;
+    /*box-shadow: 0 .4vw .4vw 0 rgb(66, 51, 51);*/
+    display: flex;
 }
 .logo{
-margin-left: 1%;
-width: 5%;
+width: 7vh;
 }
-.cart-button{
-display: flex;
-margin-top: 0%;
-width:5%;
-height:100%;
+.left-elem{
+    display: flex;
+    align-content: center;
+    height: 100%;
+    width:10vh;
+}
+.right-elem{
+    height: 100%;
+    display:flex;
+    margin-right: 1%;
+    align-content: center;
+}
+.translate-button{
 border: none;
-margin-left:82%;
 background: transparent;
+color: white;
 }
-
+.weather-button{
+    border: none;
+    color: white;
+    background: transparent;
+    white-space: nowrap;
+    font-size: 3vh;
+    text-align: center;
+    align-self: center; 
+ }
+.home-button{
+    height:100%;
+    width:100%;
+    border: none;
+    background: transparent;
+}
 .login-button{
-margin-top: 0%;
-width:5%;
-height:100%;
+    font-size: 3vh;
+    text-align: center;
+    align-self: center;
 border: none;
-margin-right:2%;
 background: transparent;
-}
-.cart-icon{
-font-size: 3vw;
-
-}
-.cart-num{
-display: grid;
-border: none;
-border-radius: 100%;
-width:7px;
-height:13px;
-font-size: 8px;
-margin-top: 8px;
-margin-left:-7px;
-text-align: center;
-justify-content: center;
-align-items: center;
 }
 .login-icon{
-font-size: 3vw;
-color: black;
+color: rgb(255, 255, 255);
+font-size:4vh;
+}
+.weather-icon{
+    width:4vh;
+}
+#goog-gt-tt{
+    display:hide;
 }
