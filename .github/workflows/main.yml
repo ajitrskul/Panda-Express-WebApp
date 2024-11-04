@@ -1,4 +1,4 @@
-name: Deploy
+name: Deploy to Heroku
 
 on:
   push:
@@ -11,48 +11,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout repository
+      # Check out the repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Set up Node.js to version 22 or higher
+      # Set up Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '22'
+          node-version: '22'  # Update to your Node.js version
 
-      # Navigate to the frontend directory, install dependencies, and build
-      - name: Install frontend dependencies and build
+      # Install frontend dependencies and build
+      - name: Build frontend
         working-directory: ./frontend
         run: |
           npm install
           npm run build
 
       # Move the build directory to the backend
-      - name: Move build directory to backend
+      - name: Move build to backend
         run: |
           rm -rf backend/build
           mv frontend/build backend/
 
-      # Set up Git in the backend directory if not already set up
-      - name: Initialize Git in backend
-        working-directory: ./backend
-        run: |
-          if [ ! -d ".git" ]; then
-            git init
-          fi
-          # Create and check out the main branch explicitly
-          git checkout -b main
-
-      # Set Git user information explicitly for GitHub Actions
-      - name: Configure Git user
-        working-directory: ./backend
-        run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-
-      # Add Heroku as a Git remote using the API key directly
-      - name: Configure Heroku Git remote
+      # Configure Git to push to Heroku using the main branch
+      - name: Set up Heroku remote
         working-directory: ./backend
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
@@ -63,14 +46,10 @@ jobs:
       - name: Deploy to Heroku
         working-directory: ./backend
         run: |
-          # Stage and commit changes if there are any
+          # Add, commit, and push changes to Heroku main
           git add .
-          if git diff --cached --quiet; then
-            echo "Nothing to commit, skipping deployment."
-          else
-            git commit -m "Deploying with new frontend build"
-            git push -f heroku master 
-          fi
+          git commit -m "Deploying with new frontend build" || echo "No changes to commit"
+          git push -f heroku main
 
       # Clean up frontend build directory if deployment succeeded
       - name: Cleanup frontend build
