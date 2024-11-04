@@ -42,6 +42,13 @@ jobs:
             git init
           fi
 
+      # Set Git user information explicitly for GitHub Actions
+      - name: Configure Git user
+        working-directory: ./backend
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
       # Install Heroku CLI
       - name: Install Heroku CLI
         run: |
@@ -58,11 +65,12 @@ jobs:
       # Set up Heroku remote and deploy
       - name: Deploy to Heroku
         working-directory: ./backend
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: |
-          # Check if Heroku remote exists, add if missing
-          heroku_remote=$(git remote | grep heroku)
-          if [ -z "$heroku_remote" ]; then
-            heroku git:remote -a project-3-01-beastmode
+          # Ensure the Heroku remote is set correctly
+          if ! git remote | grep heroku; then
+            heroku git:remote -a project-3-01-beastmode --ssh-git
           fi
 
           # Stage and commit changes if there are any
