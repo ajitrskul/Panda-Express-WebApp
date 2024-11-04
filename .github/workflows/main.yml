@@ -49,35 +49,25 @@ jobs:
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
 
-      # Install Heroku CLI
-      - name: Install Heroku CLI
-        run: |
-          curl https://cli-assets.heroku.com/install.sh | sh
-
-      # Authenticate with Heroku using the API Key and verify
-      - name: Heroku Authentication
+      # Add Heroku as a Git remote using the API key directly
+      - name: Configure Heroku Git remote
+        working-directory: ./backend
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: |
-          echo "$HEROKU_API_KEY" | heroku auth:token
-          heroku auth:whoami  # Verify authentication; if this fails, the job will stop here
+          git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/project-3-01-beastmode.git
 
-      # Set up Heroku remote and deploy
+      # Deploy to Heroku by pushing to the main branch
       - name: Deploy to Heroku
         working-directory: ./backend
         run: |
-          # Ensure the Heroku remote is set correctly
-          if ! git remote | grep heroku; then
-            heroku git:remote -a project-3-01-beastmode
-          fi
-
           # Stage and commit changes if there are any
           git add .
           if git diff --cached --quiet; then
             echo "Nothing to commit, skipping deployment."
           else
             git commit -m "Deploying with new frontend build"
-            git push -f heroku main 
+            git push -f heroku main  # Adjust to 'main' or 'master' based on your Heroku setup
           fi
 
       # Clean up frontend build directory if deployment succeeded
