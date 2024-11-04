@@ -2,7 +2,7 @@ import { Route, Routes, Link } from "react-router-dom";
 //import { useState } from 'react';
 import "../../styles/SignUpError.css";
 
-export function SignUpError() {
+export default function SignUpError() {
   return (
     <Routes>
       <Route

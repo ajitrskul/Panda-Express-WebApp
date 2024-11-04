@@ -2,7 +2,7 @@ import { Route, Routes, Link } from "react-router-dom";
 //import { useState } from 'react';
 import "../../styles/SignUpSuccess.css";
 
-export function SignUpSuccess() {
+export default function SignUpSuccess() {
   return (
     <Routes>
       <Route

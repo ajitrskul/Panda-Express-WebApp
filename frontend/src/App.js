@@ -6,12 +6,7 @@ import { KitchenMain } from './pages/kitchen';
 import { ManagerMain } from './pages/manager';
 import { KioskMain, KioskLanding, OrderSelection } from './pages/kiosk';
 import { PosMain } from './pages/pos';
-import { AuthMain } from './pages/auth';
-
-//Import secondary pages
-import { SignUpPage } from './pages/auth/SignUpPage.js';
-import { SignUpError } from './pages/auth/SignUpError.js';
-import { SignUpSuccess } from './pages/auth/SignUpSuccess.js';
+import { AuthMain, SignUpPage, SignUpError, SignUpSuccess } from './pages/auth';
 
 function App() {
   return (

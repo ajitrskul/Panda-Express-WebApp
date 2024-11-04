@@ -4,7 +4,7 @@ import "../../styles/SignUpPage.css";
 import api from '../../services/api';
 
 //function that handles signup page logic & frontend
-export function SignUpPage() {
+export default function SignUpPage() {
   //set up useState object and functions to hold current input states
   const navigate = useNavigate();
 
