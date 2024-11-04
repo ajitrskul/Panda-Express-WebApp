@@ -42,11 +42,21 @@ jobs:
             git init
           fi
 
+      # Install Heroku CLI
+      - name: Install Heroku CLI
+        run: |
+          curl https://cli-assets.heroku.com/install.sh | sh
+
+      # Authenticate with Heroku using the API Key
+      - name: Heroku Authentication
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: |
+          echo "$HEROKU_API_KEY" | heroku auth:token
+
       # Set up Heroku remote and deploy
       - name: Deploy to Heroku
         working-directory: ./backend
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: |
           # Check if Heroku remote exists, add if missing
           heroku_remote=$(git remote | grep heroku)
@@ -60,7 +70,7 @@ jobs:
             echo "Nothing to commit, skipping deployment."
           else
             git commit -m "Deploying with new frontend build"
-            git push -f heroku master
+            git push -f heroku main  # Change 'master' to 'main' if deploying from main
           fi
 
       # Clean up frontend build directory if deployment succeeded
