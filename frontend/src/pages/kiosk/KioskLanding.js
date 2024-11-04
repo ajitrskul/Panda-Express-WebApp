@@ -2,7 +2,7 @@ import { React } from "react";
 import { useNavigate } from "react-router-dom";
 import '../../styles/kiosk.css';
 
-function KioskLanding() {
+function KioskLanding() { 
   const navigate = useNavigate();
 
   const handleStartOrdering = () => {

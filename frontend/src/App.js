@@ -1,6 +1,4 @@
-import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
-import api from './services/api';
 
 // Import all pages
 import { MenuMain } from './pages/menu';
@@ -32,12 +30,17 @@ function App() {
             }
           />
           <Route path="/menu" element={<MenuMain />} />
+
           <Route path="/kitchen" element={<KitchenMain />} />
+
           <Route path="/manager" element={<ManagerMain />} />
+
           <Route path="/kiosk" element={<KioskLanding />} />
           <Route path="/kiosk/order" element={<KioskMain />} />
           <Route path="/kiosk/order/:itemName" element={<OrderSelection />} />
+
           <Route path="/pos" element={<PosMain />} />
+
           <Route path="/auth" element={<AuthMain />} />
         </Routes>
     </Router>

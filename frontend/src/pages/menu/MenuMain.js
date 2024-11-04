@@ -7,7 +7,7 @@ function MenuMain() {
   // how to fetch api
   const fetchAPI = async () => {
     // Step 2: Fetch data when component loads
-    const response = await api.get("/api/menu"); 
+    const response = await api.get("/menu"); 
     setMenuData(response.data); 
   };
 

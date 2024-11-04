@@ -1,0 +1,31 @@
+{
+  "files": {
+    "main.css": "/static/css/main.32ff7c51.css",
+    "main.js": "/static/js/main.6ef5d320.js",
+    "static/media/order-background.png": "/static/media/order-background.36f9f6c4c9b0e1c07899.png",
+    "static/media/chow-mein.png": "/static/media/chow-mein.6db05b8c10198ac4faa1.png",
+    "static/media/fried-rice.png": "/static/media/fried-rice.09c7c69203b92805162f.png",
+    "static/media/super-greens.png": "/static/media/super-greens.036c8933ffa44e3182e5.png",
+    "static/media/grilled-teriyaki-chicken.png": "/static/media/grilled-teriyaki-chicken.910e7c884a7a1756ae58.png",
+    "static/media/white-rice.png": "/static/media/white-rice.4a3808ff9f728b275ef9.png",
+    "static/media/broccoli-beef.png": "/static/media/broccoli-beef.08da3483db920c231071.png",
+    "static/media/orange-chicken.png": "/static/media/orange-chicken.9d6fefe673e54a3a6b7b.png",
+    "static/media/kung-pao-chicken.png": "/static/media/kung-pao-chicken.e69e29ad2e901ee3be64.png",
+    "static/media/honey-walnut-shrimp.png": "/static/media/honey-walnut-shrimp.5f62d90f667f38fa6fab.png",
+    "static/media/beijing-beef.png": "/static/media/beijing-beef.f1a2910ade2e1cdf670b.png",
+    "static/media/bigger-plate.png": "/static/media/bigger-plate.0323e1eb65b1f1bf9d34.png",
+    "static/media/plate.png": "/static/media/plate.a49cbe666d818353c0b6.png",
+    "static/media/appetizer.png": "/static/media/appetizer.802a4c1a9ba27badb0ac.png",
+    "static/media/bowl.png": "/static/media/bowl.1ed16b3fcf32b5abb606.png",
+    "static/media/family-meal.png": "/static/media/family-meal.c71de48f5e40f51a26a0.png",
+    "static/media/a-la-carte.png": "/static/media/a-la-carte.8e1c86049ec5056c4cca.png",
+    "static/media/drinks.png": "/static/media/drinks.650e143b3c5b3ae0a4b2.png",
+    "index.html": "/index.html",
+    "main.32ff7c51.css.map": "/static/css/main.32ff7c51.css.map",
+    "main.6ef5d320.js.map": "/static/js/main.6ef5d320.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.32ff7c51.css",
+    "static/js/main.6ef5d320.js"
+  ]
+}
