@@ -54,23 +54,21 @@ jobs:
         run: |
           curl https://cli-assets.heroku.com/install.sh | sh
 
-      # Authenticate with Heroku using the API Key
+      # Authenticate with Heroku using the API Key and verify
       - name: Heroku Authentication
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: |
           echo "$HEROKU_API_KEY" | heroku auth:token
-          heroku auth:whoami  # Verify that authentication is successful
+          heroku auth:whoami  # Verify authentication; if this fails, the job will stop here
 
       # Set up Heroku remote and deploy
       - name: Deploy to Heroku
         working-directory: ./backend
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: |
           # Ensure the Heroku remote is set correctly
           if ! git remote | grep heroku; then
-            heroku git:remote -a project-3-01-beastmode --ssh-git
+            heroku git:remote -a project-3-01-beastmode
           fi
 
           # Stage and commit changes if there are any
@@ -79,8 +77,9 @@ jobs:
             echo "Nothing to commit, skipping deployment."
           else
             git commit -m "Deploying with new frontend build"
-            git push -f heroku main  # Adjust to 'main' if deploying from main branch
+            git push -f heroku master  
           fi
+
 
       # Clean up frontend build directory if deployment succeeded
       - name: Cleanup frontend build
