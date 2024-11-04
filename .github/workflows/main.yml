@@ -77,9 +77,8 @@ jobs:
             echo "Nothing to commit, skipping deployment."
           else
             git commit -m "Deploying with new frontend build"
-            git push -f heroku master  
+            git push -f heroku main 
           fi
-
 
       # Clean up frontend build directory if deployment succeeded
       - name: Cleanup frontend build
