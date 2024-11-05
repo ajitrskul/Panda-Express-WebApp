@@ -58,7 +58,7 @@ jobs:
           # Add, commit, and push changes to Heroku main
           git add .
           git commit -m "Deploying with new frontend build" || echo "No changes to commit"
-          git push -f heroku master
+          git push -f heroku main
 
       # Clean up frontend build directory if deployment succeeded
       - name: Cleanup frontend build
