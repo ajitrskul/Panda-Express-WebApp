@@ -139,3 +139,16 @@
     display: flex;
     gap: 10px;
 }
+
+.cart-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1050; 
+}
+  
+.cart-offcanvas .cart-item {
+border-bottom: 1px solid #ddd;
+padding: 10px 0;
+}
+  

@@ -1,12 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import '../../styles/kiosk.css';
 
-// components 
+// Components
 import CheckoutButton from './components/CheckoutButton';
 import MenuItemCard from './components/MenuItemCard';
+import Cart from './components/Cart';
 
-// images
+// Images
 import BowlImage from '../../assets/bowl.png';
 import PlateImage from '../../assets/plate.png';
 import BiggerPlateImage from '../../assets/bigger-plate.png';
@@ -25,7 +26,10 @@ function KioskMain() {
     { name: "Drinks", image: DrinksImage, description: "Add a Refreshing Beverage", numSides: 0, numEntrees: 0 },
     { name: "Family Meal", image: FamilyMealImage, description: "2 Large Sides & 3 Large Entrees", numSides: 2, numEntrees: 3 }
   ];
-  
+
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [cartItems, setCartItems] = useState([]); // Replace with actual cart items as needed
+
   const navigate = useNavigate();
 
   const handleItemClick = (item) => {
@@ -44,8 +48,18 @@ function KioskMain() {
     }
   };
 
+  const toggleCart = () => {
+    setIsCartOpen(!isCartOpen);
+  };
+
   return (
     <div className="kiosk-landing-order container-fluid">
+      {/* CheckoutButton component with toggleCart functionality */}
+      <CheckoutButton orderCount={cartItems.length} toggleCart={toggleCart} />
+
+      {/* Cart component */}
+      <Cart isOpen={isCartOpen} toggleCart={toggleCart} cartItems={cartItems} />
+
       {/* Menu Items Grid */}
       <div className="row pt-4 px-3 justify-content-center">
         {menuItems.map((item, index) => (
@@ -59,9 +73,6 @@ function KioskMain() {
           </div>
         ))}
       </div>
-
-      {/* CheckoutButton component */}
-      <CheckoutButton price="$XXX.XX" />
     </div>
   );
 }
