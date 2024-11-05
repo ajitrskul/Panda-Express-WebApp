@@ -13,13 +13,11 @@ def auth_home():
 def handle_signup():
     data = request.get_json()
 
-    #user_id auto incremented
-    new_user = User(points=0, email=data['email'], password=data['password'], first_name=data['first_name'], last_name=data['last_name'], role='customer')
-
-    with db.engine.connect() as conn:
-        conn.execute(text("SELECT setval('user_info_user_id_seq', COALESCE((SELECT MAX(user_id) FROM user_info), 1), FALSE);"))
-
     with db.session.begin():
+        max_user_id = db.session.execute(text("SELECT COALESCE(MAX(user_id), 0) FROM user_info;"))
+        db.session.execute(text("SELECT setval('user_info_user_id_seq', :next_id, FALSE);"), {'next_id': max_user_id.scalar() + 1})  
+
+        new_user = User(points=0, email=data['email'], password=data['password'], first_name=data['first_name'], last_name=data['last_name'], role='customer')
         db.session.add(new_user)
         db.session.commit()
 

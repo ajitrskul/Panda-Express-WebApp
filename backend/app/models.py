@@ -10,7 +10,7 @@ class Item(db.Model):
 class User(db.Model):
     __tablename__ = 'user_info'
     
-    user_id = db.Column(db.Integer, primary_key=True, auto_increment=True)
+    user_id = db.Column(db.Integer, primary_key=True)
     points = db.Column(db.Integer, nullable=False)
     email = db.Column(db.String(50), nullable=False)
     password = db.Column(db.String(50), nullable=False)
