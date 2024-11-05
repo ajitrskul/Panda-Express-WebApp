@@ -11,15 +11,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Check out the repository
+      # Check out the repository with full history
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Fetch the entire history for Heroku
 
       # Set up Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '22'  # Update to your Node.js version
+          node-version: '22'  # Adjust to your preferred Node.js version
 
       # Install frontend dependencies and build
       - name: Build frontend
@@ -34,13 +36,6 @@ jobs:
           rm -rf backend/build
           mv frontend/build backend/
 
-      # Set Git user information explicitly for GitHub Actions
-      - name: Configure Git user
-        working-directory: ./backend
-        run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-
       # Configure Git to push to Heroku using the main branch
       - name: Set up Heroku remote
         working-directory: ./backend
@@ -53,10 +48,9 @@ jobs:
       - name: Deploy to Heroku
         working-directory: ./backend
         run: |
-          # Add, commit, and push changes to Heroku main
           git add .
           git commit -m "Deploying with new frontend build" || echo "No changes to commit"
-          git push -f heroku main
+          git push -f heroku master
 
       # Clean up frontend build directory if deployment succeeded
       - name: Cleanup frontend build
