@@ -1,10 +1,9 @@
 import React from 'react';
 import { Offcanvas, OffcanvasHeader, OffcanvasBody } from 'reactstrap';
-import '../../../styles/kiosk.css';
 
 const Cart = ({ isOpen, toggleCart, cartItems }) => {
   return (
-    <Offcanvas isOpen={isOpen} direction="end" toggle={toggleCart} className="cart-offcanvas">
+    <div className={`cart-offcanvas ${isOpen ? 'open' : ''}`}>
       <OffcanvasHeader toggle={toggleCart}>Your Cart</OffcanvasHeader>
       <OffcanvasBody>
         {cartItems.length > 0 ? (
@@ -18,7 +17,7 @@ const Cart = ({ isOpen, toggleCart, cartItems }) => {
           <p>Your cart is empty</p>
         )}
       </OffcanvasBody>
-    </Offcanvas>
+    </div>
   );
 };
 

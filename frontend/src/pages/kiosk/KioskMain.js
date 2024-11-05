@@ -28,7 +28,7 @@ function KioskMain() {
   ];
 
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [cartItems, setCartItems] = useState([]); // Replace with actual cart items as needed
+  const [cartItems, setCartItems] = useState([]);
 
   const navigate = useNavigate();
 
@@ -54,10 +54,14 @@ function KioskMain() {
 
   return (
     <div className="kiosk-landing-order container-fluid">
-      {/* CheckoutButton component with toggleCart functionality */}
-      <CheckoutButton orderCount={cartItems.length} toggleCart={toggleCart} />
+      {/* Animated CheckoutButton with toggleCart functionality */}
+      <CheckoutButton
+        orderCount={cartItems.length}
+        toggleCart={toggleCart}
+        isCartOpen={isCartOpen} // Pass isCartOpen to control animation
+      />
 
-      {/* Cart component */}
+      {/* Animated Cart component */}
       <Cart isOpen={isCartOpen} toggleCart={toggleCart} cartItems={cartItems} />
 
       {/* Menu Items Grid */}
