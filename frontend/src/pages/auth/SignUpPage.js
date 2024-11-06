@@ -240,8 +240,8 @@ export default function SignUpPage() {
       currentError.valid_confirm_password.isHighlighted = true;
       isInvalid = true;
     }
-    else if (signupInput.password && (!(/^(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{10,}$/.test(signupInput.password)))) {
-      currentError.password = "Password must contain at least one upper case letter, one special character, and be at least 10 characters long";
+    else if (signupInput.password && (!(/^(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{6,}$/.test(signupInput.password)))) {
+      currentError.password = "Password must contain at least one upper case letter, one special character, and be at least 6 characters long";
       if (!currentError.valid_password.isHighlighted) {
         currentError.valid_password.password_class += " invalid-input";
       }
