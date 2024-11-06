@@ -1,6 +1,6 @@
 import { Route, Routes, Link, useNavigate } from "react-router-dom";
 import { useState } from 'react';
-import "../../styles/SignUpPage.css";
+import "../../styles/signup/SignUpPage.css";
 import api from '../../services/api';
 
 //function that handles signup page logic & frontend

@@ -12,7 +12,7 @@
 }
 
 .signup-bg {
-  background: url(../assets/SignUpBg.jpg) no-repeat center center fixed;
+  background: url(../../assets/SignUpBg.jpg) no-repeat center center fixed;
   background-size: cover;
 
   /* Set rules to fill background */

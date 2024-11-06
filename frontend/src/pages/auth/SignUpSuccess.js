@@ -1,6 +1,6 @@
 import { Route, Routes, Link } from "react-router-dom";
 //import { useState } from 'react';
-import "../../styles/SignUpSuccess.css";
+import "../../styles/signup/SignUpSuccess.css";
 
 export default function SignUpSuccess() {
   return (
