@@ -134,3 +134,12 @@
   transform: translateY(-2px);
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
+
+@media (max-width: 768px) {
+  .cart-offcanvas {
+    width: 100%;
+  }
+  .checkout-button.rolling {
+    transform: translateX(-100%) rotate(-360deg);
+  }
+}
