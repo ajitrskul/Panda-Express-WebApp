@@ -41,14 +41,18 @@ jobs:
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: |
+          # Initialize Git in the backend directory if it’s not already a Git repository
           git init
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
+          git checkout -b main  # Create and switch to the main branch
           git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/project-3-01-beastmode.git
           
+          # Stage, commit, and push only the backend directory to Heroku
           git add .
           git commit -m "Deploy backend directory" || echo "No changes to commit"
           git push -f heroku main
+
 
       # Clean up frontend build directory if deployment succeeded
       - name: Cleanup frontend build
