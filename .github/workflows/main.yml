@@ -1,4 +1,4 @@
-name: Deploy to Heroku
+name: Deploy Backend to Heroku
 
 on:
   push:
@@ -11,53 +11,43 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Check out the repository with full history
+      # Checkout the repository with full history to avoid shallow clone issues
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
           fetch-depth: 0  # Fetch the entire history for Heroku
 
-      # Set up Node.js
+      # Set up Node.js to install and build frontend, if necessary
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '22'  # Adjust to your preferred Node.js version
+          node-version: '22'  # Adjust based on your Node.js version
 
-      # Install frontend dependencies and build
-      - name: Build frontend
+      # Optional: Install and build frontend, then move build to backend if needed
+      - name: Build frontend (optional)
         working-directory: ./frontend
         run: |
           npm install
           npm run build
 
-      # Move the build directory to the backend
-      - name: Move build to backend
+      - name: Move frontend build to backend (optional)
         run: |
           rm -rf backend/build
           mv frontend/build backend/
 
-      # Set Git user information explicitly for GitHub Actions
-      - name: Configure Git user
-        working-directory: ./backend
-        run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-
-      # Configure Git to push to Heroku using the main branch
-      - name: Set up Heroku remote
+      # Configure Git and deploy only the backend directory to Heroku
+      - name: Deploy Backend to Heroku
         working-directory: ./backend
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: |
+          git init
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
           git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/project-3-01-beastmode.git
-
-      # Deploy to Heroku by pushing to the main branch
-      - name: Deploy to Heroku
-        working-directory: ./backend
-        run: |
-          # Add, commit, and push changes to Heroku main
+          
           git add .
-          git commit -m "Deploying with new frontend build" || echo "No changes to commit"
+          git commit -m "Deploy backend directory" || echo "No changes to commit"
           git push -f heroku main
 
       # Clean up frontend build directory if deployment succeeded
