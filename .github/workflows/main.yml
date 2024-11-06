@@ -17,20 +17,20 @@ jobs:
         with:
           fetch-depth: 0  # Fetch the entire history for Heroku
 
-      # Set up Node.js to install and build frontend, if necessary
+      # Set up Node.js to install and build frontend
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '22'  # Adjust based on your Node.js version
 
-      # Optional: Install and build frontend, then move build to backend if needed
-      - name: Build frontend (optional)
+      # Install and build frontend, then move build to backend
+      - name: Build frontend
         working-directory: ./frontend
         run: |
           npm install
           npm run build
 
-      - name: Move frontend build to backend (optional)
+      - name: Move frontend build to backend
         run: |
           rm -rf backend/build
           mv frontend/build backend/
@@ -41,20 +41,29 @@ jobs:
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: |
-          # Initialize Git in the backend directory if it’s not already a Git repository
           git init
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           git checkout -b main  # Create and switch to the main branch
           git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/project-3-01-beastmode.git
           
-          # Stage, commit, and push only the backend directory to Heroku
           git add .
           git commit -m "Deploy backend directory" || echo "No changes to commit"
           git push -f heroku main
 
 
-      # Clean up frontend build directory if deployment succeeded
+      # Clean up frontend build if deployment succeeded
       - name: Cleanup frontend build
         if: success()
         run: rm -rf frontend/build
+
+        # Clean up backend build if deployment succeeded
+      - name: Cleanup backend build
+        if: success()
+        run: rm -rf backend/build
+
+        # Remove the .git directory in backend after deployment
+      - name: Cleanup .git directory in backend
+        working-directory: ./backend
+        run: |
+          rm -rf .git
