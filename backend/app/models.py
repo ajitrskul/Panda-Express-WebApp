@@ -1,12 +1,5 @@
 from .extensions import db
 
-class Item(db.Model):
-    __tablename__ = 'items'
-    
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    price = db.Column(db.Float, nullable=False)
-
 class ProductItem(db.Model):
     __tablename__ = 'product_item'
 
@@ -43,3 +36,14 @@ class MenuItem(db.Model):
     menu_item_description = db.Column(db.String(300), nullable=False)
     calories = db.Column(db.String(30), nullable=False)
     image = db.Column(db.String(200), nullable=True)
+
+class User(db.Model):
+    __tablename__ = 'user_info'
+    
+    user_id = db.Column(db.Integer, primary_key=True)
+    points = db.Column(db.Integer, nullable=False)
+    email = db.Column(db.String(50), nullable=False)
+    password = db.Column(db.String(50), nullable=False)
+    first_name = db.Column(db.String(50), nullable=False)
+    last_name = db.Column(db.String(50), nullable=False)
+    role = db.Column(db.String(20), nullable=False)
