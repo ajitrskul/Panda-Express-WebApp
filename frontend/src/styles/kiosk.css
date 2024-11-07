@@ -21,8 +21,8 @@
 }
 
 .kiosk-landing-order {
-    /* background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('https://t4.ftcdn.net/jpg/04/81/88/03/360_F_481880392_qj1h5f1QVbYlzwh2n1yiJHM5L4KOUMSN.jpg'); */
-    background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('../assets/order-background.png');
+    background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('https://t4.ftcdn.net/jpg/04/81/88/03/360_F_481880392_qj1h5f1QVbYlzwh2n1yiJHM5L4KOUMSN.jpg');
+    /* background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('../assets/order-background.png'); */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -138,4 +138,25 @@
 .sides-section, .entrees-section {
     display: flex;
     gap: 10px;
+}
+
+.banner {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: white;
+    padding: 5px 10px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    border-radius: 4px;
+    z-index: 1;
+    display: inline-block;
+}
+  
+.seasonal-banner {
+    background-color: #a3080c; 
+}
+  
+.premium-banner {
+    background-color: goldenrod; 
 }

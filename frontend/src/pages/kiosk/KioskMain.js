@@ -49,7 +49,7 @@ function KioskMain() {
       {/* Menu Items Grid */}
       <div className="row pt-4 px-3 justify-content-center">
         {menuItems.map((item, index) => (
-          <div className="col-sm-6 col-md-4 col-lg-3 col-xxl-2 d-flex justify-content-center mb-4" key={index}>
+          <div className="col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center mb-4" key={index}>
             <MenuItemCard 
               name={item.name} 
               image={item.image} 
