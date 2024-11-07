@@ -6,7 +6,7 @@ const formatProductName = (name) => {
   return name.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();
 };
 
-const SideSelection = () => {
+const SideSelection = ({ onItemSelect }) => {
   const [sides, setSides] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -34,8 +34,8 @@ const SideSelection = () => {
     return <div>Error: {error}</div>;
   }
 
-  const handleSideSelect = (sideName) => {
-    alert(`You selected ${sideName}`);
+  const handleSideSelect = (side) => {
+    onItemSelect(side); 
   };
 
   return (
@@ -48,7 +48,7 @@ const SideSelection = () => {
               name={formatProductName(side.product_name)} 
               image={side.image }
               description={side.calories + " Calories"}
-              onClick={() => handleSideSelect(side.name)} 
+              onClick={() => handleSideSelect(side)}
             />
           </div>
         ))}

@@ -6,7 +6,7 @@ const formatProductName = (name) => {
   return name.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();
 };
 
-const EntreeSelection = () => {
+const EntreeSelection = ({ onItemSelect }) => {
   const [entrees, setEntrees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -43,8 +43,8 @@ const EntreeSelection = () => {
     setSelectedInfo(null);
   };
 
-  const handleEntreeSelect = (entreeName) => {
-    alert(`You selected ${entreeName}`);
+  const handleEntreeSelect = (entree) => {
+    onItemSelect(entree); 
   };
 
   return (
@@ -59,8 +59,8 @@ const EntreeSelection = () => {
               description={entree.calories + " Calories"}
               isPremium={entree.is_premium } 
               isSeasonal={entree.is_seasonal }
-              onClick={() => handleEntreeSelect(entree.name)} 
               onInfoClick={() => handleInfoClick(entree)}
+              onClick={() => handleEntreeSelect(entree)} 
             />
           </div>
         ))}

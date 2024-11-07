@@ -1,29 +1,32 @@
 import React, { useState } from 'react';
 import SelectionCard from './SelectionCard';
 
-const SelectionGrid = ({ numSides, numEntrees, onSelect }) => {
+const SelectionGrid = ({ numSides, numEntrees, onSelect, selectedSideImage, selectedEntreeImage }) => {
   const [selectedSideIndex, setSelectedSideIndex] = useState(null);
   const [selectedEntreeIndex, setSelectedEntreeIndex] = useState(null);
 
   const handleCardClick = (type, index) => {
     if (type === 'side') {
       setSelectedSideIndex(index);
-      setSelectedEntreeIndex(null); // Clear the entree selection when a side is selected
-      onSelect(type); 
+      setSelectedEntreeIndex(null); 
+      onSelect(type);
     } else if (type === 'entree') {
       setSelectedEntreeIndex(index);
-      setSelectedSideIndex(null); // Clear the side selection when an entree is selected
+      setSelectedSideIndex(null);
       onSelect(type);
     }
   };
 
   const renderCards = (count, type) => {
     return Array.from({ length: count }, (_, index) => (
-      <SelectionCard 
-        key={`${type}-${index}`} 
-        type={type} 
-        isSelected={(type === 'side' && index === selectedSideIndex) || (type === 'entree' && index === selectedEntreeIndex)} 
-        onClick={() => handleCardClick(type, index)} 
+      <SelectionCard
+        key={`${type}-${index}`}
+        type={type}
+        isSelected={(type === 'side' && index === selectedSideIndex) || (type === 'entree' && index === selectedEntreeIndex)}
+        onClick={() => handleCardClick(type, index)}
+        image={(type === 'side' && index === selectedSideIndex && selectedSideImage) ||
+               (type === 'entree' && index === selectedEntreeIndex && selectedEntreeImage) ||
+               null} 
       />
     ));
   };
@@ -37,7 +40,6 @@ const SelectionGrid = ({ numSides, numEntrees, onSelect }) => {
         {renderCards(numEntrees, 'entree')}
       </div>
     </div>
-
   );
 };
 
