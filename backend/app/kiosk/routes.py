@@ -70,3 +70,99 @@ def get_entrees():
     ]
 
     return jsonify(entrees_list), 200
+
+@kiosk_bp.route('/drinks', methods=['GET'])
+def get_drinks():
+    drinks = db.session.execute(
+        text("SELECT * FROM product_item WHERE type = :type"), 
+        {'type': 'drink'}
+    ).fetchall()
+
+    drinks_list = [
+        {
+            "product_id": drink.product_id,
+            "product_name": drink.product_name,
+            "type": drink.type,
+            "is_seasonal": drink.is_seasonal,
+            "is_available": drink.is_available,
+            "servings_remaining": drink.servings_remaining,
+            "allergens": drink.allergens,
+            "display_icons": drink.display_icons,
+            "product_description": drink.product_description,
+            "premium_addition": drink.premium_addition,
+            "serving_size": drink.serving_size,
+            "calories": drink.calories,
+            "saturated_fat": drink.saturated_fat,
+            "carbohydrate": drink.carbohydrate,
+            "protein": drink.protein,
+            "image": drink.image,
+            "is_premium": drink.is_premium,
+        }
+        for drink in drinks
+    ]
+
+    return jsonify(drinks_list), 200
+
+@kiosk_bp.route('/appetizers', methods=['GET'])
+def get_appetizers():
+    appetizers = db.session.execute(
+        text("SELECT * FROM product_item WHERE type = :type"), 
+        {'type': 'appetizer'}
+    ).fetchall()
+
+    appetizers_list = [
+        {
+            "product_id": appetizer.product_id,
+            "product_name": appetizer.product_name,
+            "type": appetizer.type,
+            "is_seasonal": appetizer.is_seasonal,
+            "is_available": appetizer.is_available,
+            "servings_remaining": appetizer.servings_remaining,
+            "allergens": appetizer.allergens,
+            "display_icons": appetizer.display_icons,
+            "product_description": appetizer.product_description,
+            "premium_addition": appetizer.premium_addition,
+            "serving_size": appetizer.serving_size,
+            "calories": appetizer.calories,
+            "saturated_fat": appetizer.saturated_fat,
+            "carbohydrate": appetizer.carbohydrate,
+            "protein": appetizer.protein,
+            "image": appetizer.image,
+            "is_premium": appetizer.is_premium,
+        }
+        for appetizer in appetizers
+    ]
+
+    return jsonify(appetizers_list), 200
+
+@kiosk_bp.route('/desserts', methods=['GET'])
+def get_desserts():
+    desserts = db.session.execute(
+        text("SELECT * FROM product_item WHERE type = :type"), 
+        {'type': 'dessert'}
+    ).fetchall()
+
+    desserts_list = [
+        {
+            "product_id": dessert.product_id,
+            "product_name": dessert.product_name,
+            "type": dessert.type,
+            "is_seasonal": dessert.is_seasonal,
+            "is_available": dessert.is_available,
+            "servings_remaining": dessert.servings_remaining,
+            "allergens": dessert.allergens,
+            "display_icons": dessert.display_icons,
+            "product_description": dessert.product_description,
+            "premium_addition": dessert.premium_addition,
+            "serving_size": dessert.serving_size,
+            "calories": dessert.calories,
+            "saturated_fat": dessert.saturated_fat,
+            "carbohydrate": dessert.carbohydrate,
+            "protein": dessert.protein,
+            "image": dessert.image,
+            "is_premium": dessert.is_premium,
+        }
+        for dessert in desserts
+    ]
+
+    return jsonify(desserts_list), 200

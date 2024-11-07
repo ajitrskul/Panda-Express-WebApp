@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import '../../styles/kiosk.css';
 
 // components 
+import SubOrder from '../../components/SubOrder';
 import CheckoutButton from './components/CheckoutButton';
 import MenuItemCard from './components/MenuItemCard';
 
@@ -32,10 +33,10 @@ function KioskMain() {
     const formattedName = item.name.toLowerCase().replace(/\s+/g, '-');
 
     if (item.name === "Drinks") {
-      navigate(`/kiosk/drinks`);
+      navigate(`/kiosk/order/drink`);
     } 
     else if (item.name === "Appetizer") {
-      navigate(`/kiosk/appetizer`);
+      navigate(`/kiosk/order/apps-and-more`);
     } 
     else {
       navigate(`/kiosk/order/${formattedName}`, {
@@ -55,13 +56,14 @@ function KioskMain() {
               image={item.image} 
               description={item.description} 
               onClick={() => handleItemClick(item)}
+              showInfoButton={false} 
             />
           </div>
         ))}
       </div>
 
       {/* CheckoutButton component */}
-      <CheckoutButton price="$XXX.XX" />
+      <CheckoutButton />
     </div>
   );
 }

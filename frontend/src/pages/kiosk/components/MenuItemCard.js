@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../styles/kiosk.css';
 
-const MenuItemCard = ({ name, image, description, isPremium, isSeasonal, onInfoClick, onClick }) => {
+const MenuItemCard = ({ name, image, description, isPremium, isSeasonal, onInfoClick, onClick, showInfoButton = true }) => {
   return (
     <div className="card pt-3" style={{ width: "18rem", cursor: "pointer" }} onClick={onClick}>
       {(isPremium || isSeasonal) && (
@@ -14,19 +14,21 @@ const MenuItemCard = ({ name, image, description, isPremium, isSeasonal, onInfoC
           )}
         </div>
       )}
-      <button
-        className="info-button"
-        onClick={(e) => {
-          e.stopPropagation(); 
-          if (typeof onInfoClick === 'function') {
-            onInfoClick(); 
-          } else {
-            console.error('onInfoClick is not a function'); 
-          }
-        }}
-      >
-        i
-      </button>
+      {showInfoButton && ( 
+        <button
+          className="info-button"
+          onClick={(e) => {
+            e.stopPropagation(); 
+            if (typeof onInfoClick === 'function') {
+              onInfoClick(); 
+            } else {
+              console.error('onInfoClick is not a function'); 
+            }
+          }}
+        >
+          i
+        </button>
+      )}
       <img src={image} className="card-img-top" alt={name} />
       <div className="card-body">
         <p className="card-text text-center">{name}</p>

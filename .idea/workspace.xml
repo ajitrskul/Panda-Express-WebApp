@@ -1,25 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="f9596594-e564-4c4c-aab7-c6dbba754e08" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/app/kiosk/routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/kiosk/routes.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/public/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/assets/beijing-beef.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/assets/broccoli-beef.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/assets/chow-mein.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/assets/fried-rice.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/assets/grilled-teriyaki-chicken.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/assets/honey-walnut-shrimp.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/assets/kung-pao-chicken.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/assets/orange-chicken.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/assets/super-greens.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/assets/white-rice.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/App.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/pages/kiosk/KioskMain.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/kiosk/KioskMain.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/pages/kiosk/components/EntreeSelection.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/kiosk/components/EntreeSelection.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/pages/kiosk/components/MenuItemCard.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/kiosk/components/MenuItemCard.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/kiosk/components/SelectionCard.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/kiosk/components/SelectionCard.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/pages/kiosk/components/SideSelection.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/kiosk/components/SideSelection.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/styles/kiosk.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/styles/kiosk.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/kiosk/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/kiosk/index.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,10 +23,10 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 7
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 7
+}</component>
   <component name="ProjectId" id="2oUpcouXyeKouNWwOt3RAbxEhgM" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -43,7 +37,8 @@
     "RunOnceActivity.OpenDatabaseViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "ethan/KioskWorkflows",
-    "last_opened_file_path": "/Users/etnguyen12"
+    "last_opened_file_path": "/Users/etnguyen12",
+    "settings.editor.selected.configurable": "preferences.lookFeel"
   },
   "keyToStringList": {
     "DatabaseDriversLRU": [

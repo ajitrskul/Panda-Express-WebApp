@@ -18,5 +18,4 @@ const SelectionCard = ({ type, onClick, isSelected, image }) => {
   );
 };
 
-
 export default SelectionCard;

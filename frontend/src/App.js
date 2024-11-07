@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import { MenuMain } from './pages/menu';
 import { KitchenMain } from './pages/kitchen';
 import { ManagerMain } from './pages/manager';
-import { KioskMain, KioskLanding, OrderSelection } from './pages/kiosk';
+import { KioskMain, KioskLanding, OrderSelection, DrinkSelection, AppsAndMoreSelection } from './pages/kiosk';
 import { PosMain } from './pages/pos';
 import { AuthMain } from './pages/auth';
 
@@ -38,6 +38,8 @@ function App() {
           <Route path="/kiosk" element={<KioskLanding />} />
           <Route path="/kiosk/order" element={<KioskMain />} />
           <Route path="/kiosk/order/:itemName" element={<OrderSelection />} />
+          <Route path="/kiosk/order/drink" element={<DrinkSelection />} />
+          <Route path="/kiosk/order/apps-and-more" element={<AppsAndMoreSelection />} />
 
           <Route path="/pos" element={<PosMain />} />
 

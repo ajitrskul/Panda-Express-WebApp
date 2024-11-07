@@ -1,31 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import api from '../../../services/api';
-import MenuItemCard from './MenuItemCard';
+import '../../../styles/kiosk.css';
+import MenuItemCard from './MenuItemCard'; 
 import InfoCard from './InfoCard'; 
+import api from '../../../services/api';
+import CheckoutButton from './CheckoutButton'; 
 
 const formatProductName = (name) => {
   return name.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();
 };
 
-const EntreeSelection = ({ onItemSelect }) => {
-  const [entrees, setEntrees] = useState([]);
+const DrinkSelection = () => {
+  const [drinks, setDrinks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedInfo, setSelectedInfo] = useState(null);
+  const [selectedInfo, setSelectedInfo] = useState(null); 
 
   useEffect(() => {
-    const fetchEntrees = async () => {
+    const fetchDrinks = async () => {
       try {
-        const response = await api.get('/kiosk/entrees'); 
-        setEntrees(response.data);
+        const response = await api.get('/kiosk/drinks'); 
+        setDrinks(response.data);
       } catch (err) {
-        setError('Failed to fetch entrees. Please try again later.');
+        setError('Failed to fetch drinks. Please try again later.');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchEntrees();
+    fetchDrinks();
   }, []);
 
   if (loading) {
@@ -36,32 +38,29 @@ const EntreeSelection = ({ onItemSelect }) => {
     return <div>Error: {error}</div>;
   }
 
-  const handleInfoClick = (entree) => {
-    setSelectedInfo(entree); 
+  const handleDrinkSelect = (drink) => {
+    console.log('Selected drink:', drink);
   };
-  
+
+  const handleInfoClick = (drink) => {
+    setSelectedInfo(drink);
+  };
+
   const handleCloseInfo = () => {
     setSelectedInfo(null);
   };
 
-  const handleEntreeSelect = (entree) => {
-    onItemSelect(entree); 
-  };
-
   return (
-    <div className="entree-selection container-fluid">
-      <h2 className="text-center mb-4" style={{color: "white", fontWeight: "bold"}}>Select an Entree</h2>
-      <div className="row justify-content-center">
-        {entrees.map((entree, index) => (
+    <div className="kiosk-landing-order container-fluid">
+      <div className="row pt-4 px-3 justify-content-center">
+        {drinks.map((drink, index) => (
           <div className="col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center mb-4" key={index}>
             <MenuItemCard 
-              name={formatProductName(entree.product_name)} 
-              image={entree.image}
-              description={entree.calories + " Calories"}
-              isPremium={entree.is_premium } 
-              isSeasonal={entree.is_seasonal }
-              onInfoClick={() => handleInfoClick(entree)}
-              onClick={() => handleEntreeSelect(entree)} 
+              name={formatProductName(drink.product_name)} 
+              image={drink.image}
+              description={drink.calories + " Calories"}
+              onClick={() => handleDrinkSelect(drink)}
+              onInfoClick={() => handleInfoClick(drink)}
             />
           </div>
         ))}
@@ -81,8 +80,10 @@ const EntreeSelection = ({ onItemSelect }) => {
           onClose={handleCloseInfo} 
         />
       )}
+
+      <CheckoutButton />
     </div>
   );
 };
 
-export default EntreeSelection;
+export default DrinkSelection;
