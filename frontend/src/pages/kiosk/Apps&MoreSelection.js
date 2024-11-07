@@ -66,6 +66,7 @@ const AppsAndMoreSelection = () => {
               name={formatProductName(appetizer.product_name)} 
               image={appetizer.image}
               description={appetizer.calories + " Calories"}
+              price={appetizer.premium_addition }
               onClick={() => handleItemSelect(appetizer)}
               onInfoClick={() => handleInfoClick(appetizer)}
             />
@@ -81,6 +82,7 @@ const AppsAndMoreSelection = () => {
             <MenuItemCard 
               name={formatProductName(dessert.product_name)} 
               image={dessert.image}
+              price={dessert.premium_addition }
               description={dessert.calories + " Calories"}
               onClick={() => handleItemSelect(dessert)}
               onInfoClick={() => handleInfoClick(dessert)}
