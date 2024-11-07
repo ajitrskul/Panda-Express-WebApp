@@ -39,7 +39,7 @@ function App() {
           <Route path="/kiosk/order" element={<KioskMain />} />
           <Route path="/kiosk/order/:itemName" element={<OrderSelection />} />
           <Route path="/kiosk/order/drink" element={<DrinkSelection />} />
-          <Route path="/kiosk/order/apps-and-more" element={<AppsAndMoreSelection />} />
+          <Route path="/kiosk/order/appetizers-&-more" element={<AppsAndMoreSelection />} />
 
           <Route path="/pos" element={<PosMain />} />
 

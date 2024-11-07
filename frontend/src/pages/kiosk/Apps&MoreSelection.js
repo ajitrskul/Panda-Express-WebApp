@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import '../../../styles/kiosk.css';
-import MenuItemCard from './MenuItemCard'; 
-import InfoCard from './InfoCard'; 
-import api from '../../../services/api';
-import CheckoutButton from './CheckoutButton'; 
+import '../../styles/kiosk.css';
+import MenuItemCard from './components/MenuItemCard'; 
+import InfoCard from './components/InfoCard'; 
+import api from '../../services/api';
+import CheckoutButton from './components/CheckoutButton'; 
 
 const formatProductName = (name) => {
   return name.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();

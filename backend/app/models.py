@@ -30,3 +30,16 @@ class ProductItem(db.Model):
     quantity_in_cases = db.Column(db.Integer, nullable=False)
     servings_per_case = db.Column(db.Integer, nullable=False)
     cost_per_case = db.Column(db.Integer, nullable=False)
+
+class MenuItem(db.Model):
+    __tablename__ = 'menu_item'
+
+    menu_item_id = db.Column(db.Integer, primary_key=True)
+    item_name = db.Column(db.String(50), nullable=False)
+    max_entrees = db.Column(db.Integer, nullable=False)
+    max_sides = db.Column(db.Integer, nullable=False)
+    menu_item_base_price = db.Column(db.Float, nullable=False)
+    premium_multiplier = db.Column(db.Integer, nullable=False)
+    menu_item_description = db.Column(db.String(300), nullable=False)
+    calories = db.Column(db.String(30), nullable=False)
+    image = db.Column(db.String(200), nullable=True)

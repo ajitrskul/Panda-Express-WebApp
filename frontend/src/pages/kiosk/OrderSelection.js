@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import '../../../styles/kiosk.css';
-import SelectionGrid from './SelectionGrid';
-import SideSelection from './SideSelection';
-import EntreeSelection from './EntreeSelection';
-import CheckoutButton from "./CheckoutButton";
+import '../../styles/kiosk.css';
+import SelectionGrid from './components/SelectionGrid';
+import SideSelection from './components/SideSelection';
+import EntreeSelection from './components/EntreeSelection';
+import CheckoutButton from "./components/CheckoutButton";
 
 const OrderSelection = () => {
   const location = useLocation();
-  const { numSides = 1, numEntrees = 1 } = location.state || {};
+  const { numSides, numEntrees } = location.state;
 
   const [selectedSection, setSelectedSection] = useState(null);
   const [selectedSideImage, setSelectedSideImage] = useState(null);

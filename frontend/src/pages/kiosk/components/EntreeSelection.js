@@ -60,6 +60,7 @@ const EntreeSelection = ({ onItemSelect }) => {
               description={entree.calories + " Calories"}
               isPremium={entree.is_premium } 
               isSeasonal={entree.is_seasonal }
+              isAvailable={entree.is_available}
               onInfoClick={() => handleInfoClick(entree)}
               onClick={() => handleEntreeSelect(entree)} 
             />

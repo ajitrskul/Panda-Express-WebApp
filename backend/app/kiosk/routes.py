@@ -7,10 +7,55 @@ from app.extensions import db
 def customer_kiosk_home():
     return {"message": "Welcome to the Customer Kiosk"}
 
+@kiosk_bp.route('/menu', methods=['GET'])
+def get_menu_items():
+    single_appetizer = db.session.execute(
+        text("SELECT * FROM menu_item WHERE item_name = 'appetizerSmall' LIMIT 1")
+    ).fetchall()
+
+    single_a_la_carte = db.session.execute(
+        text("SELECT * FROM menu_item WHERE item_name = 'aLaCarteSideMedium' LIMIT 1")
+    ).fetchall()
+
+    single_drink = db.session.execute(
+        text("SELECT * FROM menu_item WHERE item_name = 'drinks' LIMIT 1")
+    ).fetchall()
+
+    all_other_items = db.session.execute(
+        text("""
+            SELECT * FROM menu_item 
+            WHERE item_name NOT LIKE 'appetizer%' 
+            AND item_name NOT LIKE 'dessert%' 
+            AND item_name NOT LIKE 'aLaCarte%'
+            AND item_name NOT LIKE 'drinks%'
+            ORDER BY menu_item_id ASC
+        """)
+    ).fetchall()
+
+    menu_items = all_other_items + single_a_la_carte + single_appetizer + single_drink
+
+    menu_items_list = [
+        {
+            "menu_item_id": menu_item.menu_item_id,
+            "item_name": menu_item.item_name,
+            "max_entrees": menu_item.max_entrees,
+            "max_sides": menu_item.max_sides,
+            "menu_item_base_price": menu_item.menu_item_base_price,
+            "premium_multiplier": menu_item.premium_multiplier,
+            "menu_item_description": menu_item.menu_item_description,
+            "calories": menu_item.calories,
+            "image": menu_item.image,
+        }
+        for menu_item in menu_items
+    ]
+
+    return jsonify(menu_items_list), 200
+
+
 @kiosk_bp.route('/sides', methods=['GET'])
 def get_sides():
     sides = db.session.execute(
-        text("SELECT * FROM product_item WHERE type = :type"), 
+        text("SELECT * FROM product_item WHERE type = :type ORDER BY product_id ASC"), 
         {'type': 'side'}
     ).fetchall()
 
@@ -39,10 +84,11 @@ def get_sides():
 
     return jsonify(sides_list), 200
 
+
 @kiosk_bp.route('/entrees', methods=['GET'])
 def get_entrees():
     entrees = db.session.execute(
-        text("SELECT * FROM product_item WHERE type = :type"), 
+        text("SELECT * FROM product_item WHERE type = :type ORDER BY product_id ASC"), 
         {'type': 'entree'}
     ).fetchall()
 
@@ -71,10 +117,11 @@ def get_entrees():
 
     return jsonify(entrees_list), 200
 
+
 @kiosk_bp.route('/drinks', methods=['GET'])
 def get_drinks():
     drinks = db.session.execute(
-        text("SELECT * FROM product_item WHERE type = :type"), 
+        text("SELECT * FROM product_item WHERE type = :type ORDER BY product_id ASC"), 
         {'type': 'drink'}
     ).fetchall()
 
@@ -103,10 +150,11 @@ def get_drinks():
 
     return jsonify(drinks_list), 200
 
+
 @kiosk_bp.route('/appetizers', methods=['GET'])
 def get_appetizers():
     appetizers = db.session.execute(
-        text("SELECT * FROM product_item WHERE type = :type"), 
+        text("SELECT * FROM product_item WHERE type = :type ORDER BY product_id ASC"), 
         {'type': 'appetizer'}
     ).fetchall()
 
@@ -135,10 +183,11 @@ def get_appetizers():
 
     return jsonify(appetizers_list), 200
 
+
 @kiosk_bp.route('/desserts', methods=['GET'])
 def get_desserts():
     desserts = db.session.execute(
-        text("SELECT * FROM product_item WHERE type = :type"), 
+        text("SELECT * FROM product_item WHERE type = :type ORDER BY product_id ASC"), 
         {'type': 'dessert'}
     ).fetchall()
 
