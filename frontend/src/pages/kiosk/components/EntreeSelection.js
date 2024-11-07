@@ -61,6 +61,7 @@ const EntreeSelection = ({ onItemSelect }) => {
               isPremium={entree.is_premium } 
               isSeasonal={entree.is_seasonal }
               isAvailable={entree.is_available}
+              price={entree.premium_addition }
               onInfoClick={() => handleInfoClick(entree)}
               onClick={() => handleEntreeSelect(entree)} 
             />

@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../styles/kiosk.css';
 
-const MenuItemCard = ({ name, image, description, isPremium, isSeasonal, onInfoClick, onClick, showInfoButton = true, isAvailable = true }) => {
+const MenuItemCard = ({ name, image, description, isPremium, isSeasonal, onInfoClick, onClick, showInfoButton = true, isAvailable = true, price, priceType = 'Premium Addition' }) => {
   return (
     <div className="card pt-3" onClick={isAvailable ? onClick : undefined}>
       {!isAvailable && (
@@ -39,6 +39,12 @@ const MenuItemCard = ({ name, image, description, isPremium, isSeasonal, onInfoC
       <div className="card-body">
         <p className="card-text text-center">{name}</p>
         <p className="card-description text-center">{description}</p>
+        <div className="price-container" style={{ fontWeight: 'bold', position: 'absolute', bottom: '10px', left: '10px', fontSize: '0.6em' }}>
+        {price && !isNaN(price) && parseFloat(price) !== 0 ? (
+          priceType === 'Base Price' ? `$${parseFloat(price).toFixed(2)}+` : `+$${parseFloat(price).toFixed(2)}`
+          ) : null}
+        </div>
+
       </div>
     </div>
   );

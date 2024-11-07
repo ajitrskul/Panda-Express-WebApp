@@ -73,6 +73,8 @@ function KioskMain() {
               name={formatItemName(item.item_name)}
               image={item.image } 
               description={item.menu_item_description || 'No description available'} 
+              price={item.menu_item_base_price }
+              priceType={ 'Base Price' }
               onClick={() => handleItemClick(item)}
               showInfoButton={false} 
             />

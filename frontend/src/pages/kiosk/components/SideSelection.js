@@ -58,6 +58,7 @@ const SideSelection = ({ onItemSelect }) => {
               name={formatProductName(side.product_name)} 
               image={side.image}
               description={side.calories + " Calories"}
+              price={side.premium_addition }
               onClick={() => handleSideSelect(side)}
               onInfoClick={() => handleInfoClick(side)} 
             />
