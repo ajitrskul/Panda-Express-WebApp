@@ -66,9 +66,9 @@
     right: 30px;
     width: 50px;
     height: 50px;
-    background-color: #a3080c; /* Red button background */
+    background-color: #a3080c; 
     border: none;
-    border-radius: 50%; /* Circular shape */
+    border-radius: 50%; 
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -79,14 +79,14 @@
 }
 
 .cart-icon {
-    font-size: 1.5rem; /* Adjust size of shopping cart icon */
+    font-size: 1.5rem; 
 }
 
 .order-count-badge {
     position: absolute;
     top: -5px;
     right: -5px;
-    background-color: #ff0000; /* Red badge background */
+    background-color: #ff0000;
     color: white;
     border-radius: 50%;
     padding: 2px 6px;
@@ -140,23 +140,47 @@
     gap: 10px;
 }
 
-.banner {
+.banners-container {
+    display: flex;
     position: absolute;
     top: 10px;
     right: 10px;
+    z-index: 1;
+}
+
+.banner {
     color: white;
     padding: 5px 10px;
     font-size: 0.75rem;
     font-weight: bold;
     border-radius: 4px;
-    z-index: 1;
-    display: inline-block;
+    margin-left: 5px; 
 }
-  
+
 .seasonal-banner {
-    background-color: #a3080c; 
+    background-color: #a3080c;
 }
-  
+
 .premium-banner {
-    background-color: goldenrod; 
+    background-color: goldenrod;
+}
+
+.banners-container .banner:first-child {
+    margin-left: 0; 
+}
+
+.info-button {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

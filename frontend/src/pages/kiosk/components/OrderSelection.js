@@ -27,7 +27,7 @@ const OrderSelection = () => {
         {selectedSection === "entree" && <EntreeSelection />}
       </div>
 
-      <CheckoutButton price="$XXX.XX" />
+      <CheckoutButton />
     </div>
   );
 };
