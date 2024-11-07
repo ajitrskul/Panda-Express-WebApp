@@ -1,31 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import api from '../../../services/api';
+import '../../../styles/kiosk.css';
 import MenuItemCard from './MenuItemCard'; 
 import InfoCard from './InfoCard'; 
+import api from '../../../services/api';
+import CheckoutButton from './CheckoutButton'; 
 
 const formatProductName = (name) => {
   return name.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();
 };
 
-const SideSelection = ({ onItemSelect }) => {
-  const [sides, setSides] = useState([]);
+const DrinkSelection = () => {
+  const [drinks, setDrinks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedInfo, setSelectedInfo] = useState(null); 
 
   useEffect(() => {
-    const fetchSides = async () => {
+    const fetchDrinks = async () => {
       try {
-        const response = await api.get('/kiosk/sides'); 
-        setSides(response.data);
+        const response = await api.get('/kiosk/drinks'); 
+        setDrinks(response.data);
       } catch (err) {
-        setError('Failed to fetch sides. Please try again later.');
+        setError('Failed to fetch drinks. Please try again later.');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchSides();
+    fetchDrinks();
   }, []);
 
   if (loading) {
@@ -36,12 +38,12 @@ const SideSelection = ({ onItemSelect }) => {
     return <div>Error: {error}</div>;
   }
 
-  const handleSideSelect = (side) => {
-    onItemSelect(side); 
+  const handleDrinkSelect = (drink) => {
+    console.log('Selected drink:', drink);
   };
 
-  const handleInfoClick = (side) => {
-    setSelectedInfo(side);
+  const handleInfoClick = (drink) => {
+    setSelectedInfo(drink);
   };
 
   const handleCloseInfo = () => {
@@ -49,17 +51,16 @@ const SideSelection = ({ onItemSelect }) => {
   };
 
   return (
-    <div className="side-selection container-fluid">
-      <h2 className="text-center mb-4" style={{color: "white", fontWeight: "bold"}}>Select a Side</h2>
-      <div className="row justify-content-center">
-        {sides.map((side, index) => (
+    <div className="kiosk-landing-order container-fluid">
+      <div className="row pt-4 px-3 justify-content-center">
+        {drinks.map((drink, index) => (
           <div className="col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center mb-4" key={index}>
             <MenuItemCard 
-              name={formatProductName(side.product_name)} 
-              image={side.image}
-              description={side.calories + " Calories"}
-              onClick={() => handleSideSelect(side)}
-              onInfoClick={() => handleInfoClick(side)} 
+              name={formatProductName(drink.product_name)} 
+              image={drink.image}
+              description={drink.calories + " Calories"}
+              onClick={() => handleDrinkSelect(drink)}
+              onInfoClick={() => handleInfoClick(drink)}
             />
           </div>
         ))}
@@ -79,8 +80,10 @@ const SideSelection = ({ onItemSelect }) => {
           onClose={handleCloseInfo} 
         />
       )}
+
+      <CheckoutButton />
     </div>
   );
 };
 
-export default SideSelection;
+export default DrinkSelection;
