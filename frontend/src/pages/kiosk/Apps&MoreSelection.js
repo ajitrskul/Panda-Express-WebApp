@@ -67,6 +67,9 @@ const AppsAndMoreSelection = () => {
               image={appetizer.image}
               description={appetizer.calories + " Calories"}
               price={appetizer.premium_addition }
+              isPremium={appetizer.is_premium } 
+              isSeasonal={appetizer.is_seasonal }
+              isAvailable={appetizer.is_available}
               onClick={() => handleItemSelect(appetizer)}
               onInfoClick={() => handleInfoClick(appetizer)}
             />
@@ -83,6 +86,9 @@ const AppsAndMoreSelection = () => {
               name={formatProductName(dessert.product_name)} 
               image={dessert.image}
               price={dessert.premium_addition }
+              isPremium={dessert.is_premium } 
+              isSeasonal={dessert.is_seasonal }
+              isAvailable={dessert.is_available}
               description={dessert.calories + " Calories"}
               onClick={() => handleItemSelect(dessert)}
               onInfoClick={() => handleInfoClick(dessert)}

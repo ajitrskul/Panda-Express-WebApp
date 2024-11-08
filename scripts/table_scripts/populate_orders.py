@@ -3,29 +3,90 @@ from random import *
 ####GLOBAL VARIABLES####
 
 #organizing product ID's to randomize
-entreeProductIDs = {'theOriginalOrangeChicken': 5, 'blackPepperSirloinSteak': 6, 'honeyWalnutShrimp': 7, 'grilledTeriyakiChicken': 8, 'kungPaoChicken': 9, 'honeySesameChickenBreast': 10, 'beijingBeef': 11, 'mushroomChicken': 12, 'sweetfireChickenBreast': 13, 'stringBeanChickenBreast': 14, 'broccoliBeef': 15, 'blackPepperChicken': 16, 'superGreensEntree': 17}
+entreeProductIDs = {
+    'theOriginalOrangeChicken': 5,
+    'blackPepperSirloinSteak': 6,
+    'honeyWalnutShrimp': 7,
+    'grilledTeriyakiChicken': 8,
+    'kungPaoChicken': 9,
+    'honeySesameChickenBreast': 10,
+    'beijingBeef': 11,
+    'mushroomChicken': 12,
+    'sweetfireChickenBreast': 13,
+    'stringBeanChickenBreast': 14,
+    'broccoliBeef': 15,
+    'blackPepperChicken': 16,
+    'superGreensEntree': 17
+}
 
-entreeProducts = ['theOriginalOrangeChicken', 'blackPepperSirloinSteak', 'honeyWalnutShrimp', 'grilledTeriyakiChicken', 'kungPaoChicken', 'honeySesameChickenBreast', 'beijingBeef', 'mushroomChicken', 'sweetfireChickenBreast', 'stringBeanChickenBreast', 'broccoliBeef', 'blackPepperChicken', 'superGreensEntree']
+entreeProducts = [
+    'theOriginalOrangeChicken', 'blackPepperSirloinSteak', 'honeyWalnutShrimp', 
+    'grilledTeriyakiChicken', 'kungPaoChicken', 'honeySesameChickenBreast', 
+    'beijingBeef', 'mushroomChicken', 'sweetfireChickenBreast', 
+    'stringBeanChickenBreast', 'broccoliBeef', 'blackPepperChicken', 'superGreensEntree'
+]
 
-sideProductIDs = {'chowMein': 1, 'friedRice': 2, 'whiteSteamedRice': 3, 'superGreensSide': 4}
+sideProductIDs = {
+    'chowMein': 1,
+    'friedRice': 2,
+    'whiteSteamedRice': 3,
+    'superGreensSide': 4
+}
 
 sideProducts = ['chowMein', 'friedRice', 'whiteSteamedRice', 'superGreensSide']
 
-appetizerProductIDs = {'chickenEggRoll': 18, 'veggieSpringRoll': 19, 'creamCheeseRangoon': 20, 'applePieRoll': 21}
+appetizerProductIDs = {
+    'chickenEggRoll': 18,
+    'veggieSpringRoll': 19,
+    'creamCheeseRangoon': 20,
+    'applePieRoll': 21
+}
 
 appetizerProducts = ['chickenEggRoll', 'veggieSpringRoll', 'creamCheeseRangoon', 'applePieRoll']
 
-drinkProductIDs = {'fountainDrink': 22, 'aquafina': 23, 'gatorade': 24}
+drinkProductIDs = {
+    'drPepper': 22,
+    'sweetTea': 23,
+    'pepsi': 24,
+    'dietPepsi': 25,
+    'mountainDew': 26,
+    'liptonBriskRaspberryIcedTea': 27,
+    'sierraMist': 28,
+    'tropicanaLemonade': 29,
+    'aquafina': 30,
+    'gatoradeLemonLime': 31
+}
 
-drinkProducts = ['fountainDrink', 'aquafina', 'gatorade']
-#Note: aLaCarte's are all entrees
-menuItemsList = ['bowl', 'plate', 'biggerPlate', 'familyMeal', 'appetizerSmall', 'appetizerMedium', 
-                 'appetizerLarge', 'aLaCarteSmall', 'aLaCarteMedium', 'aLaCarteLarge', 'drinkSmall', 'drinkMedium', 'drinkLarge']
+drinkProducts = ['drPepper', 'sweetTea', 'pepsi', 'dietPepsi', 'mountainDew', 'liptonBriskRaspberryIcedTea', 'sierraMist', 'tropicanaLemonade', 'aquafina', 'gatoradeLemonLime']
 
-#not needed anymore
-# menuPrices = {'bowl': 8.30, 'plate': 9.80, 'biggerPlate': 11.30, 'aLaCarteSmall': 5.20, 'aLaCarteMedium': 8.50, 'aLaCarteLarge': 11.20, 'appetizerSmall': 2.00, 'drinkMedium': 2.30}
+menuItemsList = [
+    'bowl', 'plate', 'biggerPlate', 'familyMeal', 'appetizerSmall', 'appetizerLarge', 
+    'aLaCarteSideMedium', 'aLaCarteSideLarge', 'aLaCarteEntreeSmall', 
+    'aLaCarteEntreeMedium', 'aLaCarteEntreeLarge', 'dessertSmall', 
+    'dessertMedium', 'dessertLarge', 'drinksSmall', 'drinksMedium', 
+    'drinksLarge', 'drinks'
+]
 
-menuItemIDs = {'bowl': 1, 'plate': 2, 'biggerPlate': 3, 'familyMeal': 4, 'appetizerSmall': 5, 'appetizerMedium': 6, 'appetizerLarge': 7, 'aLaCarteSmall': 8, 'aLaCarteMedium': 9, 'aLaCarteLarge': 10, 'drinkSmall': 11, 'drinkMedium': 12, 'drinkLarge': 13}
+menuItemIDs = {
+    'bowl': 1,
+    'plate': 2,
+    'biggerPlate': 3,
+    'familyMeal': 4,
+    'appetizerSmall': 5,
+    'appetizerLarge': 6,
+    'aLaCarteSideMedium': 7,
+    'aLaCarteSideLarge': 8,
+    'aLaCarteEntreeSmall': 9,
+    'aLaCarteEntreeMedium': 10,
+    'aLaCarteEntreeLarge': 11,
+    'dessertSmall': 12,
+    'dessertMedium': 13,
+    'dessertLarge': 14,
+    'drinksSmall': 15,
+    'drinksMedium': 16,
+    'drinksLarge': 17,
+    'drinks': 18
+}
 
 daysInMonth = {1:31, 2:28, 3:31, 4:30, 5:31, 6:30, 7:31, 8:31, 9:30, 10:31, 11:30, 12:31}
 
@@ -417,11 +478,11 @@ def incrementTime(previousTime, secondsToIncrement):
 #   file1.write(f"({employeeID[1]}, 'Gretta', 'Weich', 'cashier'),\n") 
 #   file1.write(f"({employeeID[2]}, 'Aurora', 'Jitrskul', 'cashier');\n\n") 
 
-employeeID = [1577, 5235, 3128, 1212, 1234, 4321]  
+employeeID = [121202, 312879, 493268, 523506, 668453, 826497]  
 
 #opening ordertable file for writing  
 with open("populate_order.sql", 'w') as file2:
-  file2.write('''INSERT INTO "order" (order_id, order_date_time, employee_id, total_price)\n''')
+  file2.write('''INSERT INTO "order" (order_id, order_date_time, user_id, total_price)\n''')
   file2.write("VALUES\n")
 
   #peak days 2024-08-31 & 2024-04-13 

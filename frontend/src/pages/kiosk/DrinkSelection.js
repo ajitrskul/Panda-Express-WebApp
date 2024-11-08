@@ -59,6 +59,9 @@ const DrinkSelection = () => {
               name={formatProductName(drink.product_name)} 
               image={drink.image}
               price={drink.premium_addition }
+              isPremium={drink.is_premium } 
+              isSeasonal={drink.is_seasonal }
+              isAvailable={drink.is_available}
               description={drink.calories + " Calories"}
               onClick={() => handleDrinkSelect(drink)}
               onInfoClick={() => handleInfoClick(drink)}
