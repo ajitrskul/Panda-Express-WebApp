@@ -482,7 +482,7 @@ employeeID = [121202, 312879, 493268, 523506, 668453, 826497]
 
 #opening ordertable file for writing  
 with open("populate_order.sql", 'w') as file2:
-  file2.write('''INSERT INTO "order" (order_id, order_date_time, user_id, total_price)\n''')
+  file2.write('''INSERT INTO "order" (order_id, order_date_time, employee_id, total_price)\n''')
   file2.write("VALUES\n")
 
   #peak days 2024-08-31 & 2024-04-13 
