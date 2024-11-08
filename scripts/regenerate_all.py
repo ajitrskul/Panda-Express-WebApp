@@ -9,11 +9,12 @@ sql_files = [
     'create_tables.sql',
     'populate_menu_item.sql',
     'populate_product_item.sql',
-    'populate_user_info.sql',
+    'populate_employee_info.sql',
     'populate_finances.sql',
     'populate_order.sql',
     'populate_order_menu_item.sql',
-    'populate_order_menu_item_product.sql'
+    'populate_order_menu_item_product.sql',
+    'populate_customer_info.sql'
 ]
 
 sql_content = "\n".join(

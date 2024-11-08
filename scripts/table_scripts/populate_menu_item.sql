@@ -1,4 +1,4 @@
-insert into public.menu_item (menu_item_id, item_name, max_entrees, max_sides, menu_item_base_price, premium_multiplier, menu_item_description, calories, image)
+insert into menu_item (menu_item_id, item_name, max_entrees, max_sides, menu_item_base_price, premium_multiplier, menu_item_description, calories, image)
 values  
 (1, 'bowl', 1, 1, 8.3, 1, '1 Side & 1 Entree', '280-1130 Cal per serving', 'https://i.imgur.com/MJcKJXZ.png'),
 (2, 'plate', 2, 1, 9.8, 1, '1 Side & 2 Entrees', '430-1640 Cal per serving', 'https://i.imgur.com/aGNosMQ.png'),

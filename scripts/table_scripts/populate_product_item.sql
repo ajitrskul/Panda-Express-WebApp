@@ -1,4 +1,4 @@
-insert into public.product_item (product_id, product_name, type, is_seasonal, is_available, servings_remaining, allergens, display_icons, product_description, premium_addition, serving_size, calories, saturated_fat, carbohydrate, protein, image, is_premium, quantity_in_cases, servings_per_case, cost_per_case)
+insert into product_item (product_id, product_name, type, is_seasonal, is_available, servings_remaining, allergens, display_icons, product_description, premium_addition, serving_size, calories, saturated_fat, carbohydrate, protein, image, is_premium, quantity_in_cases, servings_per_case, cost_per_case)
 values  
 (1, 'chowMein', 'side', false, true, 50, 'Contains Sesame, Soybeans and Wheat.', 0, 'Stir-fried wheat noodles with onions, celery and cabbage.', 0.00, 11, 600, 4, 94, 15, 'https://i.imgur.com/TOgupaZ.png', false, 21, 50, 35.66),
 (2, 'friedRice', 'side', false, true, 50, 'Contains Sesame, Soybeans and Wheat.', 0, 'Prepared steamed white rice with soy sauce, eggs, peas, carrots and green onions.', 0.00, 11, 620, 4, 101, 13, 'https://i.imgur.com/jnVSbmw.png', false, 2, 75, 23.99),
