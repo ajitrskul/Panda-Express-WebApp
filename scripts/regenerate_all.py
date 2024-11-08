@@ -2,17 +2,23 @@ import os
 import subprocess
 import tempfile
 
-sql_content = """
-\\i 'table_scripts/drop_tables.sql'
-\\i 'table_scripts/create_tables.sql'
-\\i 'table_scripts/populate_menu_item.sql'
-\\i 'table_scripts/populate_product_item.sql'
-\\i 'table_scripts/populate_user_info.sql'
-\\i 'table_scripts/populate_finances.sql'
-\\i 'table_scripts/populate_order.sql'
-\\i 'table_scripts/populate_order_menu_item.sql'
-\\i 'table_scripts/populate_order_menu_item_product.sql'
-"""
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
+sql_files = [
+    'drop_tables.sql', 
+    'create_tables.sql',
+    'populate_menu_item.sql',
+    'populate_product_item.sql',
+    'populate_user_info.sql',
+    'populate_finances.sql',
+    'populate_order.sql',
+    'populate_order_menu_item.sql',
+    'populate_order_menu_item_product.sql'
+]
+
+sql_content = "\n".join(
+    [f"\\i '{os.path.join(script_dir, 'table_scripts', file).replace(os.sep, '/')}'" for file in sql_files]
+)
 
 with tempfile.NamedTemporaryFile(delete=False, suffix=".sql") as temp_sql_file:
     temp_sql_path = temp_sql_file.name

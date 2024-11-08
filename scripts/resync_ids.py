@@ -2,43 +2,15 @@ import os
 import subprocess
 import tempfile
 
-sql_content = """
-SELECT setval(
-    pg_get_serial_sequence('user_info', 'user_id'),
-    COALESCE((SELECT MAX(user_id) FROM user_info), 1),
-    true
-);
+script_dir = os.path.dirname(os.path.abspath(__file__))
 
-SELECT setval(
-    pg_get_serial_sequence('product_item', 'product_id'),
-    COALESCE((SELECT MAX(product_id) FROM product_item), 1),
-    true
-);
+sql_files = [
+    'resync_ids.sql'
+]
 
-SELECT setval(
-    pg_get_serial_sequence('menu_item', 'menu_item_id'),
-    COALESCE((SELECT MAX(menu_item_id) FROM menu_item), 1),
-    true
-);
-
-SELECT setval(
-    pg_get_serial_sequence('"order"', 'order_id'),
-    COALESCE((SELECT MAX(order_id) FROM "order"), 1),
-    true
-);
-
-SELECT setval(
-    pg_get_serial_sequence('order_menu_item', 'order_menu_item_id'),
-    COALESCE((SELECT MAX(order_menu_item_id) FROM order_menu_item), 1),
-    true
-);
-
-SELECT setval(
-    pg_get_serial_sequence('order_menu_item_product', 'order_menu_item_product_id'),
-    COALESCE((SELECT MAX(order_menu_item_product_id) FROM order_menu_item_product), 1),
-    true
-);
-"""
+sql_content = "\n".join(
+    [f"\\i '{os.path.join(script_dir, 'table_scripts', file).replace(os.sep, '/')}'" for file in sql_files]
+)
 
 with tempfile.NamedTemporaryFile(delete=False, suffix=".sql") as temp_sql_file:
     temp_sql_path = temp_sql_file.name
