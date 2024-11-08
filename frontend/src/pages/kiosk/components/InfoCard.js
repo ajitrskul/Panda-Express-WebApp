@@ -18,6 +18,7 @@ const InfoCard = ({
         <h3>{title}</h3>
         <img src={image} alt={title} style={imageStyles} />
         <p>{description}</p>
+        <hr />
         <p><strong>Allergens:</strong> {allergens}</p>
         <p><strong>Serving Size:</strong> {servingSize}</p>
         <p><strong>Calories:</strong> {calories} kcal</p>
