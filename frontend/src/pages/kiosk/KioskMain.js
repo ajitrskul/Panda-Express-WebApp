@@ -21,15 +21,6 @@ function KioskMain() {
   const [menuItems, setMenuItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const menuItems = [
-    { name: "Bowl", image: BowlImage, description: "1 Side & 1 Entree", numSides: 1, numEntrees: 1 },
-    { name: "Plate", image: PlateImage, description: "1 Side & 2 Entree", numSides: 1, numEntrees: 2 },
-    { name: "Bigger Plate", image: BiggerPlateImage, description: "1 Side & 3 Entree", numSides: 1, numEntrees: 3 },
-    { name: "A La Carte", image: ALaCarteImage, description: "Individual Entrees & Sides", numSides: 1, numEntrees: 1 },
-    { name: "Appetizer", image: AppetizerImage, description: "Something Extra with Your Meal", numSides: 0, numEntrees: 0 },
-    { name: "Drinks", image: DrinksImage, description: "Add a Refreshing Beverage", numSides: 0, numEntrees: 0 },
-    { name: "Family Meal", image: FamilyMealImage, description: "2 Large Sides & 3 Large Entrees", numSides: 2, numEntrees: 3 }
-  ];
 
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cartItems, setCartItems] = useState([]);
