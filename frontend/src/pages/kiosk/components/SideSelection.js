@@ -70,7 +70,7 @@ const SideSelection = ({ onItemSelect }) => {
         <InfoCard 
           title={formatProductName(selectedInfo.product_name)} 
           image={selectedInfo.image}
-          description={selectedInfo.description}
+          description={selectedInfo.product_description}
           allergens={selectedInfo.allergens || 'None'} 
           servingSize={selectedInfo.serving_size}
           calories={selectedInfo.calories}
