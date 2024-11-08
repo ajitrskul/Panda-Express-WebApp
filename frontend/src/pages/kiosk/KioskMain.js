@@ -9,13 +9,13 @@ import api from '../../services/api';
 import Cart from './components/Cart';
 
 // Images
-import BowlImage from '../../assets/bowl.png';
-import PlateImage from '../../assets/plate.png';
-import BiggerPlateImage from '../../assets/bigger-plate.png';
-import ALaCarteImage from '../../assets/a-la-carte.png';
-import AppetizerImage from '../../assets/appetizer.png';
-import DrinksImage from '../../assets/drinks.png';
-import FamilyMealImage from '../../assets/family-meal.png';
+// import BowlImage from '../../assets/bowl.png';
+// import PlateImage from '../../assets/plate.png';
+// import BiggerPlateImage from '../../assets/bigger-plate.png';
+// import ALaCarteImage from '../../assets/a-la-carte.png';
+// import AppetizerImage from '../../assets/appetizer.png';
+// import DrinksImage from '../../assets/drinks.png';
+// import FamilyMealImage from '../../assets/family-meal.png';
 
 function KioskMain() {
   const [menuItems, setMenuItems] = useState([]);
@@ -109,9 +109,6 @@ function KioskMain() {
           </div>
         ))}
       </div>
-
-      {/* CheckoutButton component */}
-      <CheckoutButton />
     </div>
   );
 }
