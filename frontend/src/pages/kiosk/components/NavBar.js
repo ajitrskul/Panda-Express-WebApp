@@ -1,7 +1,6 @@
 import axios from "axios";
 import beastLogo from "./beastLogo.png";
 import "../../../styles/navbar.css";
-import "../../../styles/kiosk.css";
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import { useEffect, useState } from "react";

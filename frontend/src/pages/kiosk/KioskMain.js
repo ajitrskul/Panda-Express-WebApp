@@ -8,13 +8,13 @@ import MenuItemCard from './components/MenuItemCard';
 import { NavBar } from "./components/NavBar";
 
 // images
-import BowlImage from '../../assets/bowl.png';
+/*import BowlImage from '../../assets/bowl.png';
 import PlateImage from '../../assets/plate.png';
 import BiggerPlateImage from '../../assets/bigger-plate.png';
 import ALaCarteImage from '../../assets/a-la-carte.png';
 import AppetizerImage from '../../assets/appetizer.png';
 import DrinksImage from '../../assets/drinks.png';
-import FamilyMealImage from '../../assets/family-meal.png';
+import FamilyMealImage from '../../assets/family-meal.png';*/
 import api from '../../services/api'; 
 
 function KioskMain() {
