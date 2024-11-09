@@ -1,6 +1,7 @@
 import { React } from "react";
 import { useNavigate } from "react-router-dom";
 import '../../styles/kiosk.css';
+import "../../styles/translate.css";
 import { NavBar } from "./components/NavBar";
 
 function KioskLanding() { 

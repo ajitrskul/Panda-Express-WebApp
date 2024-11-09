@@ -1,5 +1,6 @@
 import axios from "axios";
 import beastLogo from "./beastLogo.png";
+import "../../../styles/navbar.css";
 import "../../../styles/kiosk.css";
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
@@ -7,7 +8,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export function NavBar(){
-  document.cookie="googtrans=/en/en;"
   const navigate = useNavigate();
   const [temp, setTemp] = useState();
   const [iconSrc, setIconSrc] = useState();

@@ -1,63 +1,4 @@
 
-
-.navbar{
-    background-color:#A3080C ;
-    align-content: center;
-    /*box-shadow: 0 .4vw .4vw 0 rgb(66, 51, 51);*/
-    display: flex;
-}
-.logo{
-width: 7vh;
-}
-.left-elem{
-    display: flex;
-    align-content: center;
-    height: 100%;
-    width:10vh;
-}
-.right-elem{
-    height: 100%;
-    display:flex;
-    margin-right: 1%;
-    align-content: center;
-}
-.translate-button{
-border: none;
-background: transparent;
-color: white;
-}
-.weather-button{
-    border: none;
-    color: white;
-    background: transparent;
-    white-space: nowrap;
-    font-size: 3vh;
-    text-align: center;
-    align-self: center; 
- }
-.home-button{
-    height:100%;
-    width:100%;
-    border: none;
-    background: transparent;
-}
-.login-button{
-    font-size: 3vh;
-    text-align: center;
-    align-self: center;
-border: none;
-background: transparent;
-}
-.login-icon{
-color: rgb(255, 255, 255);
-font-size:4vh;
-}
-.weather-icon{
-    width:4vh;
-}
-#goog-gt-tt{
-    display:hide;
-}
 .cover {
     background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('https://scontent.fftw1-1.fna.fbcdn.net/v/t39.30808-6/269868483_10159808884248814_9043853655181082426_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=cc71e4&_nc_ohc=KIdRDM1JMiAQ7kNvgGyACY7&_nc_zt=23&_nc_ht=scontent.fftw1-1.fna&_nc_gid=AF7TZNbu9Wqdq3YId2QB-9P&oh=00_AYCJAgN94MeHURFr2qlwF7Tyr4xnPdwEFxvEdA240S1gdw&oe=67274CB0');
     background-size: cover;
@@ -74,6 +15,7 @@ font-size:4vh;
     cursor: pointer;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     transition: transform 0.2s;
+    border:none;
 }
 
 .start-order-button:hover {
@@ -81,6 +23,7 @@ font-size:4vh;
 }
 
 .kiosk-landing-order {
+    padding-top:90px;
     /* background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('https://t4.ftcdn.net/jpg/04/81/88/03/360_F_481880392_qj1h5f1QVbYlzwh2n1yiJHM5L4KOUMSN.jpg'); */
     background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('../assets/order-background.png');
     background-size: cover;
