@@ -63,6 +63,7 @@
 
 .selection-card {
     width: 150px;
+    /* width: 100% !important; */
     height: 200px;
     display: flex;
     align-items: center;
@@ -83,6 +84,11 @@
     background-color: #a3080c;
     color: white;
 }
+
+.selection-card-content {
+    width: 100% !important;
+}
+
 
 .selection-card-content .plus-sign {
     font-size: 2rem;

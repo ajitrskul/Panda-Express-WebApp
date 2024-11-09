@@ -8,47 +8,57 @@ import { KioskMain, KioskLanding, OrderSelection, DrinkSelection, AppsAndMoreSel
 import { PosMain } from './pages/pos';
 import { AuthMain, SignUpPage, SignUpError, SignUpSuccess } from './pages/auth';
 
+// Cart Context API
+import { CartProvider } from './pages/kiosk/components/CartContext';
+import KioskOrderLayout from './pages/kiosk/KioskOrderLayout';
+
 function App() {
   return (
-    <Router>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <>
-                <div className="container-fluid d-flex justify-content-center vh-100 pt-5">
-                  <header className="App-header">
-                    <nav><Link to="/menu">Menu Board</Link></nav>
-                    <nav><Link to="/kitchen">Kitchen</Link></nav>
-                    <nav><Link to="/manager">Manager</Link></nav>
-                    <nav><Link to="/kiosk">Customer Kiosk</Link></nav>
-                    <nav><Link to="/pos">Cashier POS</Link></nav>
-                    <nav><Link to="/auth">Login</Link></nav>
-                  </header>
-                </div>
-              </>
-            }
-          />
-          <Route path="/menu" element={<MenuMain />} />
+    <CartProvider>
+      <Router>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <>
+                  <div className="container-fluid d-flex justify-content-center vh-100 pt-5">
+                    <header className="App-header">
+                      <nav><Link to="/menu">Menu Board</Link></nav>
+                      <nav><Link to="/kitchen">Kitchen</Link></nav>
+                      <nav><Link to="/manager">Manager</Link></nav>
+                      <nav><Link to="/kiosk">Customer Kiosk</Link></nav>
+                      <nav><Link to="/pos">Cashier POS</Link></nav>
+                      <nav><Link to="/auth">Login</Link></nav>
+                    </header>
+                  </div>
+                </>
+              }
+            />
+            <Route path="/menu" element={<MenuMain />} />
 
-          <Route path="/kitchen" element={<KitchenMain />} />
+            <Route path="/kitchen" element={<KitchenMain />} />
 
-          <Route path="/manager" element={<ManagerMain />} />
+            <Route path="/manager" element={<ManagerMain />} />
 
+          {/* ... other routes */}
           <Route path="/kiosk" element={<KioskLanding />} />
-          <Route path="/kiosk/order" element={<KioskMain />} />
-          <Route path="/kiosk/order/:itemName" element={<OrderSelection />} />
-          <Route path="/kiosk/order/drink" element={<DrinkSelection />} />
-          <Route path="/kiosk/order/appetizers-&-more" element={<AppsAndMoreSelection />} />
+          <Route path="/kiosk/order/*" element={<KioskOrderLayout />}>
+            <Route index element={<KioskMain />} />
+            <Route path=":itemName" element={<OrderSelection />} />
+            <Route path="drink" element={<DrinkSelection />} />
+            <Route path="appetizers-&-more" element={<AppsAndMoreSelection />} />
+          </Route>
+          {/* ... other routes */}
 
-          <Route path="/pos" element={<PosMain />} />
+            <Route path="/pos" element={<PosMain />} />
 
-          <Route path="/auth" element={<AuthMain />} />
-          <Route path="/auth/signup" element={<SignUpPage />}></Route>
-          <Route path="/auth/signup/error" element={<SignUpError />}></Route>
-          <Route path="/auth/signup/success" element={<SignUpSuccess />}></Route>
-        </Routes>
-    </Router>
+            <Route path="/auth" element={<AuthMain />} />
+            <Route path="/auth/signup" element={<SignUpPage />}></Route>
+            <Route path="/auth/signup/error" element={<SignUpError />}></Route>
+            <Route path="/auth/signup/success" element={<SignUpSuccess />}></Route>
+          </Routes>
+      </Router>
+    </CartProvider>
   );
 }
 
