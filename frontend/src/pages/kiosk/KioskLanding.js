@@ -10,6 +10,10 @@ function KioskLanding() {
     navigate("/kiosk/order"); 
   };
 
+  const initTranslate = () =>{
+    window.location.reload();
+  }
+
   return (
     <div className="container-fluid d-flex align-items-center justify-content-center vh-100 cover">
        <NavBar></NavBar>
@@ -23,7 +27,7 @@ function KioskLanding() {
 
         <button className="translate-button" >
           <div id="google_translate_element"> </div> 
-          <i class="bi bi-translate translate-icon"></i>
+          <i class="bi bi-translate translate-icon" onClick={initTranslate}></i>
         </button>
       </div>
      
