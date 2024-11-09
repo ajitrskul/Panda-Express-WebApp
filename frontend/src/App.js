@@ -4,9 +4,9 @@ import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import { MenuMain } from './pages/menu';
 import { KitchenMain } from './pages/kitchen';
 import { ManagerMain } from './pages/manager';
-import { KioskMain, KioskLanding, OrderSelection } from './pages/kiosk';
+import { KioskMain, KioskLanding, OrderSelection, DrinkSelection, AppsAndMoreSelection } from './pages/kiosk';
 import { PosMain } from './pages/pos';
-import { AuthMain } from './pages/auth';
+import { AuthMain, SignUpPage, SignUpError, SignUpSuccess } from './pages/auth';
 
 function App() {
   /* Reload the page when kiosk is clicked, so that google translate element will initialize*/
@@ -47,10 +47,15 @@ function App() {
           <Route path="/kiosk" element={<KioskLanding />} />
           <Route path="/kiosk/order" element={<KioskMain />} />
           <Route path="/kiosk/order/:itemName" element={<OrderSelection />} />
+          <Route path="/kiosk/order/drink" element={<DrinkSelection />} />
+          <Route path="/kiosk/order/appetizers-&-more" element={<AppsAndMoreSelection />} />
 
           <Route path="/pos" element={<PosMain />} />
 
           <Route path="/auth" element={<AuthMain />} />
+          <Route path="/auth/signup" element={<SignUpPage />}></Route>
+          <Route path="/auth/signup/error" element={<SignUpError />}></Route>
+          <Route path="/auth/signup/success" element={<SignUpSuccess />}></Route>
         </Routes>
     </Router>
   );

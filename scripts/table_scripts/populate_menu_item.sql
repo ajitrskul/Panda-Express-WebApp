@@ -1,16 +1,20 @@
-INSERT INTO menu_item (menu_item_id, item_name, max_entrees, max_sides, is_unique, price_adjustment, premium_price_multiplier, side_price_adjustment)
-VALUES
-(1, 'bowl', 1, 1, FALSE, 0, 0, 0),
-(2, 'plate', 2, 1, FALSE, 0, 0, 0),
-(3, 'biggerPlate', 3, 1, FALSE, 0, 0, 0),
-(4, 'familyMeal', 3, 2, TRUE, 24.9, 3, 0), 
-(5, 'appetizerSmall', 0, 0, FALSE, 0, 0, 0),
-(6, 'appetizerMedium', 0, 0, TRUE, 4.2, 0, 0),
-(7, 'appetizerLarge', 0, 0, TRUE, 9.2, 0, 0),
-(8, 'aLaCarteSmall', 1, 1, TRUE, 3.7, 1, 0),
-(9, 'aLaCarteMedium', 1, 1, TRUE, 7.0, 2, -2.4),
-(10, 'aLaCarteLarge', 1, 1, TRUE, 9.7, 3, -1.4),
-(11, 'drinkSmall', 0, 0, FALSE, 0, 0, 0),
-(12, 'drinkMedium', 0, 0, TRUE, 0.2, 0, 0),
-(13, 'drinkLarge', 0, 0, TRUE, 0.4, 0, 0),
-(14, 'drink', 0, 0, FALSE, 0, 0, 0);
+insert into menu_item (menu_item_id, item_name, max_entrees, max_sides, menu_item_base_price, premium_multiplier, menu_item_description, calories, image)
+values  
+(1, 'bowl', 1, 1, 8.3, 1, '1 Side & 1 Entree', '280-1130 Cal per serving', 'https://i.imgur.com/MJcKJXZ.png'),
+(2, 'plate', 2, 1, 9.8, 1, '1 Side & 2 Entrees', '430-1640 Cal per serving', 'https://i.imgur.com/aGNosMQ.png'),
+(3, 'biggerPlate', 3, 1, 11.3, 1, '1 Side & 3 Entrees', '580-2150 Cal per serving', 'https://i.imgur.com/NSQDvyG.png'),
+(4, 'familyMeal', 3, 2, 43, 1, '2 Large Sides & 3 Large Entrees', '430-1640 Cal per serving', 'https://i.imgur.com/rIOIRCH.png'),
+(5, 'appetizerSmall', null, null, 2, 0, 'Something Extra with Your Meal', '150-240 Cal per serving', 'https://i.imgur.com/ADqBpI6.png'),
+(6, 'appetizerLarge', null, null, 8, 1, null, null, null),
+(7, 'aLaCarteSideMedium', 1, 1, 4.4, 1, 'Individual Entrees & Sides', '130-620 Cal per serving', 'https://i.imgur.com/MsZtPIz.png'),
+(8, 'aLaCarteSideLarge', null, null, 5.4, 1, null, null, null),
+(9, 'aLaCarteEntreeSmall', null, null, 5.2, 1, null, null, null),
+(10, 'aLaCarteEntreeMedium', null, null, 8.5, 2, null, null, null),
+(11, 'aLaCarteEntreeLarge', null, null, 11.2, 3, null, null, null),
+(12, 'dessertSmall', null, null, 2, 1, null, null, null),
+(13, 'dessertMedium', null, null, 6.2, 1, null, null, null),
+(14, 'dessertLarge', null, null, 8, 1, null, null, null),
+(15, 'drinksSmall', null, null, 21, 1, null, null, null),
+(16, 'drinksMedium', null, null, 2.3, 1, null, null, null),
+(17, 'drinksLarge', null, null, 2.5, 1, null, null, null),
+(18, 'drinks', null, null, 2.1, 1, 'Add a Refreshing Beverage', '0-570 Cal per serving', 'https://i.imgur.com/H5POm5V.png');

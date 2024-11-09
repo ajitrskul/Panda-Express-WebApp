@@ -1,69 +1,31 @@
 class Order {
     constructor() {
-      this.items = [];
+      this.subOrders = []; // Array to hold suborders
     }
   
-    // Add or update an item in the order
-    addItem(item) {
-      const existingItem = this.items.find(i => i.name === item.name);
-      if (existingItem) {
-        // If the item already exists, update quantity and details
-        existingItem.quantity += item.quantity || 1;
-        existingItem.details = [...existingItem.details, ...(item.details || [])];
+    // Add a suborder to the order
+    addSubOrder(subOrder) {
+      this.subOrders.push(subOrder);
+    }
+  
+    // Remove a suborder by index
+    deleteSubOrder(index) {
+      if (index >= 0 && index < this.subOrders.length) {
+        this.subOrders.splice(index, 1);
       } else {
-        // Add new item with a default quantity and optional details
-        this.items.push({
-          ...item,
-          quantity: item.quantity || 1,
-          details: item.details || []  // Initialize details if not provided
-        });
+        console.warn('Invalid index');
       }
     }
   
-    // Remove an item from the order by name
-    removeItem(name) {
-      this.items = this.items.filter(item => item.name !== name);
-    }
-  
-    // Update the details for a specific item
-    updateItemDetails(name, newDetails) {
-      const item = this.items.find(i => i.name === name);
-      if (item) {
-        item.details = newDetails;
-      }
-    }
-  
-    // Update quantity for an item in the order
-    updateItemQuantity(name, quantity) {
-      const item = this.items.find(i => i.name === name);
-      if (item) {
-        item.quantity = quantity;
-        if (item.quantity <= 0) {
-          this.removeItem(name);
-        }
-      }
-    }
-  
-    // Calculate the total price of the order
-    getTotalPrice() {
-      return this.items.reduce((total, item) => total + item.price * item.quantity, 0);
-    }
-  
-    // Clear the entire order
-    clearOrder() {
-      this.items = [];
-    }
-  
-    // Get a summary of the order items
+    // Get a summary of all suborders
     getOrderSummary() {
-      return this.items.map(item => ({
-        name: item.name,
-        quantity: item.quantity,
-        details: item.details,
-        total: item.price * item.quantity
-      }));
+      return this.subOrders.map(subOrder => subOrder.items);
     }
-  }
   
-  export default Order;
-  
+    // Convert the order to a string for display
+    toString() {
+      return this.subOrders.map(subOrder => `[${subOrder.items.join(', ')}]`).join(', ');
+    }
+}
+
+export default Order;
