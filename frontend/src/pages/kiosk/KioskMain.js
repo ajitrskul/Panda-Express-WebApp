@@ -5,6 +5,7 @@ import '../../styles/kiosk.css';
 // components 
 import CheckoutButton from './components/CheckoutButton';
 import MenuItemCard from './components/MenuItemCard';
+import { NavBar } from "./components/NavBar";
 
 // images
 import BowlImage from '../../assets/bowl.png';
@@ -46,6 +47,7 @@ function KioskMain() {
 
   return (
     <div className="kiosk-landing-order container-fluid">
+       <NavBar></NavBar>
       {/* Menu Items Grid */}
       <div className="row pt-4 px-3 justify-content-center">
         {menuItems.map((item, index) => (
@@ -59,7 +61,7 @@ function KioskMain() {
           </div>
         ))}
       </div>
-
+        
       {/* CheckoutButton component */}
       <CheckoutButton price="$XXX.XX" />
     </div>
