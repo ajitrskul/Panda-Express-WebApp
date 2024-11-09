@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+// AppsAndMoreSelection.js
+import React, { useState, useEffect, useContext } from 'react';
 import '../../styles/kiosk.css';
 import MenuItemCard from './components/MenuItemCard'; 
 import InfoCard from './components/InfoCard'; 
 import api from '../../services/api';
-import CheckoutButton from './components/CheckoutButton'; 
+import { CartContext } from './components/CartContext';
 
 const formatProductName = (name) => {
   return name.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();
@@ -15,6 +16,8 @@ const AppsAndMoreSelection = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedInfo, setSelectedInfo] = useState(null);
+
+  const { cartItems, setCartItems } = useContext(CartContext); // Access cart context
 
   useEffect(() => {
     const fetchData = async () => {
@@ -45,6 +48,8 @@ const AppsAndMoreSelection = () => {
 
   const handleItemSelect = (item) => {
     console.log('Selected item:', item);
+    // Add the selected item to the cart
+    setCartItems([...cartItems, { ...item, quantity: 1 }]);
   };
 
   const handleInfoClick = (item) => {
@@ -111,8 +116,6 @@ const AppsAndMoreSelection = () => {
           onClose={handleCloseInfo} 
         />
       )}
-
-      <CheckoutButton />
     </div>
   );
 };

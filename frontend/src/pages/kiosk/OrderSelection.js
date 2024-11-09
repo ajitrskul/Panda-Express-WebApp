@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+// OrderSelection.js
+import React, { useState, useContext } from 'react';
 import { useLocation } from 'react-router-dom';
 import '../../styles/kiosk.css';
 import SelectionGrid from './components/SelectionGrid';
 import SideSelection from './components/SideSelection';
 import EntreeSelection from './components/EntreeSelection';
-import CheckoutButton from "./components/CheckoutButton";
+
+// CartContext use
+import { CartContext } from './components/CartContext';
 
 const OrderSelection = () => {
   const location = useLocation();
@@ -13,6 +16,8 @@ const OrderSelection = () => {
   const [selectedSection, setSelectedSection] = useState(null);
   const [selectedSideImage, setSelectedSideImage] = useState(null);
   const [selectedEntreeImage, setSelectedEntreeImage] = useState(null);
+
+  const { cartItems, setCartItems } = useContext(CartContext); // Access cart context
 
   const handleSelection = (type) => {
     setSelectedSection(type);
@@ -24,6 +29,9 @@ const OrderSelection = () => {
     } else if (type === 'entree') {
       setSelectedEntreeImage(item.image); 
     }
+
+    // Example: Add selected item to cart
+    setCartItems([...cartItems, { ...item, quantity: 1 }]);
   };
 
   return (
@@ -46,12 +54,8 @@ const OrderSelection = () => {
           <EntreeSelection onItemSelect={(item) => handleItemSelect(item, 'entree')} />
         )}
       </div>
-
-      <CheckoutButton />
     </div>
   );
 };
-
-
 
 export default OrderSelection;
