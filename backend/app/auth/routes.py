@@ -1,6 +1,41 @@
 from . import auth_bp
+from flask import request, jsonify
+from sqlalchemy import text
+from app.extensions import db
+from app.models import User
 
 @auth_bp.route('/', methods=['GET'])
 def auth_home():
     return {"message": "Welcome to Login Page"}
+
+
+@auth_bp.route('/signup', methods=['POST'])
+def handle_signup():
+    data = request.get_json()
+
+    with db.session.begin():
+        max_user_id = db.session.execute(text("SELECT COALESCE(MAX(user_id), 0) FROM user_info;"))
+        db.session.execute(text("SELECT setval('user_info_user_id_seq', :next_id, FALSE);"), {'next_id': max_user_id.scalar() + 1})  
+
+        new_user = User(points=0, email=data['email'], password=data['password'], first_name=data['first_name'], last_name=data['last_name'], role='customer')
+        db.session.add(new_user)
+        db.session.commit()
+
+    return jsonify({"message": "Signup data received"}), 200
+
+@auth_bp.route('/signup/email', methods=['POST'])
+def emailExists():
+    userEmail = request.get_data()
+    userEmail = userEmail.decode('utf-8')
+
+    with db.session.begin():
+        matchingEmail = db.session.query(User).filter_by(email=userEmail).first()
+
+    if (matchingEmail == None):
+        return jsonify(True)
+    else:
+        return jsonify(False)
+
+
+
 

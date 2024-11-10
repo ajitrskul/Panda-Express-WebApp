@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Route, Routes, Link } from "react-router-dom";
 import api from '../../services/api'; // Axios instance with base URL
 import '../../styles/auth.css';
 import logo from '../../assets/beast_mode_logo.png'
@@ -61,4 +62,4 @@ function AuthMain() {
   );
 }
 
-export default AuthMain;
+
