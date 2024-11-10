@@ -22,6 +22,10 @@ function AuthMain() {
     }
   };
 
+  const handleGoogle = async (e) => {
+    window.location.href = "http://127.0.0.1:5001/api/auth/signin/google";
+  };
+
   return (
     <div className="login-page">
       <div className="container-fluid d-flex vh-100 align-items-center justify-content-center">
@@ -49,7 +53,7 @@ function AuthMain() {
               </form>
               {loginMessage && <p>{loginMessage}</p>}
               <h2>or</h2>
-              <button type="button" className="google-login-btn">
+              <button type="button" onClick={handleGoogle} className="google-login-btn">
                 <img src={google_logo} alt="Google logo" className="google-icon" />
                 Login With Google
               </button>
@@ -62,4 +66,4 @@ function AuthMain() {
   );
 }
 
-
+export default AuthMain;

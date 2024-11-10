@@ -20,3 +20,6 @@ def register_blueprints(app):
     app.register_blueprint(kiosk_bp, url_prefix='/api/kiosk')
     app.register_blueprint(pos_bp, url_prefix='/api/pos')
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
+
+def register_secret_key(app):
+    app.secret_key = "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"
