@@ -22,8 +22,9 @@ function AuthMain() {
     }
   };
 
+  const isLocal = window.location.hostname === 'localhost';
   const handleGoogle = async (e) => {
-    window.location.href = "http://127.0.0.1:5001/api/auth/signin/google";
+    window.location.href = isLocal ? "http://127.0.0.1:5001/api/auth/signin/google" : "https://project-3-01-beastmode-1fed971de919.herokuapp.com/api/auth/signin/google";
   };
 
   return (

@@ -3,8 +3,6 @@ from flask import request, jsonify, session, abort, redirect
 from sqlalchemy import text
 from app.extensions import db
 from app.models import User
-import os
-import pathlib
 import requests
 from google.oauth2 import id_token
 from google_auth_oauthlib.flow import Flow
@@ -16,6 +14,9 @@ GOOGLE_CLIENT_ID = "691942944903-g8cmnfe0iu3jujav9jpgonda6dkj9b8u.apps.googleuse
 
 @auth_bp.route('/', methods=['GET'])
 def auth_home():
+    session.setdefault("name", None)
+    session.setdefault("email", None)
+    session.setdefault("state", None)
     return {"message": "Welcome to Login Page"}
 
 
@@ -33,6 +34,7 @@ def handle_signup():
 
     return jsonify({"message": "Signup data received"}), 200
 
+
 @auth_bp.route('/signup/email', methods=['POST'])
 def emailExists():
     userEmail = request.get_data()
@@ -46,12 +48,14 @@ def emailExists():
     else:
         return jsonify(False)
 
+
 @auth_bp.route("/signin/google", methods=["GET"])
 def authenticate_google():
     flow = current_app.config['OAUTH_FLOW']
     authorization_url, state = flow.authorization_url()
     session['state'] = state
     return redirect(authorization_url)
+
 
 @auth_bp.route("/callback")
 def callback():
@@ -74,8 +78,17 @@ def callback():
 
     session["name"] = id_info.get("name")
     session["email"] = id_info.get("email")
-
-    return redirect(f"http://localhost:3000/manager")
-
+    email = id_info.get("email")
 
 
+    with db.session.begin():
+        employee = db.session.query(User).filter_by(email=email).first()
+
+    if employee:
+        if employee.role == 'manager':
+            re_route_link = current_app.config['base_url'] + "/manager"
+        else:
+            re_route_link = current_app.config['base_url'] + "/pos"
+        return redirect(re_route_link)
+    else:
+        return jsonify({"message": "User not found in employee table."}), 404
