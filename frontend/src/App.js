@@ -6,7 +6,7 @@ import { KitchenMain } from './pages/kitchen';
 import { ManagerMain } from './pages/manager';
 import { KioskMain, KioskLanding, OrderSelection, DrinkSelection, AppsAndMoreSelection } from './pages/kiosk';
 import { PosMain } from './pages/pos';
-import { AuthMain, SignUpPage, SignUpError, SignUpSuccess } from './pages/auth';
+import { AuthMain, SignUpPage, SignUpError, SignUpSuccess, SignInError } from './pages/auth';
 
 function App() {
   return (
@@ -47,6 +47,7 @@ function App() {
           <Route path="/auth/signup" element={<SignUpPage />}></Route>
           <Route path="/auth/signup/error" element={<SignUpError />}></Route>
           <Route path="/auth/signup/success" element={<SignUpSuccess />}></Route>
+          <Route path="/auth/signin/error" element={<SignInError />}></Route>
         </Routes>
     </Router>
   );

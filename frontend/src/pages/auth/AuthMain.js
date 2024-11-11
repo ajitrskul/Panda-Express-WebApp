@@ -14,11 +14,11 @@ function AuthMain() {
     e.preventDefault();
 
     try {
-      const response = await api.post("/login", { username, password });
+      const response = await api.post("/auth/login", { username, password });
       setLoginMessage(response.data.message);
     } catch (error) {
-      setLoginMessage("Login failed. Please try again.");
-      console.error("Error during login:", error);
+      clear();
+      navigate("/auth/signup/error");
     }
   };
 

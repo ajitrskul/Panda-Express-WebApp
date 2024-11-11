@@ -2,7 +2,8 @@ from . import auth_bp
 from flask import request, jsonify, session, abort, redirect
 from sqlalchemy import text
 from app.extensions import db
-from app.models import User
+from app.models import Customer
+from app.models import Employee
 import requests
 from google.oauth2 import id_token
 from google_auth_oauthlib.flow import Flow
@@ -28,7 +29,7 @@ def handle_signup():
         max_user_id = db.session.execute(text("SELECT COALESCE(MAX(user_id), 0) FROM user_info;"))
         db.session.execute(text("SELECT setval('user_info_user_id_seq', :next_id, FALSE);"), {'next_id': max_user_id.scalar() + 1})  
 
-        new_user = User(points=0, email=data['email'], password=data['password'], first_name=data['first_name'], last_name=data['last_name'], role='customer')
+        new_user = Customer(points=0, email=data['email'], password=data['password'], first_name=data['first_name'], last_name=data['last_name'], role='customer')
         db.session.add(new_user)
         db.session.commit()
 
@@ -41,7 +42,7 @@ def emailExists():
     userEmail = userEmail.decode('utf-8')
 
     with db.session.begin():
-        matchingEmail = db.session.query(User).filter_by(email=userEmail).first()
+        matchingEmail = db.session.query(Customer).filter_by(email=userEmail).first()
 
     if (matchingEmail == None):
         return jsonify(True)
@@ -82,7 +83,7 @@ def callback():
 
 
     with db.session.begin():
-        employee = db.session.query(User).filter_by(email=email).first()
+        employee = db.session.query(Employee).filter_by(email=email).first()
 
     if employee:
         if employee.role == 'manager':
@@ -91,4 +92,5 @@ def callback():
             re_route_link = current_app.config['base_url'] + "/pos"
         return redirect(re_route_link)
     else:
-        return jsonify({"message": "User not found in employee table."}), 404
+        re_route_link = current_app.config['base_url'] + "/auth/signin/error"
+        return redirect(re_route_link)
