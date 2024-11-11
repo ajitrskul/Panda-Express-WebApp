@@ -5,6 +5,7 @@ import SelectionGrid from './components/SelectionGrid';
 import SideSelection from './components/SideSelection';
 import EntreeSelection from './components/EntreeSelection';
 import CheckoutButton from "./components/CheckoutButton";
+import { NavBar } from "./components/NavBar";
 
 const OrderSelection = () => {
   const location = useLocation();
@@ -28,6 +29,7 @@ const OrderSelection = () => {
 
   return (
     <div className="kiosk-landing-order container-fluid">
+      <NavBar></NavBar>
       <div className="container-fluid align-items-center">
         <SelectionGrid 
           numSides={numSides} 
