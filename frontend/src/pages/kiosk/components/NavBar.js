@@ -2,7 +2,6 @@ import axios from "axios";
 import beastLogo from "./beastLogo.png";
 import "../../../styles/navbar.css";
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -57,7 +56,7 @@ export function NavBar(){
             <button className="weather-button">
               <div class="notranslate" id="weather-text">
                 {temp} °F
-                <img className="weather-icon" src={iconSrc}></img>
+                <img className="weather-icon" src={iconSrc} alt="icon displaying the current weather"></img>
               </div>
             </button>
           </div>
