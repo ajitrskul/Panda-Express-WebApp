@@ -2,6 +2,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import '../../styles/kiosk.css';
+import '../../styles/kiosk/addToCartButton.css';
 import SelectionGrid from './components/SelectionGrid';
 import SideSelection from './components/SideSelection';
 import EntreeSelection from './components/EntreeSelection';

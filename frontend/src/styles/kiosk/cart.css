@@ -143,3 +143,39 @@
     transform: translateX(-100%) rotate(-360deg);
   }
 }
+
+/* cart.css */
+
+/* Emphasize the main item name */
+.cart-item-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+/* Adjust cart item details */
+.cart-item-details {
+  flex: 1;
+  padding-left: 10px;
+}
+
+/* Optional: Style the components list */
+.cart-item-components {
+  margin-bottom: 5px;
+}
+
+.cart-item-components strong {
+  display: block;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+.cart-item-components ul {
+  list-style-type: disc;
+  margin: 5px 0 0 20px;
+  padding: 0;
+}
+
+.cart-item-components li {
+  font-size: 0.9rem;
+}
