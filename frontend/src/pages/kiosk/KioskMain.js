@@ -109,9 +109,6 @@ function KioskMain() {
           </div>
         ))}
       </div>
-        
-      {/* CheckoutButton component */}
-      <CheckoutButton />
     </div>
   );
 }
