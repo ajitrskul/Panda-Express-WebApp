@@ -18,9 +18,41 @@ function Cart({ isOpen, toggleCart, cartItems }) {
         ) : (
           cartItems.map((item, index) => (
             <div className="cart-item" key={index}>
-              <img src={item.image} alt={item.product_name || item.name} className="cart-item-image" />
+              <img
+                src={
+                  item.image ||
+                  item.components?.sides[0]?.image ||
+                  item.components?.entrees[0]?.image
+                }
+                alt={item.product_name || item.name}
+                className="cart-item-image"
+              />
               <div className="cart-item-details">
                 <p className="cart-item-name">{item.product_name || item.name}</p>
+                {item.components && (
+                  <div className="cart-item-components">
+                    {item.components.sides.length > 0 && (
+                      <div>
+                        <strong>Sides:</strong>
+                        <ul>
+                          {item.components.sides.map((side, idx) => (
+                            <li key={`side-${idx}`}>{side.product_name || side.name}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {item.components.entrees.length > 0 && (
+                      <div>
+                        <strong>Entrees:</strong>
+                        <ul>
+                          {item.components.entrees.map((entree, idx) => (
+                            <li key={`entree-${idx}`}>{entree.product_name || entree.name}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                )}
                 <p className="cart-item-quantity">Quantity: {item.quantity}</p>
               </div>
               <p className="cart-item-price">
@@ -53,7 +85,16 @@ function Cart({ isOpen, toggleCart, cartItems }) {
 
 function getItemPrice(item) {
   // Use dummy value if price is not available
-  return item.price || item.premium_addition || 0;
+  if (item.price) {
+    return item.price;
+  } else if (item.components) {
+    // Sum up the prices of components if available
+    const sidesPrice = item.components.sides.reduce((sum, side) => sum + (side.price || 0), 0);
+    const entreesPrice = item.components.entrees.reduce((sum, entree) => sum + (entree.price || 0), 0);
+    return sidesPrice + entreesPrice;
+  } else {
+    return item.premium_addition || 0;
+  }
 }
 
 function calculateSubtotal(cartItems) {
@@ -62,7 +103,7 @@ function calculateSubtotal(cartItems) {
 
 function calculateTax(cartItems) {
   const subtotal = calculateSubtotal(cartItems);
-  const taxRate = 0.08; // Adjust according to your local tax rate
+  const taxRate = 0.0825; 
   return subtotal * taxRate;
 }
 
