@@ -5,6 +5,7 @@ import MenuItemCard from './components/MenuItemCard';
 import InfoCard from './components/InfoCard'; 
 import api from '../../services/api';
 import { CartContext } from './components/CartContext'; // Import CartContext
+import { NavBar } from "./components/NavBar";
 
 const formatProductName = (name) => {
   return name.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();
@@ -75,6 +76,7 @@ const AppsAndMoreSelection = () => {
 
   return (
     <div className="kiosk-landing-order container-fluid">
+      <NavBar></NavBar>
       {/* Appetizers Section */}
       <div className="row pt-4 px-3 justify-content-center">
         <h2 className="text-center mb-4" style={{ color: "white", fontWeight: "bold" }}>Appetizers</h2>

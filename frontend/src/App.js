@@ -13,6 +13,12 @@ import { CartProvider } from './pages/kiosk/components/CartContext';
 import KioskOrderLayout from './pages/kiosk/KioskOrderLayout';
 
 function App() {
+  /* Reload the page when kiosk is clicked, so that google translate element will initialize*/
+  /*Reset default language to English */
+  const translateLoad = () =>{
+    window.location.reload()
+    document.cookie="googtrans=/en/en;"
+  }
   return (
     <CartProvider>
       <Router>
@@ -26,8 +32,11 @@ function App() {
                       <nav><Link to="/menu">Menu Board</Link></nav>
                       <nav><Link to="/kitchen">Kitchen</Link></nav>
                       <nav><Link to="/manager">Manager</Link></nav>
+                      <button onClick={translateLoad}>
                       <nav><Link to="/kiosk">Customer Kiosk</Link></nav>
-                      <nav><Link to="/pos">Cashier POS</Link></nav>
+                      </button>
+                    
+                    <nav><Link to="/pos">Cashier POS</Link></nav>
                       <nav><Link to="/auth">Login</Link></nav>
                     </header>
                   </div>
