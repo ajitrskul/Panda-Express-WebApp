@@ -4,7 +4,7 @@ import '../../styles/kiosk.css';
 import MenuItemCard from './components/MenuItemCard'; 
 import InfoCard from './components/InfoCard'; 
 import api from '../../services/api';
-import { CartContext } from './components/CartContext';
+import { CartContext } from './components/CartContext'; // Import CartContext
 
 const formatProductName = (name) => {
   return name.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();
@@ -48,10 +48,23 @@ const AppsAndMoreSelection = () => {
 
   const handleItemSelect = (item) => {
     console.log('Selected item:', item);
-    // Add the selected item to the cart
-    setCartItems([...cartItems, { ...item, quantity: 1 }]);
+  
+    // Manage quantities in the cart
+    const existingItemIndex = cartItems.findIndex(
+      (cartItem) => cartItem.product_name === item.product_name
+    );
+  
+    if (existingItemIndex !== -1) {
+      // If item exists, update quantity
+      const updatedCartItems = [...cartItems];
+      updatedCartItems[existingItemIndex].quantity += 1;
+      setCartItems(updatedCartItems);
+    } else {
+      // If item doesn't exist, add to cart with quantity 1
+      setCartItems([...cartItems, { ...item, quantity: 1 }]);
+    }
   };
-
+  
   const handleInfoClick = (item) => {
     setSelectedInfo(item);
   };

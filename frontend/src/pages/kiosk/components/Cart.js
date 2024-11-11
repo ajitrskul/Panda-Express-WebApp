@@ -1,3 +1,4 @@
+// Cart.js
 import React from 'react';
 import { FaTimes } from 'react-icons/fa';
 import '../../../styles/kiosk/cart.css';
@@ -17,12 +18,14 @@ function Cart({ isOpen, toggleCart, cartItems }) {
         ) : (
           cartItems.map((item, index) => (
             <div className="cart-item" key={index}>
-              <img src={item.image} alt={item.name} className="cart-item-image" />
+              <img src={item.image} alt={item.product_name || item.name} className="cart-item-image" />
               <div className="cart-item-details">
-                <p className="cart-item-name">{item.name}</p>
+                <p className="cart-item-name">{item.product_name || item.name}</p>
                 <p className="cart-item-quantity">Quantity: {item.quantity}</p>
               </div>
-              <p className="cart-item-price">${item.price.toFixed(2)}</p>
+              <p className="cart-item-price">
+                ${ (getItemPrice(item) * item.quantity).toFixed(2) }
+              </p>
             </div>
           ))
         )}
@@ -48,8 +51,13 @@ function Cart({ isOpen, toggleCart, cartItems }) {
   );
 }
 
+function getItemPrice(item) {
+  // Use dummy value if price is not available
+  return item.price || item.premium_addition || 0;
+}
+
 function calculateSubtotal(cartItems) {
-  return cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  return cartItems.reduce((acc, item) => acc + getItemPrice(item) * item.quantity, 0);
 }
 
 function calculateTax(cartItems) {
