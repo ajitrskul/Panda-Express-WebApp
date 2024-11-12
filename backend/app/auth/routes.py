@@ -50,6 +50,22 @@ def emailExists():
         return jsonify(False)
 
 
+@auth_bp.route("/login/db", methods=["POST"])
+def authenticate_db():
+    data = request.get_json()
+    email = data.get("username")
+    with db.session.begin():
+        employee = db.session.query(Employee).filter_by(email=email).first()
+
+    if employee:
+        if employee.role == 'manager':
+            return jsonify({"success": True, "password": employee.password, "route": "/manager"})
+        else:
+            return jsonify({"success": True, "password": employee.password, "route": "/pos"})
+    else:
+        return jsonify({"success": False, "password": "", "route": ""})
+
+
 @auth_bp.route("/signin/google", methods=["GET"])
 def authenticate_google():
     flow = current_app.config['OAUTH_FLOW']
@@ -60,37 +76,41 @@ def authenticate_google():
 
 @auth_bp.route("/callback")
 def callback():
-    flow = current_app.config['OAUTH_FLOW']
-    flow.fetch_token(authorization_response=request.url)
-    
-    if not session.get("state") == request.args.get("state"):
-        abort(500)
+    try:
+        flow = current_app.config['OAUTH_FLOW']
+        flow.fetch_token(authorization_response=request.url)
+        
+        if not session.get("state") == request.args.get("state"):
+            abort(500)
 
-    credentials = flow.credentials
-    request_session = requests.session()
-    cached_session = cachecontrol.CacheControl(request_session)
-    token_request = google.auth.transport.requests.Request(session=cached_session)
+        credentials = flow.credentials
+        request_session = requests.session()
+        cached_session = cachecontrol.CacheControl(request_session)
+        token_request = google.auth.transport.requests.Request(session=cached_session)
 
-    id_info = id_token.verify_oauth2_token(
-        id_token=credentials._id_token,
-        request=token_request,
-        audience=GOOGLE_CLIENT_ID
-    )
+        id_info = id_token.verify_oauth2_token(
+            id_token=credentials._id_token,
+            request=token_request,
+            audience=GOOGLE_CLIENT_ID
+        )
 
-    session["name"] = id_info.get("name")
-    session["email"] = id_info.get("email")
-    email = id_info.get("email")
+        session["name"] = id_info.get("name")
+        session["email"] = id_info.get("email")
+        email = id_info.get("email")
 
 
-    with db.session.begin():
-        employee = db.session.query(Employee).filter_by(email=email).first()
+        with db.session.begin():
+            employee = db.session.query(Employee).filter_by(email=email).first()
 
-    if employee:
-        if employee.role == 'manager':
-            re_route_link = current_app.config['base_url'] + "/manager"
+        if employee:
+            if employee.role == 'manager':
+                re_route_link = current_app.config['base_url'] + "/manager"
+            else:
+                re_route_link = current_app.config['base_url'] + "/pos"
+            return redirect(re_route_link)
         else:
-            re_route_link = current_app.config['base_url'] + "/pos"
-        return redirect(re_route_link)
-    else:
+            re_route_link = current_app.config['base_url'] + "/auth/signin/error"
+            return redirect(re_route_link)
+    except:
         re_route_link = current_app.config['base_url'] + "/auth/signin/error"
         return redirect(re_route_link)
