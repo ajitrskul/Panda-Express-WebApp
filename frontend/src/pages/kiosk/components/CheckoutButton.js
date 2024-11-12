@@ -1,14 +1,14 @@
 import React from 'react';
-import '../../../styles/kiosk.css';
-import { FaShoppingCart } from 'react-icons/fa'; // Import shopping cart icon from react-icons
+import { FaShoppingCart } from 'react-icons/fa';
+import '../../../styles/kiosk/checkoutButton.css';
 
-const CheckoutButton = ({ orderCount = 0 }) => {
+function CheckoutButton({ orderCount, toggleCart, isCartOpen }) {
   return (
-    <button className="checkout-button">
+    <button className={`checkout-button ${isCartOpen ? 'rolling' : ''}`} onClick={toggleCart}>
       <FaShoppingCart className="cart-icon" />
       {orderCount > 0 && <span className="order-count-badge">{orderCount}</span>}
     </button>
   );
-};
+}
 
 export default CheckoutButton;

@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+// AppsAndMoreSelection.js
+import React, { useState, useEffect, useContext } from 'react';
 import '../../styles/kiosk.css';
 import MenuItemCard from './components/MenuItemCard'; 
 import InfoCard from './components/InfoCard'; 
 import api from '../../services/api';
-import CheckoutButton from './components/CheckoutButton'; 
+import { CartContext } from './components/CartContext'; // Import CartContext
 import { NavBar } from "./components/NavBar";
 
 const formatProductName = (name) => {
@@ -16,6 +17,8 @@ const AppsAndMoreSelection = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedInfo, setSelectedInfo] = useState(null);
+
+  const { cartItems, setCartItems } = useContext(CartContext); // Access cart context
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,8 +49,23 @@ const AppsAndMoreSelection = () => {
 
   const handleItemSelect = (item) => {
     console.log('Selected item:', item);
+  
+    // Manage quantities in the cart
+    const existingItemIndex = cartItems.findIndex(
+      (cartItem) => cartItem.product_name === item.product_name
+    );
+  
+    if (existingItemIndex !== -1) {
+      // If item exists, update quantity
+      const updatedCartItems = [...cartItems];
+      updatedCartItems[existingItemIndex].quantity += 1;
+      setCartItems(updatedCartItems);
+    } else {
+      // If item doesn't exist, add to cart with quantity 1
+      setCartItems([...cartItems, { ...item, quantity: 1 }]);
+    }
   };
-
+  
   const handleInfoClick = (item) => {
     setSelectedInfo(item);
   };
@@ -113,8 +131,6 @@ const AppsAndMoreSelection = () => {
           onClose={handleCloseInfo} 
         />
       )}
-
-      <CheckoutButton />
     </div>
   );
 };
