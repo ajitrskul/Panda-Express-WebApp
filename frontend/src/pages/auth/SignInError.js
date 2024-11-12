@@ -29,9 +29,8 @@ export default function SignInError() {
                         Your Account was not found.
                       </p>
                       <p className="signup-error-text">
-                        Please signup with our sign up page.
+                        Please talk to your manager to register an account with us
                       </p>
-                      <Link className="signup-error-text" to="/auth/signup" tabIndex="1">Go to Sign Up Page</Link>
                     </div>
                   </div>
                 </div>
