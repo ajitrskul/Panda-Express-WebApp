@@ -1,34 +1,34 @@
-import React, { useState } from 'react';
+import React from 'react';
 import SelectionCard from './SelectionCard';
 
-const SelectionGrid = ({ numSides, numEntrees, onSelect, selectedSideImage, selectedEntreeImage }) => {
-  const [selectedSideIndex, setSelectedSideIndex] = useState(null);
-  const [selectedEntreeIndex, setSelectedEntreeIndex] = useState(null);
-
+const SelectionGrid = ({ numSides, numEntrees, onSelect, selectedSides, selectedEntrees }) => {
   const handleCardClick = (type, index) => {
-    if (type === 'side') {
-      setSelectedSideIndex(index);
-      setSelectedEntreeIndex(null); 
-      onSelect(type);
-    } else if (type === 'entree') {
-      setSelectedEntreeIndex(index);
-      setSelectedSideIndex(null);
-      onSelect(type);
-    }
+    onSelect(type, index);
   };
 
   const renderCards = (count, type) => {
-    return Array.from({ length: count }, (_, index) => (
-      <SelectionCard
-        key={`${type}-${index}`}
-        type={type}
-        isSelected={(type === 'side' && index === selectedSideIndex) || (type === 'entree' && index === selectedEntreeIndex)}
-        onClick={() => handleCardClick(type, index)}
-        image={(type === 'side' && index === selectedSideIndex && selectedSideImage) ||
-               (type === 'entree' && index === selectedEntreeIndex && selectedEntreeImage) ||
-               null} 
-      />
-    ));
+    return Array.from({ length: count }, (_, index) => {
+      let isSelected = false;
+      let image = null;
+
+      if (type === 'side') {
+        isSelected = selectedSides[index] !== null;
+        image = selectedSides[index]?.image;
+      } else if (type === 'entree') {
+        isSelected = selectedEntrees[index] !== null;
+        image = selectedEntrees[index]?.image;
+      }
+
+      return (
+        <SelectionCard
+          key={`${type}-${index}`}
+          type={type}
+          isSelected={isSelected}
+          onClick={() => handleCardClick(type, index)}
+          image={image}
+        />
+      );
+    });
   };
 
   return (

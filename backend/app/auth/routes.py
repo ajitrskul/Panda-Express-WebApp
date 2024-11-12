@@ -112,5 +112,5 @@ def callback():
             re_route_link = current_app.config['base_url'] + "/auth/signin/error"
             return redirect(re_route_link)
     except:
-        re_route_link = current_app.config['base_url'] + "/auth/signin/error"
+        re_route_link = current_app.config['base_url'] + "/auth/signup/error"
         return redirect(re_route_link)
