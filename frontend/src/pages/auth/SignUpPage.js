@@ -86,10 +86,6 @@ export default function SignUpPage() {
 
         const hashPassword = await hashData.json();
         if (hashPassword) {
-          // setSignUpInput({
-          //   ...signupInput,
-          //   password: hashPassword.data["hashed"]
-          // });
           await api.post("/auth/signup", {...signupInput, password: hashPassword["hashed"]});
 
           //adding to database successful
