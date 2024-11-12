@@ -17,7 +17,9 @@ function AuthMain() {
     try {
       const response = await api.post("/auth/login/db", { username });
       if (response.data.success) {
-        if (password === response.data.password) {
+        const hashData = await fetch(`${process.env.REACT_APP_HASH_API_KEY}validate?plain=${password}&hashed=${response.data.password}`);
+        const validate = await hashData.json();
+        if (validate.valid) {
           navigate(response.data.route);
         } else {
           setErrorMessage("Login failed: Incorrect username or password");
