@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+// DrinkSelection.js
+import React, { useState, useEffect, useContext } from 'react';
 import '../../styles/kiosk.css';
 import MenuItemCard from './components/MenuItemCard'; 
 import InfoCard from './components/InfoCard'; 
 import api from '../../services/api';
-import CheckoutButton from './components/CheckoutButton'; 
+import { CartContext } from './components/CartContext'; // Import CartContext
+import { NavBar } from "./components/NavBar";
 
 const formatProductName = (name) => {
   return name.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();
@@ -14,6 +16,8 @@ const DrinkSelection = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedInfo, setSelectedInfo] = useState(null); 
+
+  const { cartItems, setCartItems } = useContext(CartContext); // Access cart context
 
   useEffect(() => {
     const fetchDrinks = async () => {
@@ -40,6 +44,21 @@ const DrinkSelection = () => {
 
   const handleDrinkSelect = (drink) => {
     console.log('Selected drink:', drink);
+
+    // Manage quantities in the cart
+    const existingItemIndex = cartItems.findIndex(
+      (cartItem) => cartItem.product_name === drink.product_name
+    );
+
+    if (existingItemIndex !== -1) {
+      // If item exists, update quantity
+      const updatedCartItems = [...cartItems];
+      updatedCartItems[existingItemIndex].quantity += 1;
+      setCartItems(updatedCartItems);
+    } else {
+      // If item doesn't exist, add to cart with quantity 1
+      setCartItems([...cartItems, { ...drink, quantity: 1 }]);
+    }
   };
 
   const handleInfoClick = (drink) => {
@@ -52,6 +71,7 @@ const DrinkSelection = () => {
 
   return (
     <div className="kiosk-landing-order container-fluid">
+      <NavBar></NavBar>
       <div className="row pt-4 px-3 justify-content-center">
         {drinks.map((drink, index) => (
           <div className="col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center mb-4" key={index}>
@@ -84,8 +104,6 @@ const DrinkSelection = () => {
           onClose={handleCloseInfo} 
         />
       )}
-
-      <CheckoutButton />
     </div>
   );
 };
