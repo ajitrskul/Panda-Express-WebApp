@@ -92,7 +92,7 @@ def callback():
             id_token=credentials._id_token,
             request=token_request,
             audience=GOOGLE_CLIENT_ID,
-            clock_skew_in_seconds=10
+            clock_skew_in_seconds=60
         )
 
         session["name"] = id_info.get("name")
