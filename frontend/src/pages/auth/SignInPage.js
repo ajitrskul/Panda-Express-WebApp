@@ -1,6 +1,6 @@
 import { Route, Routes, Link, useNavigate } from "react-router-dom";
 import { useState } from 'react';
-import "../../styles/login/LoginPage.css";
+import "../../styles/signin/SignInPage.css";
 import api from '../../services/api';
 
 //function that handles signup page logic & frontend
@@ -17,20 +17,20 @@ export default function SignInPage() {
   const [signinError, setSignInError] = useState({
     email: "",
     password: "",
-    correct_password: "",
+    correct_login: "",
     valid_email: {
-      email_class: "col-sm-5 p-2 signup-input",
+      email_class: "col-sm-5 p-2 signin-input",
       isHighlighted: false
     },
     valid_password: {
-      password_class: "col-sm-5 p-2 signup-input",
+      password_class: "col-sm-5 p-2 signin-input",
       isHighlighted: false
     }
   });
 
   const [signinClass, setSignInClass] = useState({
-    button_class: "signup-submit",
-    loading_class: "spinner-border signup-spinning-loader"
+    button_class: "signin-submit",
+    loading_class: "spinner-border signin-spinning-loader"
   });
 
   //when an input is changed, set the usestate object to that state
@@ -54,13 +54,13 @@ export default function SignInPage() {
       if (!response.data) { //email does not exist in database
         setSignInError({
           password: "",
-          correct_password: "Username or password incorrect",
+          correct_login: "Username or password incorrect",
           valid_email: {
-            email_class: "col-sm-5 p-2 signup-input invalid-input",
+            email_class: "col-sm-5 p-2 signin-input invalid-input",
             isHighlighted: true
           },
           valid_password: {
-            password_class: "col-sm-5 p-2 signup-input invalid-input",
+            password_class: "col-sm-5 p-2 signin-input invalid-input",
             isHighlighted: true
           }
         });
@@ -77,8 +77,16 @@ export default function SignInPage() {
         }
         else { //incorrect password
           setSignInError({
-            ...signinError,
-            correct_password: "Username or password incorrect"
+            password: "",
+            correct_login: "Username or password incorrect",
+            valid_email: {
+              email_class: "col-sm-5 p-2 signin-input invalid-input",
+              isHighlighted: true
+            },
+            valid_password: {
+              password_class: "col-sm-5 p-2 signin-input invalid-input",
+              isHighlighted: true
+            }
           });
         }
       }
@@ -92,8 +100,8 @@ export default function SignInPage() {
   const validateSignInInput = async (event) => {
     setSignInClass({
       ...signinClass,
-      button_class: "signup-submit signup-submission-loading",
-      loading_class: "spinner-border signup-spinning-loader signup-loader-opacity"
+      button_class: "signin-submit signin-submission-loading",
+      loading_class: "spinner-border signin-spinning-loader signin-loader-opacity"
     });
 
     let isInvalid = false;
@@ -106,11 +114,11 @@ export default function SignInPage() {
       email: "",
       password: "",
       valid_email: {
-        email_class: "col-sm-5 p-2 signup-input",
+        email_class: "col-sm-5 p-2 signin-input",
         isHighlighted: false
       },
       valid_password: {
-        password_class: "col-sm-5 p-2 signup-input",
+        password_class: "col-sm-5 p-2 signin-input",
         isHighlighted: false
       }
     };
@@ -168,8 +176,8 @@ export default function SignInPage() {
     }
     setSignInClass({
       ...signinClass,
-      button_class: "signup-submit",
-      loading_class: "spinner-border signup-spinning-loader"
+      button_class: "signin-submit",
+      loading_class: "spinner-border signin-spinning-loader"
     });
   }
 
@@ -179,49 +187,49 @@ export default function SignInPage() {
         path="/"
         element={
         <>
-          <div className="signup-bg"></div>
-          <div className="container-fluid signup-bg2-container">
-            <div className="row signup-bg2-row justify-content-center">
-              <div className="col-sm-6 signup-bg2"></div>
+          <div className="signin-bg"></div>
+          <div className="container-fluid signin-bg2-container">
+            <div className="row signin-bg2-row justify-content-center">
+              <div className="col-sm-6 signin-bg2"></div>
             </div>
           </div>
-          <div className="container-fluid signup-form">
-            <h1 className="text-center display-1 signup-title">Log In</h1>
+          <div className="container-fluid signin-form">
+            <h1 className="text-center display-1 signin-title">Log In</h1>
             <form method="POST" onSubmit={validateSignInInput}>
-            <div className="row justify-content-center">
-                <div className="col-xs-12 col-sm-5 signup-remove-padding">
-                  <p className="col-6 signup-remove-padding error-message">{signinError.correct_password}</p>
+              <div className="row justify-content-center">
+                <div className="col-xs-12 col-sm-5 signin-remove-padding">
+                  {signinError.correct_login && <div className="alert alert-danger text-center">{signinError.correct_login}</div>}
                 </div>
               </div>
               <div className="row justify-content-center">
-                <div className="col-xs-12 col-sm-5 signup-remove-padding">
-                  <label className="col-6 signup-label signup-remove-padding" htmlFor="signup-email">Email:</label>
+                <div className="col-xs-12 col-sm-5 signin-remove-padding">
+                  <label className="col-6 signin-label signin-remove-padding" htmlFor="signin-email">Email:</label>
                 </div>
               </div>
               <div className="row justify-content-center">
-                <input value={signinInput.email} className={signinError.valid_email.email_class} id="signup-email" name="email" placeholder="Email" tabIndex="1" onChange={({ target }) => {
+                <input value={signinInput.email} className={signinError.valid_email.email_class} id="signin-email" name="email" placeholder="Email" tabIndex="1" onChange={({ target }) => {
                   handleSignInInput(target.name, target.value);
                 }}></input>
               </div>
               <div className="row justify-content-center">
-                <p className="col-sm-5 signup-remove-padding error-message">{signinError.email}</p>
+                <p className="col-sm-5 signin-remove-padding error-message">{signinError.email}</p>
               </div>
               <div className="row justify-content-center">
-                <div className="col-xs-12 col-sm-5 signup-remove-padding">
-                  <label className="text-start signup-label" htmlFor="signup-password">Password:</label>
+                <div className="col-xs-12 col-sm-5 signin-remove-padding">
+                  <label className="text-start signin-label" htmlFor="signin-password">Password:</label>
                 </div>
               </div>
               <div className="row justify-content-center">
-                <input value={signinInput.password} className={signinError.valid_password.password_class} type="password" id="signup-password" name="password" placeholder="Password" tabIndex="2" onChange={({ target }) => {
+                <input value={signinInput.password} className={signinError.valid_password.password_class} type="password" id="signin-password" name="password" placeholder="Password" tabIndex="2" onChange={({ target }) => {
                   handleSignInInput(target.name, target.value);
                 }}></input>
               </div>
               <div className="row justify-content-center">
-                <p className="col-sm-5 signup-remove-padding error-message">{signinError.password}</p>
+                <p className="col-sm-5 signin-remove-padding error-message">{signinError.password}</p>
               </div>
               <div className="row justify-content-center">
                 <div className="col-sm-5 text-center">
-                  <p className="signup-navigate-login">
+                  <p className="signin-navigate-login">
                     Don't have an account? <Link to="/auth/signup" tabIndex="3">Sign Up.</Link>
                   </p>
                 </div>

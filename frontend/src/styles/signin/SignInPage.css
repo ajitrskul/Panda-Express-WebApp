@@ -1,17 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Jaldi:wght@400;700&family=Jomhuria&family=Julius+Sans+One&display=swap');
 
 
-.signup-title {
+.signin-title {
   font-family:'Jomhuria', Garamond;
   color:black;
 }
 
-.signup-label {
+.signin-label {
   font-family:Jaldi, Arial;
   font-size:18px;
 }
 
-.signup-bg {
+.signin-bg {
   background: url(../../assets/SignUpBg.jpg) no-repeat center center fixed;
   background-size: cover;
 
@@ -31,7 +31,7 @@
   z-index:100;
 }
 
-.signup-bg2-container {
+.signin-bg2-container {
   position:fixed;
   z-index:200;
   top:0px;
@@ -40,11 +40,11 @@
   opacity:0.9;
 }
 
-.signup-bg2-row {
+.signin-bg2-row {
   height:100%
 }
 
-.signup-bg2 {
+.signin-bg2 {
   height:100%;
   background-color:white;
 
@@ -53,7 +53,7 @@
     -5px -5px 15px rgb(206,157,55,0.8);
 }
 
-.signup-form {
+.signin-form {
   position:absolute;
   z-index:300;
   
@@ -61,7 +61,7 @@
   transform: translateY(-50%);
 }
 
-.signup-input {
+.signin-input {
   border:solid;
   border-radius:5px;
   border-color:black;
@@ -70,34 +70,26 @@
   background-color: rgb(255,255,255);
 }
 
-.signup-names {
-  width: 100%;
-}
-
 @media (width >= 576px) {
-  .signup-remove-padding {
+  .signin-remove-padding {
     padding-left:0px !important;
-  }
-  
-  .signup-last-name {
-    padding-right:0px !important;
   }
 }
 
 @media (width < 576px) {
-  .signup-remove-padding, .signup-last-name {
+  .signin-remove-padding, .signin-last-name {
     padding-left:0px !important;
     padding-right:0px !important;
   }
 }
 
-.signup-required-fields {
+.signin-required-fields {
   color:black;
   font-family: 'Julius Sans One';
   margin-bottom:0px;
 }
 
-.signup-submit {
+.signin-submit {
   background-color: #A3080C;
   font-family: 'Julius Sans One', Copperplate;
   border:none;
@@ -113,17 +105,17 @@
   position:relative;
 }
 
-.signup-submit:hover {
+.signin-submit:hover {
   color:white;
   background-color: #cd0c13;
 }
 
-.signup-submit:active {
+.signin-submit:active {
   background-color:#fe0b13;
   opacity:0.8
 }
 
-.signup-navigate-login {
+.signin-navigate-login {
   color:black;
   font-family: Julius Sans One;
 }
@@ -140,20 +132,20 @@
   border-color:red;
 }
 
-.signup-submission-loading {
+.signin-submission-loading {
   opacity:0.8;
   cursor:default;
   background-color: #fe0b13;
 }
 
-.signup-spinning-loader {
+.signin-spinning-loader {
   position:absolute;
   left:76.9125px;
   color:white;
   opacity:0;
 }
 
-.signup-loader-opacity {
+.signin-loader-opacity {
   opacity:1;
 }
 
