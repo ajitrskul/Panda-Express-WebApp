@@ -46,3 +46,13 @@ class Customer(db.Model):
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
     beast_points = db.Column(db.Integer, nullable=False)
+
+class Employee(db.Model):
+    __tablename__ = 'employee_info'
+
+    employee_id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(50), nullable=False)
+    first_name = db.Column(db.String(50), nullable=False)
+    last_name = db.Column(db.String(50), nullable=False)
+    role = db.Column(db.String(20), nullable=False)
+    password = db.Column(db.String(255), nullable=False)
