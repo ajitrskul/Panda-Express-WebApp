@@ -2,13 +2,41 @@
 import '../../../styles/sidebar-manager.css';
 import { useNavigate } from "react-router-dom";
 import beastLogo from "./beastLogo.png";
+import { useLocation } from 'react-router-dom';
+import { useEffect, useState } from "react";
 
 export function SidebarManager(){
     const navigate = useNavigate();
+    const location=useLocation();
 
+    const InitColors = async () =>{
+      if ((location.pathname)==="/manager/xreports"){
+        dropdownFunction();
+        document.getElementById("xreports").style.backgroundColor="#77070a";
+        document.getElementById("reports").style.backgroundColor="#8c070c";
+      }
+      if ((location.pathname)==="/manager/zreports"){
+        dropdownFunction();
+        document.getElementById("zreports").style.backgroundColor="#77070a";
+        document.getElementById("reports").style.backgroundColor="#8c070c";
+      }
+      if ((location.pathname)==="/manager/restockreports"){
+        dropdownFunction();
+        document.getElementById("restockreports").style.backgroundColor="#77070a";
+        document.getElementById("reports").style.backgroundColor="#8c070c";
+      }
+      if ((location.pathname)==="/manager/employees"){
+        document.getElementById("employees").style.backgroundColor="#8c070c";
+      }
+      if ((location.pathname)==="/manager/products"){
+        document.getElementById("products").style.backgroundColor="#8c070c";
+      }
+      if ((location.pathname)==="/manager/inventory"){
+        document.getElementById("inventory").style.backgroundColor="#8c070c";
+      }
+    }
     const SidebarClick = (event) =>{
       const id=event.target.id;
-      console.log(id);
         switch(id){
           case "manager":
             navigate("/manager");
@@ -33,6 +61,18 @@ export function SidebarManager(){
             break;
           case "zreports":
             navigate("/manager/zreports");
+            break;
+          case "restockreports":
+            navigate("/manager/restockreports");
+            break;
+          case "employees":
+            navigate("/manager/employees");
+            break;
+          case "products":
+            navigate("/manager/products");
+            break;
+          case "inventory":
+            navigate("/manager/inventory");
             break;
           }
       };
@@ -62,23 +102,25 @@ export function SidebarManager(){
           reportsDrop.style.display="none";
         }
       };
-    
+      useEffect(() => {
+        InitColors();
+        
+      }, [] );
     return (
-      <div>
         <div class="manager-sidebar" id="manager-sidebar">
           <div class="logo-display" id="manager" onClick={SidebarClick}>
             <img className="logo-image" src={beastLogo} alt="Beastmode logo"></img>
             <div class="manager-sidebar-text">Manager View</div>
           </div>
           
-          <hr class="divider"></hr>
+          <hr class="sidebar-divider"></hr>
   
           <a class="sidebar-item" id="login" onClick={SidebarClick}>
             <i class="bi bi-person-circle sidebar-icon"></i>
             <div class="manager-sidebar-text2">Login</div>
           </a>
     
-          <hr class="divider"></hr>
+          <hr class="sidebar-divider"></hr>
         
           <a class="sidebar-item" id="pos" onClick={SidebarClick}>
             <i class="bi bi-columns-gap sidebar-icon"></i>
@@ -104,9 +146,9 @@ export function SidebarManager(){
             {/*<i class="bi bi-lock-fill sidebar-icon-right"></i>*/}
           </a>
 
-          <hr class="divider"></hr>
+          <hr class="sidebar-divider"></hr>
 
-          <a class="sidebar-item" onClick={dropdownFunction}>
+          <a class="sidebar-item" id="reports" onClick={dropdownFunction}>
             <i class="bi bi-bar-chart sidebar-icon"></i>
             <div class="manager-sidebar-text2">Reports</div>
             <i id="dropdown-icon" class="bi bi-chevron-down sidebar-dropdown-icon" ></i>
@@ -123,29 +165,28 @@ export function SidebarManager(){
               <div class="manager-sidebar-text3">Z Reports</div>
             </div>
 
-            <div class="sidebar-drop-item">
+            <div class="sidebar-drop-item"  id="restockreports" onClick={SidebarClick}>
               <div class="manager-sidebar-text3">Restock Reports</div>
             </div>
 
           </a>
 
-          <a class="sidebar-item">
+          <a class="sidebar-item" id="employees" onClick={SidebarClick}>
             <i class="bi bi-people-fill sidebar-icon"></i>
             <div class="manager-sidebar-text2">Employees</div>
           </a>
           
-          <a class="sidebar-item">
+          <a class="sidebar-item" id="products" onClick={SidebarClick}>
             <i class="bi bi-cup-straw sidebar-icon"></i>
             <div class="manager-sidebar-text2">Products</div>
           </a>
           
-          <a class="sidebar-item">
+          <a class="sidebar-item" id="inventory" onClick={SidebarClick}>
             <i class="bi bi-box-seam sidebar-icon"></i>
             <div class="manager-sidebar-text2">Inventory</div>
           </a>
         
         </div>
-      </div>
     );
 };
 
