@@ -99,6 +99,13 @@
     display: block;
 }
 
+.selection-card-image {
+    width: 100%; 
+    height: auto; 
+    max-height: 100px; 
+    object-fit: cover; 
+}
+
 .selection-text {
     margin-top: 10px;
     font-size: 1rem;
