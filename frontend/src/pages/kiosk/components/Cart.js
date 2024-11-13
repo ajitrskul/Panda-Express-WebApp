@@ -1,17 +1,30 @@
 import React, { useState, useContext } from 'react';
+import { useEffect } from 'react';
 import { FaTimes, FaPlus, FaMinus } from 'react-icons/fa';
 import '../../../styles/kiosk/cart.css';
-import ConfirmDialog from './ConfirmDialog'; // Import the confirmation dialog
-import { CartContext } from './CartContext'; // Adjust the path as necessary
+import ConfirmDialog from './ConfirmDialog'; 
+import { CartContext } from './CartContext';
 
 function Cart({ isOpen, toggleCart, cartItems }) {
+  const [showOverlay, setShowOverlay] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [itemToRemove, setItemToRemove] = useState(null);
 
   const { setCartItems } = useContext(CartContext);
 
+
+  useEffect(() => {
+    if (isOpen) {
+      setShowOverlay(true);
+      setTimeout(() => {
+        document.querySelector('.cart-overlay')?.classList.add('fade-in');
+      }, 10); 
+    } else {
+      setShowOverlay(false);
+    }
+  }, [isOpen]);
+  
   const handleOverlayClick = (e) => {
-    // Closes the cart if the overlay is clicked
     if (e.target.classList.contains('cart-overlay')) {
       toggleCart();
     }
@@ -56,9 +69,7 @@ function Cart({ isOpen, toggleCart, cartItems }) {
 
   return (
     <>
-      {/* Overlay that closes the cart on click outside */}
-      {isOpen && <div className="cart-overlay" onClick={handleOverlayClick}></div>}
-      
+      {showOverlay && <div className="cart-overlay" onClick={handleOverlayClick}></div>}
       <div className={`cart-offcanvas ${isOpen ? 'open' : ''}`}>
         <div className="cart-header">
           <h2>Your Cart</h2>
