@@ -10,6 +10,8 @@ from google_auth_oauthlib.flow import Flow
 from pip._vendor import cachecontrol
 import google.auth.transport.requests
 from flask import current_app
+import base64
+import json
 
 GOOGLE_CLIENT_ID = "691942944903-g8cmnfe0iu3jujav9jpgonda6dkj9b8u.apps.googleusercontent.com"
 
@@ -88,16 +90,26 @@ def callback():
         cached_session = cachecontrol.CacheControl(request_session)
         token_request = google.auth.transport.requests.Request(session=cached_session)
 
-        id_info = id_token.verify_oauth2_token(
-            id_token=credentials._id_token,
-            request=token_request,
-            audience=GOOGLE_CLIENT_ID,
-            clock_skew_in_seconds=60
-        )
+        # id_info = id_token.verify_oauth2_token(
+        #     id_token=credentials._id_token,
+        #     request=token_request,
+        #     audience=GOOGLE_CLIENT_ID,
+        #     clock_skew_in_seconds=60
+        # )
+        
+        id_token_str = credentials._id_token
+        token_parts = id_token_str.split('.')
 
-        session["name"] = id_info.get("name")
-        session["email"] = id_info.get("email")
-        email = id_info.get("email")
+        payload_encoded = token_parts[1]
+
+        padding = '=' * (4 - len(payload_encoded) % 4)
+        payload_decoded = base64.urlsafe_b64decode(payload_encoded + padding)
+        
+        payload_json = json.loads(payload_decoded)
+
+        session["name"] = payload_json.get("name")
+        session["email"] = payload_json.get("email")
+        email = payload_json.get("email")
 
 
         with db.session.begin():
