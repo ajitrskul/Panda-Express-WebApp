@@ -117,7 +117,7 @@ export function SidebarManager(){
   
           <a class="sidebar-item" id="login" onClick={SidebarClick}>
             <i class="bi bi-person-circle sidebar-icon"></i>
-            <div class="manager-sidebar-text2">Login</div>
+            <div class="manager-sidebar-text2">Logout</div>
           </a>
     
           <hr class="sidebar-divider"></hr>
