@@ -37,7 +37,7 @@ export function NavBar(){
     document.cookie="googtrans=/en/en;"
   }
   const navAuth = () => {
-    navigate(`/auth`);
+    navigate(`/auth/signin`);
  }
 
     return (

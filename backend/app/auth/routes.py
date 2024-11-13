@@ -49,6 +49,17 @@ def emailExists():
     else:
         return jsonify(False)
 
+@auth_bp.route("/signin/email", methods=['POST'])
+def signinEmail():
+    customerEmail = request.get_data()
+    customerEmail = customerEmail.decode('utf-8')
+
+    customer = Customer.query.filter_by(email=customerEmail).first()
+    if customer:
+        return jsonify(customer.password)
+    else:
+        return jsonify(False)  # or handle the case where the customer is not found
+
 
 @auth_bp.route("/login/db", methods=["POST"])
 def authenticate_db():
@@ -60,6 +71,8 @@ def authenticate_db():
     if employee:
         if employee.role == 'manager':
             return jsonify({"success": True, "password": employee.password, "route": "/manager"})
+        elif employee.role == 'fired':
+            return jsonify({"success": True, "password": employee.password, "route": "/auth/signin/error"})
         else:
             return jsonify({"success": True, "password": employee.password, "route": "/pos"})
     else:
@@ -105,6 +118,8 @@ def callback():
         if employee:
             if employee.role == 'manager':
                 re_route_link = current_app.config['base_url'] + "/manager"
+            elif employee.role == 'fired':
+                re_route_link = current_app.config['base_url'] + "/auth/signin/error"
             else:
                 re_route_link = current_app.config['base_url'] + "/pos"
             return redirect(re_route_link)

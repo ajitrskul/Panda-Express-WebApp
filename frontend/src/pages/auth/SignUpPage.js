@@ -96,9 +96,6 @@ export default function SignUpPage() {
           clear();
           navigate("/auth/signup/error");
         }
-        // await api.post("/auth/signup", signupInput);
-        // clear();
-        // navigate("/auth/signup/success");
       }
     } catch (error) {
       //Issue from API Call
@@ -293,7 +290,6 @@ export default function SignUpPage() {
             <form method="POST" onSubmit={validateSignUpInput}>
               <div className="row justify-content-center align-items-end">
                 <label className="col-6 col-sm-2 signup-label signup-remove-padding" htmlFor="signup-email">Email:</label>
-                <p className="col-6 col-sm-3 text-end signup-required-fields">*All fields are required</p>
               </div>
               <div className="row justify-content-center">
                 <input value={signupInput.email} className={signupError.valid_email.email_class} id="signup-email" name="email" placeholder="Email" tabIndex="1" onChange={({ target }) => {
@@ -353,7 +349,7 @@ export default function SignUpPage() {
               <div className="row justify-content-center">
                 <div className="col-sm-5 text-center">
                   <p className="signup-navigate-login">
-                    Already have an account? <Link to="/auth" tabIndex="6">Log in.</Link>
+                    Already have an account? <Link to="/auth/signin" tabIndex="6">Log in.</Link>
                   </p>
                 </div>
               </div>
