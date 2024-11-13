@@ -2,17 +2,14 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import '../../styles/kiosk.css';
-import '../../styles/kiosk/addToCartButton.css';
 import SelectionGrid from './components/SelectionGrid';
 import SideSelection from './components/SideSelection';
 import EntreeSelection from './components/EntreeSelection';
-import { CartContext } from './components/CartContext'; // Corrected import path
-import { NavBar } from "./components/NavBar";
+import { CartContext } from './components/CartContext';
 
 const OrderSelection = () => {
   const location = useLocation();
-  const { numSides, numEntrees } = location.state;
-  const itemName = location.state.itemName || 'Custom Meal';
+  const { numSides, numEntrees, itemName, itemImage, basePrice, premiumMultiplier } = location.state;
 
   const [selectedSection, setSelectedSection] = useState(null);
   const [selectedSideIndex, setSelectedSideIndex] = useState(null);
@@ -23,7 +20,6 @@ const OrderSelection = () => {
 
   const { cartItems, setCartItems } = useContext(CartContext);
 
-  // Initialize selectedSides and selectedEntrees arrays
   useEffect(() => {
     setSelectedSides(Array(numSides).fill(null));
     setSelectedEntrees(Array(numEntrees).fill(null));
@@ -58,12 +54,14 @@ const OrderSelection = () => {
     if (isSelectionComplete) {
       const mainItem = {
         name: itemName,
+        image: itemImage,
         components: {
           sides: selectedSides,
           entrees: selectedEntrees
         },
         quantity: 1,
-        price: 9.99 // Use a dummy price or calculate based on components
+        basePrice: basePrice, // Include basePrice
+        premiumMultiplier: premiumMultiplier // Include premiumMultiplier
       };
 
       // Check if an identical composed item already exists in the cart
@@ -88,7 +86,6 @@ const OrderSelection = () => {
 
   return (
     <div className="kiosk-landing-order container-fluid">
-      <NavBar></NavBar>
       <div className="container-fluid align-items-center">
         <SelectionGrid 
           numSides={numSides} 

@@ -5,7 +5,7 @@
   }
   
   .add-to-cart-button {
-    background-color: #ff6f61; /* Use your theme's primary color */
+    background-color: #a3080c; 
     color: #fff;
     font-size: 1.5rem;
     padding: 10px 30px;
@@ -16,5 +16,5 @@
   }
   
   .add-to-cart-button:hover {
-    background-color: #e55a4e; /* Slightly darker shade on hover */
+    background-color: #e55a4e; 
   }

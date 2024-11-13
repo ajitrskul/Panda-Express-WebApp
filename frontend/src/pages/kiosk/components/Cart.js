@@ -1,4 +1,3 @@
-// Cart.js
 import React, { useState, useContext } from 'react';
 import { FaTimes, FaPlus, FaMinus } from 'react-icons/fa';
 import '../../../styles/kiosk/cart.css';
@@ -175,22 +174,41 @@ function getItemImage(item) {
 // }
 
 function getItemPrice(item) {
-  // Use dummy value if price is not available
-  if (item.price) {
-    return item.price;
-  } else if (item.components) {
-    // Sum up the prices of components if available
-    const sidesPrice = item.components.sides.reduce(
-      (sum, side) => sum + (side.price || 0),
-      0
-    );
-    const entreesPrice = item.components.entrees.reduce(
-      (sum, entree) => sum + (entree.price || 0),
-      0
-    );
-    return sidesPrice + entreesPrice;
+  if (item.basePrice !== undefined && item.premiumMultiplier !== undefined && item.components) {
+    // Complex item (e.g., Bowl, Plate)
+    const { basePrice, premiumMultiplier, components } = item;
+
+    // Sum up premium additions for premium subitems
+    let totalPremiumAddition = 0;
+
+    // Sum premium additions for sides
+    if (components.sides && components.sides.length > 0) {
+      components.sides.forEach(side => {
+        if (side.is_premium) {
+          totalPremiumAddition += side.premium_addition || 0;
+        }
+      });
+    }
+
+    // Sum premium additions for entrees
+    if (components.entrees && components.entrees.length > 0) {
+      components.entrees.forEach(entree => {
+        if (entree.is_premium) {
+          totalPremiumAddition += entree.premium_addition || 0;
+        }
+      });
+    }
+
+    const totalPrice = basePrice + premiumMultiplier * totalPremiumAddition;
+    return totalPrice;
+  } else if (item.price !== undefined) {
+    // Simple item with a direct price
+      return item.price;
+  } else if (item.premium_addition !== undefined) {
+    // For individual products like drinks or appetizers
+      return item.premium_addition || 0;
   } else {
-    return item.premium_addition || 0;
+      return 0;
   }
 }
 

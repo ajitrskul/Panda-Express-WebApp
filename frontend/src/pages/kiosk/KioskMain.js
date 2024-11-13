@@ -49,7 +49,7 @@ function KioskMain() {
       .toLowerCase()
       .replace(/\s+/g, '-');
     console.log(formattedName);
-  
+
     if (formattedName === "drinks") {
       navigate(`/kiosk/order/drink`);
     } 
@@ -61,7 +61,10 @@ function KioskMain() {
         state: { 
           numSides: item.max_sides, 
           numEntrees: item.max_entrees,
-          itemName: formatItemName(item.item_name) 
+          itemName: formatItemName(item.item_name),
+          itemImage: item.image,
+          basePrice: item.menu_item_base_price,
+          premiumMultiplier: item.premium_multiplier
         }
       });
     }
