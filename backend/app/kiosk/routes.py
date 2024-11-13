@@ -120,6 +120,34 @@ def get_entrees():
 
 @kiosk_bp.route('/drinks', methods=['GET'])
 def get_drinks():
+    fountain_drinks = db.session.execute(
+        text("SELECT * FROM product_item WHERE type = :type ORDER BY product_id ASC"), 
+        {'type': 'fountainDrink'}
+    ).fetchall()
+
+    fountain_drinks_list = [
+        {
+            "product_id": fountain_drink.product_id,
+            "product_name": fountain_drink.product_name,
+            "type": fountain_drink.type,
+            "is_seasonal": fountain_drink.is_seasonal,
+            "is_available": fountain_drink.is_available,
+            "servings_remaining": fountain_drink.servings_remaining,
+            "allergens": fountain_drink.allergens,
+            "display_icons": fountain_drink.display_icons,
+            "product_description": fountain_drink.product_description,
+            "premium_addition": fountain_drink.premium_addition,
+            "serving_size": fountain_drink.serving_size,
+            "calories": fountain_drink.calories,
+            "saturated_fat": fountain_drink.saturated_fat,
+            "carbohydrate": fountain_drink.carbohydrate,
+            "protein": fountain_drink.protein,
+            "image": fountain_drink.image,
+            "is_premium": fountain_drink.is_premium,
+        }
+        for fountain_drink in fountain_drinks
+    ]
+
     drinks = db.session.execute(
         text("SELECT * FROM product_item WHERE type = :type ORDER BY product_id ASC"), 
         {'type': 'drink'}
@@ -148,7 +176,7 @@ def get_drinks():
         for drink in drinks
     ]
 
-    return jsonify(drinks_list), 200
+    return jsonify(fountain_drinks_list + drinks_list), 200
 
 
 @kiosk_bp.route('/appetizers', methods=['GET'])
