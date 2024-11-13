@@ -10,6 +10,13 @@ function Cart({ isOpen, toggleCart, cartItems }) {
 
   const { setCartItems } = useContext(CartContext);
 
+  const handleOverlayClick = (e) => {
+    // Closes the cart if the overlay is clicked
+    if (e.target.classList.contains('cart-overlay')) {
+      toggleCart();
+    }
+  };
+
   const handleIncrement = (index) => {
     const updatedCartItems = [...cartItems];
     updatedCartItems[index].quantity += 1;
@@ -48,103 +55,107 @@ function Cart({ isOpen, toggleCart, cartItems }) {
   };
 
   return (
-    <div className={`cart-offcanvas ${isOpen ? 'open' : ''}`}>
-      <div className="cart-header">
-        <h2>Your Cart</h2>
-        <button className="close-button" onClick={toggleCart}>
-          <FaTimes />
-        </button>
-      </div>
-      <div className="cart-content">
-        {cartItems.length === 0 ? (
-          <p className="empty-cart">Your cart is empty.</p>
-        ) : (
-          cartItems.map((item, index) => (
-            <div className="cart-item" key={index}>
-              <button className="remove-item-button" onClick={() => handleRemove(index)}>
-                <FaTimes />
-              </button>
-              <img
-                src={
-                  getItemImage(item) ||
-                  item.components?.sides[0]?.image ||
-                  item.components?.entrees[0]?.image
-                }
-                alt={item.product_name || item.name}
-                className="cart-item-image"
-              />
-              <div className="cart-item-details">
-                <p className="cart-item-name">{item.product_name || item.name}</p>
-                {item.components && (
-                  <div className="cart-item-components">
-                    {item.components.sides.length > 0 && (
-                      <div>
-                        <strong>Sides:</strong>
-                        <ul>
-                          {item.components.sides.map((side, idx) => (
-                            <li key={`side-${idx}`}>{side.product_name || side.name}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                    {item.components.entrees.length > 0 && (
-                      <div>
-                        <strong>Entrees:</strong>
-                        <ul>
-                          {item.components.entrees.map((entree, idx) => (
-                            <li key={`entree-${idx}`}>{entree.product_name || entree.name}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
+    <>
+      {/* Overlay that closes the cart on click outside */}
+      {isOpen && <div className="cart-overlay" onClick={handleOverlayClick}></div>}
+      
+      <div className={`cart-offcanvas ${isOpen ? 'open' : ''}`}>
+        <div className="cart-header">
+          <h2>Your Cart</h2>
+          <button className="close-button" onClick={toggleCart}>
+            <FaTimes />
+          </button>
+        </div>
+        <div className="cart-content">
+          {cartItems.length === 0 ? (
+            <p className="empty-cart">Your cart is empty.</p>
+          ) : (
+            cartItems.map((item, index) => (
+              <div className="cart-item" key={index}>
+                <button className="remove-item-button" onClick={() => handleRemove(index)}>
+                  <FaTimes />
+                </button>
+                <img
+                  src={
+                    getItemImage(item) ||
+                    item.components?.sides[0]?.image ||
+                    item.components?.entrees[0]?.image
+                  }
+                  alt={item.product_name || item.name}
+                  className="cart-item-image"
+                />
+                <div className="cart-item-details">
+                  <p className="cart-item-name">{item.product_name || item.name}</p>
+                  {item.components && (
+                    <div className="cart-item-components">
+                      {item.components.sides.length > 0 && (
+                        <div>
+                          <strong>Sides:</strong>
+                          <ul>
+                            {item.components.sides.map((side, idx) => (
+                              <li key={`side-${idx}`}>{side.product_name || side.name}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      {item.components.entrees.length > 0 && (
+                        <div>
+                          <strong>Entrees:</strong>
+                          <ul>
+                            {item.components.entrees.map((entree, idx) => (
+                              <li key={`entree-${idx}`}>{entree.product_name || entree.name}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  <div className="cart-item-quantity-controls">
+                    <button className="quantity-button" onClick={() => handleDecrement(index)}>
+                      <FaMinus />
+                    </button>
+                    <span className="quantity-display">{item.quantity}</span>
+                    <button className="quantity-button" onClick={() => handleIncrement(index)}>
+                      <FaPlus />
+                    </button>
                   </div>
-                )}
-                <div className="cart-item-quantity-controls">
-                  <button className="quantity-button" onClick={() => handleDecrement(index)}>
-                    <FaMinus />
-                  </button>
-                  <span className="quantity-display">{item.quantity}</span>
-                  <button className="quantity-button" onClick={() => handleIncrement(index)}>
-                    <FaPlus />
-                  </button>
                 </div>
+                <p className="cart-item-price">
+                  ${(getItemPrice(item) * item.quantity).toFixed(2)}
+                </p>
               </div>
-              <p className="cart-item-price">
-                ${(getItemPrice(item) * item.quantity).toFixed(2)}
-              </p>
+            ))
+          )}
+        </div>
+        <div className="cart-footer">
+          <div className="cart-totals">
+            <div className="cart-subtotal">
+              <span>Subtotal</span>
+              <span>${calculateSubtotal(cartItems).toFixed(2)}</span>
             </div>
-          ))
+            <div className="cart-tax">
+              <span>Tax</span>
+              <span>${calculateTax(cartItems).toFixed(2)}</span>
+            </div>
+            <div className="cart-total">
+              <span>Total</span>
+              <span>${calculateTotal(cartItems).toFixed(2)}</span>
+            </div>
+          </div>
+          <button className="checkout-footer-button">Checkout</button>
+        </div>
+
+        {showConfirmDialog && (
+          <ConfirmDialog
+            message={`Are you sure you want to remove "${
+              itemToRemove.item.product_name || itemToRemove.item.name
+            }" from your cart?`}
+            onConfirm={confirmRemoveItem}
+            onCancel={cancelRemoveItem}
+          />
         )}
       </div>
-      <div className="cart-footer">
-        <div className="cart-totals">
-          <div className="cart-subtotal">
-            <span>Subtotal</span>
-            <span>${calculateSubtotal(cartItems).toFixed(2)}</span>
-          </div>
-          <div className="cart-tax">
-            <span>Tax</span>
-            <span>${calculateTax(cartItems).toFixed(2)}</span>
-          </div>
-          <div className="cart-total">
-            <span>Total</span>
-            <span>${calculateTotal(cartItems).toFixed(2)}</span>
-          </div>
-        </div>
-        <button className="checkout-footer-button">Checkout</button>
-      </div>
-
-      {/* Confirmation Dialog */}
-      {showConfirmDialog && (
-        <ConfirmDialog
-          message={`Are you sure you want to remove "${
-            itemToRemove.item.product_name || itemToRemove.item.name
-          }" from your cart?`}
-          onConfirm={confirmRemoveItem}
-          onCancel={cancelRemoveItem}
-        />
-      )}
-    </div>
+    </>
   );
 }
 
