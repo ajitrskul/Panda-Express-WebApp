@@ -9,6 +9,8 @@ from google_auth_oauthlib.flow import Flow
 app = Flask(__name__)
 app.config.from_object(Config)
 
+register_secret_key(app)
+
 # Register extensions and blueprints
 register_extensions(app)
 register_blueprints(app)

@@ -12,8 +12,8 @@ const LoginScreen = ({ navigation }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await api.get('/kiosk/desserts');
-        console.log('API Response:', response.data); // Debugging output
+        const response = await api.get('/mobile');
+        console.log('API Response:', response.data); 
         setData(response.data);
       } catch (err) {
         console.error('Error fetching data:', err);
@@ -53,16 +53,9 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={ styles.textPadding }>Data from /kiosk/desserts:</Text>
-      {data && Array.isArray(data) && data.length > 0 ? (
-        data.map((item, index) => (
-          <View key={index} style={styles.itemContainer}>
-            <Text>Product Name: {item.product_name}</Text>
-            <Text>Description: {item.product_description}</Text>
-            <Text>Calories: {item.calories}</Text>
-            <Text>Allergens: {item.allergens}</Text>
-          </View>
-        ))
+      <Text style={styles.textPadding}>Data from /mobile:</Text>
+      {data ? (
+        <Text>{JSON.stringify(data)}</Text>
       ) : (
         <Text>No data available</Text>
       )}
@@ -106,16 +99,9 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     paddingHorizontal: 10,
   },
-  itemContainer: {
-    marginVertical: 10,
-    padding: 10,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 5,
-  },
   textPadding: {
     paddingTop: 10,
-  }
+  },
 });
 
 export default LoginScreen;
