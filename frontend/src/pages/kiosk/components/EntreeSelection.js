@@ -45,7 +45,7 @@ const EntreeSelection = ({ onItemSelect }) => {
   };
 
   const handleEntreeSelect = (entree) => {
-    onItemSelect(entree); 
+    onItemSelect(entree, 'entree'); 
   };
 
   return (

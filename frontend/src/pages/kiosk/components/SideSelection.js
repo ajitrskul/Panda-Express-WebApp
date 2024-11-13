@@ -37,7 +37,7 @@ const SideSelection = ({ onItemSelect }) => {
   }
 
   const handleSideSelect = (side) => {
-    onItemSelect(side); 
+    onItemSelect(side, 'side'); 
   };
 
   const handleInfoClick = (side) => {
