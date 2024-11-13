@@ -4,7 +4,7 @@
   right: 0;
   top: 0;
   height: 100%;
-  width: 350px;
+  width: 420px;
   background-color: #fff;
   box-shadow: -4px 0 8px rgba(0, 0, 0, 0.2);
   transform: translateX(100%);
@@ -178,4 +178,72 @@
 
 .cart-item-components li {
   font-size: 0.9rem;
+}
+
+/* maybe change  */
+/* Remove item button */
+.remove-item-button {
+  background: none;
+  border: none;
+  color: #ff6f61;
+  font-size: 1.2rem;
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+.remove-item-button:hover {
+  color: #e55a4e;
+}
+
+/* Quantity controls */
+.cart-item-quantity-controls {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.quantity-button {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  color: #000;
+  font-size: 1rem;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.quantity-button:hover {
+  background-color: #f0f0f0;
+}
+
+.quantity-display {
+  margin: 0 10px;
+  font-size: 1rem;
+}
+
+/* Adjust cart-item layout */
+.cart-item {
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.cart-item-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+}
+
+.cart-item-details {
+  flex: 1;
+  padding-left: 10px;
+}
+
+.cart-item-price {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-left: 10px;
 }

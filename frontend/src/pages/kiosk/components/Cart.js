@@ -1,9 +1,53 @@
 // Cart.js
-import React from 'react';
-import { FaTimes } from 'react-icons/fa';
+import React, { useState, useContext } from 'react';
+import { FaTimes, FaPlus, FaMinus } from 'react-icons/fa';
 import '../../../styles/kiosk/cart.css';
+import ConfirmDialog from './ConfirmDialog'; // Import the confirmation dialog
+import { CartContext } from './CartContext'; // Adjust the path as necessary
 
 function Cart({ isOpen, toggleCart, cartItems }) {
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [itemToRemove, setItemToRemove] = useState(null);
+
+  const { setCartItems } = useContext(CartContext);
+
+  const handleIncrement = (index) => {
+    const updatedCartItems = [...cartItems];
+    updatedCartItems[index].quantity += 1;
+    setCartItems(updatedCartItems);
+  };
+
+  const handleDecrement = (index) => {
+    const updatedCartItems = [...cartItems];
+    if (updatedCartItems[index].quantity > 1) {
+      updatedCartItems[index].quantity -= 1;
+      setCartItems(updatedCartItems);
+    } else {
+      // If quantity is 1, prompt for removal confirmation
+      setItemToRemove({ index, item: updatedCartItems[index] });
+      setShowConfirmDialog(true);
+    }
+  };
+
+  const handleRemove = (index) => {
+    // Prompt for removal confirmation
+    setItemToRemove({ index, item: cartItems[index] });
+    setShowConfirmDialog(true);
+  };
+
+  const confirmRemoveItem = () => {
+    const updatedCartItems = [...cartItems];
+    updatedCartItems.splice(itemToRemove.index, 1);
+    setCartItems(updatedCartItems);
+    setShowConfirmDialog(false);
+    setItemToRemove(null);
+  };
+
+  const cancelRemoveItem = () => {
+    setShowConfirmDialog(false);
+    setItemToRemove(null);
+  };
+
   return (
     <div className={`cart-offcanvas ${isOpen ? 'open' : ''}`}>
       <div className="cart-header">
@@ -18,9 +62,12 @@ function Cart({ isOpen, toggleCart, cartItems }) {
         ) : (
           cartItems.map((item, index) => (
             <div className="cart-item" key={index}>
+              <button className="remove-item-button" onClick={() => handleRemove(index)}>
+                <FaTimes />
+              </button>
               <img
                 src={
-                  item.image ||
+                  getItemImage(item) ||
                   item.components?.sides[0]?.image ||
                   item.components?.entrees[0]?.image
                 }
@@ -53,10 +100,18 @@ function Cart({ isOpen, toggleCart, cartItems }) {
                     )}
                   </div>
                 )}
-                <p className="cart-item-quantity">Quantity: {item.quantity}</p>
+                <div className="cart-item-quantity-controls">
+                  <button className="quantity-button" onClick={() => handleDecrement(index)}>
+                    <FaMinus />
+                  </button>
+                  <span className="quantity-display">{item.quantity}</span>
+                  <button className="quantity-button" onClick={() => handleIncrement(index)}>
+                    <FaPlus />
+                  </button>
+                </div>
               </div>
               <p className="cart-item-price">
-                ${ (getItemPrice(item) * item.quantity).toFixed(2) }
+                ${(getItemPrice(item) * item.quantity).toFixed(2)}
               </p>
             </div>
           ))
@@ -79,9 +134,45 @@ function Cart({ isOpen, toggleCart, cartItems }) {
         </div>
         <button className="checkout-footer-button">Checkout</button>
       </div>
+
+      {/* Confirmation Dialog */}
+      {showConfirmDialog && (
+        <ConfirmDialog
+          message={`Are you sure you want to remove "${
+            itemToRemove.item.product_name || itemToRemove.item.name
+          }" from your cart?`}
+          onConfirm={confirmRemoveItem}
+          onCancel={cancelRemoveItem}
+        />
+      )}
     </div>
   );
 }
+
+function getItemImage(item) {
+  // Return the main item's image if available
+  if (item.image) {
+    return item.image;
+  // } else if (item.name) {
+  //   // Fallback to a default image based on item name
+  //   return getDefaultImageForItem(item.name);
+  } else {
+    // Fallback to a placeholder image
+    return '/path/to/placeholder-image.png';
+  }
+}
+
+// function getDefaultImageForItem(itemName) {
+//   // Map item names to their corresponding images
+//   const imageMap = {
+//     Bowl: require('../../../assets/bowl.png'),
+//     Plate: require('../../../assets/plate.png'),
+//     'Bigger Plate': require('../../../assets/bigger-plate.png'),
+//     // Add mappings for other items as needed
+//   };
+
+//   return imageMap[itemName] || require('../../../assets/placeholder-image.png');
+// }
 
 function getItemPrice(item) {
   // Use dummy value if price is not available
@@ -89,8 +180,14 @@ function getItemPrice(item) {
     return item.price;
   } else if (item.components) {
     // Sum up the prices of components if available
-    const sidesPrice = item.components.sides.reduce((sum, side) => sum + (side.price || 0), 0);
-    const entreesPrice = item.components.entrees.reduce((sum, entree) => sum + (entree.price || 0), 0);
+    const sidesPrice = item.components.sides.reduce(
+      (sum, side) => sum + (side.price || 0),
+      0
+    );
+    const entreesPrice = item.components.entrees.reduce(
+      (sum, entree) => sum + (entree.price || 0),
+      0
+    );
     return sidesPrice + entreesPrice;
   } else {
     return item.premium_addition || 0;
@@ -98,12 +195,15 @@ function getItemPrice(item) {
 }
 
 function calculateSubtotal(cartItems) {
-  return cartItems.reduce((acc, item) => acc + getItemPrice(item) * item.quantity, 0);
+  return cartItems.reduce(
+    (acc, item) => acc + getItemPrice(item) * item.quantity,
+    0
+  );
 }
 
 function calculateTax(cartItems) {
   const subtotal = calculateSubtotal(cartItems);
-  const taxRate = 0.0825; 
+  const taxRate = 0.0825;
   return subtotal * taxRate;
 }
 
