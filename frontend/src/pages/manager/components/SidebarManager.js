@@ -1,9 +1,9 @@
 
 import '../../../styles/sidebar-manager.css';
 import { useNavigate } from "react-router-dom";
-import beastLogo from "./beastLogo.png";
+import beastLogo from "../../../assets/beast-logo.png";
 import { useLocation } from 'react-router-dom';
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export function SidebarManager(){
     const navigate = useNavigate();
@@ -38,7 +38,7 @@ export function SidebarManager(){
     const SidebarClick = (event) =>{
       const id=event.target.id;
         switch(id){
-          case "manager":
+          default:
             navigate("/manager");
             break;
           case "pos":
