@@ -1,5 +1,6 @@
 import { Route, Routes, Link, useNavigate } from "react-router-dom";
 import { useState } from 'react';
+import { NavBar } from "../kiosk/components/NavBar";
 import "../../styles/signup/SignUpPage.css";
 import api from '../../services/api';
 
@@ -279,6 +280,7 @@ export default function SignUpPage() {
         path="/"
         element={
         <>
+          <NavBar></NavBar>
           <div className="signup-bg"></div>
           <div className="container-fluid signup-bg2-container">
             <div className="row signup-bg2-row justify-content-center">

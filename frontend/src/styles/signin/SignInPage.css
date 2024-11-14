@@ -77,7 +77,7 @@
 }
 
 @media (width < 576px) {
-  .signin-remove-padding, .signin-last-name {
+  .signin-remove-padding {
     padding-left:0px !important;
     padding-right:0px !important;
   }
@@ -149,4 +149,38 @@
   opacity:1;
 }
 
+.signin-or {
+  margin:10px 0px !important;
+}
+
+.signin-QR {
+  background-color: #A3080C;
+  font-family: 'Julius Sans One', Copperplate;
+  border:none;
+  border-radius:25px;
+  padding:4px 30px !important;
+  font-size:20px;
+
+  border:solid;
+  border-color: #A3080C;
+  border-width:2px;
+
+  color:black;
+  position:relative;  
+}
+
+.signin-QR:hover {
+  color:white;
+  background-color: #cd0c13;
+}
+
+.signin-qr-img {
+  height: 30px;
+  width: 30px;
+  object-fit: cover;
+}
+
+.signin-QR:hover .signin-qr-img {
+  filter: invert(100%) sepia(100%) saturate(18%) hue-rotate(310deg) brightness(104%) contrast(104%);
+}
 

@@ -2,13 +2,13 @@ import { Route, Routes } from "react-router-dom";
 //import { useState } from 'react';
 import "../../styles/signup/SignUpError.css";
 
-export default function SignInError() {
+export default function AuthError() {
   return (
     <Routes>
       <Route
         path="/"
         element = {
-          <>
+          <>  
             <div className="signup-error-bg"></div>
             <div className="container-fluid">
               <div className="row justify-content-center">

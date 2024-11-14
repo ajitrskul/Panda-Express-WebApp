@@ -1,5 +1,7 @@
 import { Route, Routes, Link, useNavigate } from "react-router-dom";
 import { useState } from 'react';
+import { NavBar } from "../kiosk/components/NavBar";
+import QRCode from "../../assets/qr-code.webp"
 import "../../styles/signin/SignInPage.css";
 import api from '../../services/api';
 
@@ -189,6 +191,7 @@ export default function SignInPage() {
         <>
           <div className="signin-bg"></div>
           <div className="container-fluid signin-bg2-container">
+            <NavBar></NavBar>
             <div className="row signin-bg2-row justify-content-center">
               <div className="col-sm-6 signin-bg2"></div>
             </div>
@@ -242,7 +245,20 @@ export default function SignInPage() {
                   </button>
                 </div>
               </div>
+              <div className="row justify-content-center signin-or">
+                OR
+              </div>
             </form>
+            <div className="row justify-content-center">
+              <div className="col-sm-5 text-center">
+                <Link to="/auth/signin/QR" tabIndex="4">
+                  <button className="signin-QR">
+                    <img src={QRCode} className="signin-qr-img" alt="QR code icon"/> 
+                    Login with QR Code 
+                  </button>
+                </Link>
+              </div>
+            </div>
           </div>
         </>
         }

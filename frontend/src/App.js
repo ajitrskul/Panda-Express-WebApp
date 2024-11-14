@@ -6,7 +6,7 @@ import { KitchenMain } from './pages/kitchen';
 import { ManagerMain } from './pages/manager';
 import { KioskMain, KioskLanding, OrderSelection, DrinkSelection, AppsAndMoreSelection } from './pages/kiosk';
 import { PosMain } from './pages/pos';
-import { AuthMain, SignUpPage, SignUpError, SignUpSuccess, SignInError, SignInPage } from './pages/auth';
+import { AuthMain, SignUpPage, SignUpError, SignUpSuccess, AuthError, SignInPage, SignInQR } from './pages/auth';
 
 // Cart Context API
 import { CartProvider } from './pages/kiosk/components/CartContext';
@@ -66,7 +66,8 @@ function App() {
           <Route path="/auth/signup/error" element={<SignUpError />}></Route>
           <Route path="/auth/signup/success" element={<SignUpSuccess />}></Route>
           <Route path="/auth/signin" element={<SignInPage />}></Route>
-          <Route path="/auth/signin/error" element={<SignInError />}></Route>
+          <Route path="/auth/signin/QR" element={<SignInQR />}></Route>
+          <Route path="/auth/error" element={<AuthError />}></Route>
         </Routes>
     </Router>
     </CartProvider>
