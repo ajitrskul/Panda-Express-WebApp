@@ -1,71 +1,50 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image, ActivityIndicator } from 'react-native';
 import api from '../services/api';
 
 const LoginScreen = ({ navigation }) => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(''); 
 
-  useEffect(() => {
-    const fetchData = async () => {
+  const handleLogin = async () => {
+    if (email.trim() && password.trim()) {
+      setLoading(true);
+      setErrorMessage(''); 
       try {
-        const response = await api.get('/mobile');
-        console.log('API Response:', response.data); 
-        setData(response.data);
+        const response = await api.post('/auth/login/customer', { email, password });
+
+        if (response.status === 200 && response.data.success) {
+          Alert.alert('Login Successful', `Welcome, ${email}!`);
+          navigation.navigate('Home'); 
+        } else {
+          setErrorMessage(response.data.message || 'Invalid email or password.');
+        }
       } catch (err) {
-        console.error('Error fetching data:', err);
-        setError(err);
+        const errorMessage = err.response?.data?.message || 'An error occurred during login.';
+        setErrorMessage(errorMessage);
+        console.error('Login Error:', err);
       } finally {
         setLoading(false);
       }
-    };
-
-    fetchData();
-  }, []);
-
-  if (loading) {
-    return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
-    );
-  }
-
-  if (error) {
-    return (
-      <View style={styles.container}>
-        <Text>Error fetching data: {error.message}</Text>
-      </View>
-    );
-  }
-
-  const handleLogin = () => {
-    if (username.trim() && password.trim()) {
-      Alert.alert('Login Successful', `Welcome, ${username}!`);
-      // navigation.navigate('Home'); // Uncomment this if using navigation
     } else {
-      Alert.alert('Error', 'Please enter both username and password.');
+      setErrorMessage('Please enter both email and password.');
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.textPadding}>Data from /mobile:</Text>
-      {data ? (
-        <Text>{JSON.stringify(data)}</Text>
-      ) : (
-        <Text>No data available</Text>
-      )}
+      <Text style={styles.title}>Welcome Back!</Text>
 
-      <Text style={styles.title}>Login</Text>
       <TextInput
         style={styles.input}
-        placeholder="Username"
-        value={username}
-        onChangeText={setUsername}
+        placeholder="Email"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
+        placeholderTextColor="#aaa"
       />
       <TextInput
         style={styles.input}
@@ -73,8 +52,27 @@ const LoginScreen = ({ navigation }) => {
         value={password}
         onChangeText={setPassword}
         secureTextEntry
+        placeholderTextColor="#aaa"
       />
-      <Button title="Login" onPress={handleLogin} />
+
+      {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
+
+      <View style={styles.buttonContainer}>
+        {loading ? (
+          <ActivityIndicator size="large" color="#6200EE" />
+        ) : (
+          <TouchableOpacity style={styles.button} onPress={handleLogin}>
+            <Text style={styles.buttonText}>Login</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+
+      <Text style={styles.registerText}>
+        Don't have an account?{' '}
+        <Text style={styles.registerLink} onPress={() => navigation.navigate('Register')}>
+          Register here
+        </Text>
+      </Text>
     </View>
   );
 };
@@ -82,25 +80,64 @@ const LoginScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: 50,
+    alignItems: 'center', 
     paddingHorizontal: 20,
-    backgroundColor: '#fff',
+    backgroundColor: '#f7f7f7',
+  },
+  logo: {
+    width: 150,
+    height: 150,
+    resizeMode: 'contain',
+    marginBottom: 30,
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 20,
     textAlign: 'center',
+    marginBottom: 20,
   },
   input: {
-    height: 40,
+    width: '80%',
+    height: 45,
     borderColor: '#ccc',
     borderWidth: 1,
-    borderRadius: 5,
-    marginBottom: 12,
-    paddingHorizontal: 10,
+    borderRadius: 8,
+    marginBottom: 15,
+    paddingHorizontal: 12,
+    backgroundColor: '#fff',
+    color: '#333',
   },
-  textPadding: {
-    paddingTop: 10,
+  buttonContainer: {
+    width: '80%',
+    alignItems: 'center', 
+  },
+  button: {
+    backgroundColor: '#a3080c',
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    width: '100%', 
+    marginBottom: 20,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    marginBottom: 15,
+  },
+  registerText: {
+    textAlign: 'center',
+    color: '#333',
+    marginTop: 20,
+  },
+  registerLink: {
+    color: '#a3080c',
+    fontWeight: 'bold',
   },
 });
 
