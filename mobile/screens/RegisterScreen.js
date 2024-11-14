@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Alert, ScrollView, ImageBackground, Dimensions, ActivityIndicator } from 'react-native';
 import api from '../services/api';
+import ReusableButton from '../components/ReusableButton'; 
+import InputField from '../components/InputField'; 
+import BackButton from '../components/BackButton'; 
+
+const { height } = Dimensions.get('window');
 
 const RegisterScreen = ({ navigation }) => {
   const [signupInput, setSignUpInput] = useState({
@@ -59,14 +64,19 @@ const RegisterScreen = ({ navigation }) => {
       setLoading(true);
       try {
         const response = await api.post('/auth/signup/customer', signupInput);
+  
         if (response.status === 200) {
-          Alert.alert('Success', 'Account created successfully!');
+          Alert.alert('Success', response.data.message || 'Account created successfully!');
           navigation.navigate('Login');
         } else {
           setErrorMessage(response.data.message || 'Registration failed.');
         }
       } catch (error) {
-        setErrorMessage('An error occurred during registration.');
+        if (error.response && error.response.data && error.response.data.message) {
+          setErrorMessage(error.response.data.message);
+        } else {
+          setErrorMessage('An error occurred during registration.');
+        }
         console.error('Registration Error:', error);
       } finally {
         setLoading(false);
@@ -75,100 +85,93 @@ const RegisterScreen = ({ navigation }) => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Create an Account</Text>
+    <ImageBackground
+      source={{ uri: 'https://i.imgur.com/OO0tL1D.jpeg' }}
+      style={styles.background}
+    >
+      <BackButton onPress={() => navigation.goBack()} /> 
 
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={signupInput.email}
-        onChangeText={(text) => handleInputChange('email', text)}
-        keyboardType="email-address"
-        autoCapitalize="none"
-        placeholderTextColor="#aaa"
-      />
+      <ScrollView contentContainerStyle={styles.overlayContainer}>
+        <Text style={styles.title}>Create an Account</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="First Name"
-        value={signupInput.first_name}
-        onChangeText={(text) => handleInputChange('first_name', text)}
-        placeholderTextColor="#aaa"
-      />
+        <InputField
+          placeholder="Email"
+          value={signupInput.email}
+          onChangeText={(text) => handleInputChange('email', text)}
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Last Name"
-        value={signupInput.last_name}
-        onChangeText={(text) => handleInputChange('last_name', text)}
-        placeholderTextColor="#aaa"
-      />
+        <InputField
+          placeholder="First Name"
+          value={signupInput.first_name}
+          onChangeText={(text) => handleInputChange('first_name', text)}
+        />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={signupInput.password}
-        onChangeText={(text) => handleInputChange('password', text)}
-        secureTextEntry
-        placeholderTextColor="#aaa"
-      />
+        <InputField
+          placeholder="Last Name"
+          value={signupInput.last_name}
+          onChangeText={(text) => handleInputChange('last_name', text)}
+        />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Confirm Password"
-        value={signupInput.confirm_password}
-        onChangeText={(text) => handleInputChange('confirm_password', text)}
-        secureTextEntry
-        placeholderTextColor="#aaa"
-      />
+        <InputField
+          placeholder="Password"
+          value={signupInput.password}
+          onChangeText={(text) => handleInputChange('password', text)}
+          secureTextEntry
+        />
 
-      {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
+        <InputField
+          placeholder="Confirm Password"
+          value={signupInput.confirm_password}
+          onChangeText={(text) => handleInputChange('confirm_password', text)}
+          secureTextEntry
+        />
 
-      <View style={styles.buttonContainer}>
-        {loading ? (
-          <ActivityIndicator size="large" color="#6200EE" />
-        ) : (
-          <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-            <Text style={styles.buttonText}>Register</Text>
-          </TouchableOpacity>
-        )}
-      </View>
+        {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
 
-      <Text style={styles.loginText}>
-        Already have an account?{' '}
-        <Text style={styles.loginLink} onPress={() => navigation.navigate('Login')}>
-          Log in here
+        <View style={styles.buttonContainer}>
+          {loading ? (
+            <ActivityIndicator size="large" color="#6200EE" />
+          ) : (
+            <ReusableButton
+              onPress={handleSubmit}
+              text="Register"
+            />
+          )}
+        </View>
+
+        <Text style={styles.loginText}>
+          Already have an account?{' '}
+          <Text style={styles.loginLink} onPress={() => navigation.navigate('Login')}>
+            Log in here
+          </Text>
         </Text>
-      </Text>
-    </ScrollView>
+      </ScrollView>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  background: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  },
+  overlayContainer: {
     flexGrow: 1,
-    paddingTop: 50,
+    alignItems: 'center',
+    paddingTop: height * 0.2,
     paddingHorizontal: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.75)', 
     paddingVertical: 30,
-    backgroundColor: '#f7f7f7',
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 20,
-  },
-  input: {
-    height: 45,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 8,
-    marginBottom: 15,
-    paddingHorizontal: 12,
-    backgroundColor: '#fff',
-    color: '#333',
-    width: '80%',
-    alignSelf: 'center',
+    color: '#fff',
   },
   errorText: {
     color: 'red',
@@ -179,21 +182,9 @@ const styles = StyleSheet.create({
     width: '80%',
     alignSelf: 'center',
   },
-  button: {
-    backgroundColor: '#a3080c',
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
   loginText: {
     textAlign: 'center',
-    color: '#333',
+    color: '#fff',
     marginTop: 20,
   },
   loginLink: {

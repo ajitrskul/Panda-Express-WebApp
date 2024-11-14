@@ -1,23 +1,29 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Alert, Dimensions, ActivityIndicator, ImageBackground } from 'react-native';
 import api from '../services/api';
+import ReusableButton from '../components/ReusableButton';
+import InputField from '../components/InputField';
+import BackButton from '../components/BackButton'; 
+
+const { height } = Dimensions.get('window');
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(''); 
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleLogin = async () => {
     if (email.trim() && password.trim()) {
       setLoading(true);
-      setErrorMessage(''); 
+      setErrorMessage('');
       try {
         const response = await api.post('/auth/login/customer', { email, password });
 
         if (response.status === 200 && response.data.success) {
+          const customerId = response.data.customer_id;
           Alert.alert('Login Successful', `Welcome, ${email}!`);
-          navigation.navigate('Home'); 
+          navigation.navigate('Home', { customerId }); 
         } else {
           setErrorMessage(response.data.message || 'Invalid email or password.');
         }
@@ -34,96 +40,77 @@ const LoginScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Welcome Back!</Text>
+    <ImageBackground
+      source={{ uri: 'https://i.imgur.com/OO0tL1D.jpeg' }}
+      style={styles.background}
+    >
+      <BackButton onPress={() => navigation.goBack()} /> 
 
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
-        placeholderTextColor="#aaa"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        placeholderTextColor="#aaa"
-      />
+      <View style={styles.overlayContainer}>
+        <Text style={styles.title}>Welcome Back!</Text>
 
-      {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
+        <InputField
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
+        <InputField
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
 
-      <View style={styles.buttonContainer}>
-        {loading ? (
-          <ActivityIndicator size="large" color="#6200EE" />
-        ) : (
-          <TouchableOpacity style={styles.button} onPress={handleLogin}>
-            <Text style={styles.buttonText}>Login</Text>
-          </TouchableOpacity>
-        )}
-      </View>
+        {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
 
-      <Text style={styles.registerText}>
-        Don't have an account?{' '}
-        <Text style={styles.registerLink} onPress={() => navigation.navigate('Register')}>
-          Register here
+        <View style={styles.buttonContainer}>
+          {loading ? (
+            <ActivityIndicator size="large" color="#6200EE" />
+          ) : (
+            <ReusableButton
+              onPress={handleLogin}
+              text="Login"
+            />
+          )}
+        </View>
+
+        <Text style={styles.registerText}>
+          Don't have an account?{' '}
+          <Text style={styles.registerLink} onPress={() => navigation.navigate('Register')}>
+            Register here
+          </Text>
         </Text>
-      </Text>
-    </View>
+      </View>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  background: {
     flex: 1,
-    paddingTop: 50,
-    alignItems: 'center', 
-    paddingHorizontal: 20,
-    backgroundColor: '#f7f7f7',
+    width: '100%',
+    height: '100%',
   },
-  logo: {
-    width: 150,
-    height: 150,
-    resizeMode: 'contain',
-    marginBottom: 30,
+  overlayContainer: {
+    flex: 1,
+    alignItems: 'center',
+    paddingTop: height * 0.34, 
+    paddingHorizontal: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.75)', 
+    padding: 20,
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 20,
-  },
-  input: {
-    width: '80%',
-    height: 45,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 8,
-    marginBottom: 15,
-    paddingHorizontal: 12,
-    backgroundColor: '#fff',
-    color: '#333',
+    color: '#fff',
   },
   buttonContainer: {
     width: '80%',
-    alignItems: 'center', 
-  },
-  button: {
-    backgroundColor: '#a3080c',
-    paddingVertical: 12,
-    borderRadius: 8,
     alignItems: 'center',
-    width: '100%', 
-    marginBottom: 20,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
   },
   errorText: {
     color: 'red',
@@ -132,7 +119,7 @@ const styles = StyleSheet.create({
   },
   registerText: {
     textAlign: 'center',
-    color: '#333',
+    color: '#fff',
     marginTop: 20,
   },
   registerLink: {

@@ -146,14 +146,18 @@ def login():
         if response.status_code == 200:
             validation_data = response.json()
             if validation_data.get('valid'):
-                return jsonify({"success": True, "message": "Login successful", "route": "/pos"})
+                return jsonify({
+                    "success": True,
+                    "message": "Login successful",
+                    "customer_id": customer.customer_id 
+                })
             else:
                 return jsonify({"success": False, "message": "Incorrect password"}), 401
         else:
             return jsonify({"success": False, "message": "Error validating password"}), 500
     else:
         return jsonify({"success": False, "message": "Email account not found"}), 404
-    
+
 
 @auth_bp.route("/signup/customer", methods=["POST"])
 def sign_up():
@@ -195,6 +199,21 @@ def sign_up():
     else:
         return jsonify({"success": False, "message": "Error hashing password"}), 500
 
-@auth_bp.route("/login/customer/info", methods=["GET"])
-def customer_info():
-    print()
+
+@auth_bp.route("/login/customer/info/<int:customer_id>", methods=["GET"])
+def get_customer_info(customer_id):
+    try:
+        customer = db.session.query(Customer).filter_by(customer_id=customer_id).first()
+        if customer:
+            customer_data = {
+                "customer_id": customer.customer_id,
+                "email": customer.email,
+                "first_name": customer.first_name,
+                "last_name": customer.last_name,
+                "beast_points": customer.beast_points,
+            }
+            return jsonify({"success": True, "data": customer_data}), 200
+        else:
+            return jsonify({"success": False, "message": "Customer not found"}), 404
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500

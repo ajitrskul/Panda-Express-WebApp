@@ -1,39 +1,50 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, ImageBackground, Dimensions } from 'react-native';
+import ReusableButton from '../components/ReusableButton'; 
+
+const { height } = Dimensions.get('window');
 
 const LandingScreen = ({ navigation }) => {
   return (
-    <View style={styles.container}>
-      <Image source={require('../assets/beast-logo.png')} style={styles.logo} />
-      
-      <Text style={styles.title}>Beastmode x Panda Express</Text>
-      <Text style={styles.subtitle}>Earn Beast Points!</Text>
-      
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate('Login')}
-        >
-          <Text style={styles.buttonText}>Login</Text>
-        </TouchableOpacity>
-      </View>
-      <Text style={styles.registerText}>
-        Don't have an account?{' '}
-        <Text style={styles.registerLink} onPress={() => navigation.navigate('Register')}>
-          Register here
+    <ImageBackground
+      source={{ uri: 'https://i.imgur.com/OO0tL1D.jpeg' }} 
+      style={styles.background}
+    >
+      <View style={styles.overlayContainer}>
+        <Image source={require('../assets/beast-logo.png')} style={styles.logo} />
+        
+        <Text style={styles.title}>Beastmode x Panda Express</Text>
+        <Text style={styles.subtitle}>Start Earning Beast Points Today!</Text>
+        
+        <View style={styles.buttonContainer}>
+          <ReusableButton
+            onPress={() => navigation.navigate('Login')}
+            text="Login"
+          />
+        </View>
+        <Text style={styles.registerText}>
+          Don't have an account?{' '}
+          <Text style={styles.registerLink} onPress={() => navigation.navigate('Register')}>
+            Register here
+          </Text>
         </Text>
-      </Text>
-    </View>
+      </View>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  background: {
     flex: 1,
-    justifyContent: 'center',
+    width: '100%',
+    height: '100%',
+  },
+  overlayContainer: {
+    flex: 1,
     alignItems: 'center',
+    paddingTop: height * 0.25, 
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: 'rgba(0, 0, 0, 0.75)', 
   },
   logo: {
     width: 150,
@@ -42,36 +53,24 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   title: {
-    fontSize: 28,
+    fontSize: 35,
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 10,
+    color: '#fff', 
   },
   subtitle: {
     fontSize: 16,
-    color: '#555',
+    color: '#fff', 
     textAlign: 'center',
     marginBottom: 30,
-  },
-  button: {
-    backgroundColor: '#a3080c',
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
   },
   buttonContainer: {
     width: '80%', 
   },
   registerText: {
     textAlign: 'center',
-    color: '#333',
+    color: '#fff', 
     marginTop: 20,
   },
   registerLink: {
