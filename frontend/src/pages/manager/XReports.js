@@ -7,19 +7,18 @@ import '../../styles/manager.css';
 
 function XReports() {
   const [XReportsData, setXReportsData] = useState();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   const fetchXReport = async () => {
-    const response = await api.get('/manager/xreports'); 
+    const response = await api.get('/manager'); 
     setXReportsData(response.data);
+    
   };
 
   useEffect(() => {
     const reportDropupIcon=document.getElementById("report-dropup-icon");
     reportDropupIcon.style.display="none";
     
-    //fetchXReport();
+    fetchXReport();
   }, []); 
 
 
@@ -52,10 +51,10 @@ function XReports() {
         X Report
       </div>
       
-      {XReportsData ? (
-        <div class="reports-date"> {/*XReportsData.message*/} </div>// Display the "message" from the API response
+      {XReportsData.message ? (
+        <div class="reports-date"> {XReportsData.message} </div>// Display the "message" from the API response
       ) : (
-        <div class="reports-date">  </div>
+        <div class="reports-date">  loading</div>
       )}
      
       </div>
