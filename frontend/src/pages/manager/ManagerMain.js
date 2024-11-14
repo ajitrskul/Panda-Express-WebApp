@@ -19,13 +19,15 @@ function ManagerMain() {
   useEffect(() => {
     fetchAPI();
   }, []);
-
-  
-  
   
   return (
     <div className="container-fluid">
       <SidebarManager></SidebarManager>
+      {managerData ? (
+        <div> {/*XReportsData.message*/} </div>// Display the "message" from the API response
+      ) : (
+        <div></div>
+      )}
     </div>
   );
 }

@@ -7,8 +7,8 @@ import '../../styles/manager.css';
 
 function XReports() {
   const [XReportsData, setXReportsData] = useState();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  // const [loading, setLoading] = useState(true);
+  // const [error, setError] = useState(null);
 
   const fetchXReport = async () => {
     const response = await api.get('/manager/xreports'); 
