@@ -9,7 +9,7 @@ function XReports() {
   const [XReportsData, setXReportsData] = useState();
 
   const fetchXReport = async () => {
-    const response = await api.get('/manager'); 
+    const response = await api.get('/manager/xreports'); 
     setXReportsData(response.data);
     
   };
@@ -51,10 +51,10 @@ function XReports() {
         X Report
       </div>
       
-      {XReportsData.message ? (
-        <div class="reports-date"> {XReportsData.message} </div>// Display the "message" from the API response
+      {XReportsData ? (
+        <div class="reports-date"> {XReportsData.message[0]} </div>// Display the "message" from the API response
       ) : (
-        <div class="reports-date">  loading</div>
+        <div class="reports-date"></div>
       )}
      
       </div>
@@ -64,7 +64,7 @@ function XReports() {
           Hour
           <i class="bi bi-clock-history report-card-icon"></i>
           <hr class="report-divider"></hr>
-          5
+          {XReportsData.message[1]}
         </div>
         <div class="report-card">
           Total Sales

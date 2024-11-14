@@ -9,8 +9,17 @@ def manager_dashboard():
 
 @manager_bp.route('/xreports', methods=['GET'])
 def xreports_data():
-    #currDate= db.session.execute(
-    #text("""SELECT order_date_time FROM "order" WHERE order_id = (SELECT max(order_id) FROM "order");""")
-    #).fetchall()
-    #currDay=str(currDate[0][0])[5:10] + "-" + str(currDate[0][0])[0:4]
-    return {"message" : "hello"}
+    currDate= db.session.execute(
+    text("""SELECT order_date_time FROM "order" WHERE order_id = (SELECT max(order_id) FROM "order");""")
+    ).fetchall()
+    currDay=str(currDate[0][0])[5:10]  + "-" + str(currDate[0][0])[0:4]
+    currHour=int(str(currDate[0][0])[11:13])
+
+    if (currHour<12):
+        hourDisplay=currHour+2
+    else:
+        hourDisplay=currHour-10
+
+
+    returnList=[currDay]+[hourDisplay]
+    return {"message": returnList}
