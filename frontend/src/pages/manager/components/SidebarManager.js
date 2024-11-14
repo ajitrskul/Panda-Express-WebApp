@@ -49,6 +49,7 @@ export function SidebarManager(){
             break;
           case "kiosk":
             navigate("/kiosk");
+            window.location.reload();
             break;
           case "menu":
             navigate("/menu");
