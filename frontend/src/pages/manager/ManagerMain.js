@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import api from '../../services/api'; // Axios instance with base URL
+import { SidebarManager } from './components/SidebarManager';
 
 function ManagerMain() {
   const [managerData, setManagerData] = useState(null); // State to hold data
-
+  
   // Fetch data from /manager
   const fetchAPI = async () => {
     try {
@@ -19,14 +20,12 @@ function ManagerMain() {
     fetchAPI();
   }, []);
 
+  
+  
+  
   return (
     <div className="container-fluid">
-      <h1>Manager View</h1>
-      {managerData ? (
-        <p>{managerData.message}</p> // Display the "message" from the API response
-      ) : (
-        <p>Loading...</p> // Show loading text while data is being fetched
-      )}
+      <SidebarManager></SidebarManager>
     </div>
   );
 }
