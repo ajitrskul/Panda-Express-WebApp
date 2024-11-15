@@ -1,170 +1,106 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Route, Routes, Link } from "react-router-dom";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { NavBar } from "../kiosk/components/NavBar";
 import { QrReader } from 'react-qr-reader';
+import api from '../../services/api';
 import "../../styles/signin/SignInQR.css";
 
 
 export default function SignInQR() {
-  const videoRef = useRef(null);
-  const [data, setData] = useState('No result');
+  const [data, setData] = useState({
+    customer_id: null,
+    email: "",
+    first_name: "",
+    last_name: "",
+    beast_points: null
+  });
+  const [error, setError] = useState({
+    videoClass: "col-12 qr-video",
+    errorMsg: ""
+  });
 
+  const navigate = useNavigate();
 
-  //   let stream = null;
-  //   const getVideo = async () => {
-  //   try {
-  //     stream = await navigator.mediaDevices.getUserMedia({ video: true });
-  //     if (videoRef.current) {
-  //       const video = videoRef.current;
-  //       video.srcObject = stream;
+  const leavePage = ((event) => {
+    switch (event.target.id) {
+      case 'qr-kiosk':
+        navigate('/kiosk')
+        window.location.reload();
+        break;
+      case 'qr-login':
+        navigate('/auth/signin')
+        window.location.reload();
+        break
+      default:
+        break;
+    }
+  });
 
-  //       // Wait until the video is ready before playing
-  //       video.oncanplay = () => {
-  //         video.play().catch((error) => {
-  //           console.error('Error playing the video:', error);
-  //         });
-  //       };
-  //     }
-  //   } catch (err) {
-  //     console.error('Error accessing media devices:', err);
-  //   }
-  // };
-
-  // if (location.path === '/auth/signin/QR') {
-  //   getVideo();
-  // }
-
-
-
-  // useEffect(() => {
-  //   getVideo();
-
-  //   // Clean up the stream when the component unmounts or visibility changes
-  //   return () => {
-  //     if (stream) {
-  //       stream.getTracks().forEach(track => track.stop());
-  //     }
-  //   };
-  // });
-
-  // const stopCamera = () => {
-  //   if (videoRef.current) {
-  //     // Pause and reset the video element
-  //     // videoRef.current.pause();
-  //     // videoRef.current.currentTime = 0;
-  
-  //     // Get the media stream and stop all its tracks
-  //     if (videoRef.current.srcObject) {
-  //       (videoRef.current.srcObject).getTracks().forEach(track => {
-  //         track.stop(); // Stops each media track, including video and audio
-  //       });
-  //       videoRef.current.srcObject = null; // Detach the stream from the video element
-  //     }
-  //   }
-  
-  //   // Check if any streams are still active and remove them if necessary
-  //   // navigator.mediaDevices.getUserMedia({ video: true })
-  //   //   .then(stream => {
-  //   //     stream.getTracks().forEach(track => track.stop());
-  //   //   })
-  //   //   .catch(error => {
-  //   //     console.warn("Error stopping additional media streams:", error);
-  //   //   });
-  // };
-
-
-
-  // useEffect(() => {
-  //   let stream;
-  //   const getVideo = async () => {
-  //     try {
-  //       stream = await navigator.mediaDevices.getUserMedia({ video: true });
-  //       if (videoRef.current) {
-  //         //const video = videoRef.current;
-  //         videoRef.current.srcObject = stream;
-  //         // Wait until the video is ready before playing
-  //         videoRef.current.oncanplay = () => {
-  //           videoRef.current.play().catch((error) => {
-  //             console.error('Error playing the video:', error);
-  //           });
-  //         };
-  //       }
-  //     } catch (err) {
-  //       console.error('Error accessing media devices:', err);
-  //     }
-  //   };
-  //   getVideo();
-
-  //   // const stopCamera = () => {
-  //   //   if (videoRef.current) {
-  //   //     videoRef.current.pause();
-  //   //     videoRef.current.currentTime = 0;
-  
-  //   //     //stream = videoRef.current.srcObject;
-  //   //     if (videoRef.current.srcObject) {
-  //   //       videoRef.current.srcObject.getTracks().forEach(track => track.stop()); // Stop the camera
-  //   //       videoRef.current.srcObject = null; // Detach the stream
-  //   //     }
-  //   //   }
-  //   // };
-  //   return () => {
-  //     // if (videoRef.current.srcObject) {
-  //     // // Pause and reset the video element
-  //     // // videoRef.current.pause();
-  //     // // videoRef.current.currentTime = 0;
-  
-  //     // // Get the media stream and stop all its tracks
-  //     //   if (videoRef.current.srcObject) {
-  //     //     (videoRef.current.srcObject).getTracks().forEach(track => {
-  //     //       track.stop(); // Stops each media track, including video and audio
-  //     //     });
-  //     //     videoRef.current.srcObject = null; // Detach the stream from the video element
-  //     //   }
-  //     // }
-  //     stream = null;
-  //     stopCamera();
-  //   };
-  // }, [])
+  const testSignIn = async () => {
+    const signinSuccess = await api.post("auth/signin/qr", data);
+    if (signinSuccess) {
+      //account information matches an account in the database
+      navigate("/auth/signup/success");
+      window.location.reload();
+    }
+    else {
+      setError({
+        videoClass: "col-12 qr-video qr-video-error",
+        errorMsg: 'Invalid QR Code'});
+    }
+  };
 
   return (
     <>
       <NavBar />
-      <Routes>
-        <Route
-        path="/"
-        element={
-          <>
-            <div className="qr-bg"></div>
-            <div className="qr-container">
-              <div className="fluid-container qr-video-container">
-                <h1 className="row text-center">
-                  <p className="col-12 qr-title">Login with QR-Code</p>
-                </h1>
-                <div className="row justify-content-center">
-                  {/* <video ref={videoRef} className="col-12 qr-video" autoPlay playsInline /> */}
-                  <QrReader onResult={(result, error) => {
-                    if (result) {
-                      setData(result.text);
-                    }
-                    if (error) {
-                      console.error(error);
-                    }
-                  }}
-                  className="col-12 qr-video"
-                  />
-                </div>
-                <div className="qr-return text-center">
-                  <p className="qr-margin">Return to <Link to="/kiosk">Kiosk</Link></p>
-                  <p style={{fontWeight: 'bold'}}>OR</p>
-                  <p>Login with Username and Password <Link to="/auth/signin">Here.</Link></p>
-                  <p>{data}</p>
-                </div>
-              </div>
-            </div>
-          </>
-        }>
-        </Route>
-      </Routes>
+      <div className="qr-bg"></div>
+      <div className="qr-container">
+        <div className="fluid-container qr-video-container">
+          <h1 className="row text-center">
+            <p className="col-12 qr-title">Login with QR-Code</p>
+          </h1>
+          <div className="row justify-content-center qr-row">
+            <QrReader onResult={(result) => {
+              if (result) {
+                try {
+                  const scannedInfo = JSON.parse(result.text);
+                  setData({
+                    customer_id: scannedInfo.customer_id,
+                    email: scannedInfo.email,
+                    first_name: scannedInfo.first_name,
+                    last_name: scannedInfo.last_name,
+                    beast_points: scannedInfo.beast_points
+                  });
+                } catch(err) {
+                  setError({
+                    videoClass: "col-12 qr-video qr-video-error",
+                    errorMsg: 'Invalid QR Code'});
+                  return;
+                }   
+
+                try {
+                  testSignIn(data);
+                } catch(err) {
+                  navigate("/auth/signup/error");
+                  window.location.reload();
+                }
+              }
+            }}
+            className={error.videoClass}
+            />
+            {error && <p className="qr-error-msg text-center">{error.errorMsg}</p>}
+          </div>
+          <div className="row justify-content-center">
+            <button className="qr-navigate col-6" id="qr-kiosk" onClick={leavePage}>Return to Kiosk</button>
+          </div>
+          <div className="row text-center qr-or">
+            <p style={{fontWeight: 'bold'}} className="qr-or">OR</p>
+          </div>
+          <div className="row text-center">
+            <button className="qr-navigate" id="qr-login" onClick={leavePage}>Login with Username and Password</button>
+          </div>
+        </div>
+      </div>
     </>
   );
 }

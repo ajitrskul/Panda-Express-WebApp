@@ -23,7 +23,7 @@ export default function SignUpSuccess() {
                     <div className="col-sm-9 text-center">
                       <h1 className="signup-success-title">Sign Up Success!</h1>
                       <p className="signup-success-links">
-                        You can log in with your new account <Link to="/auth" tabIndex="1">here</Link>
+                        You can log in with your new account <Link to="/auth/signin" tabIndex="1">here</Link>
                       </p>
                       <Link className="signup-success-links" to="/kiosk" tabIndex="2">Return to Kiosk</Link>
                     </div>

@@ -38,6 +38,7 @@ export function NavBar(){
   }
   const navAuth = () => {
     navigate(`/auth/signin`);
+    window.location.reload();
  }
 
     return (

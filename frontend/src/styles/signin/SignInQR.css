@@ -48,13 +48,18 @@
 }
 
 .qr-video {
-  max-width:100%;
-  height: 150px !important;
+  height:250px !important;
+  width:250px !important;
+  padding:0px !important;
+}
+
+.qr-video video{
+  object-fit: cover !important; /* Ensure the video fills the container while maintaining aspect ratio */
 
   border: solid;
   border-color:black;
-  border-width:2px;
-  border-radius:12px;
+  border-width:3px;
+  border-radius:20px;
   padding:0px !important;
 }
 
@@ -67,4 +72,43 @@
 
 .qr-margin {
   margin-top: 20px;
+}
+
+.qr-navigate {
+  background-color: #A3080C;
+  font-family: 'Julius Sans One', Copperplate;
+  border:none;
+  border-radius:25px;
+  padding:10px 0 !important;
+  font-size:15px;
+
+  border:solid;
+  border-color: #A3080C;
+  border-width:1px;
+
+  color:black;
+}
+
+.qr-navigate:hover {
+  color:white;
+  background-color: #cd0c13;
+}
+
+.qr-navigate:active {
+  background-color:#fe0b13;
+  opacity:0.8
+}
+
+.qr-or {
+  margin-top:5px !important;
+  margin-bottom: 5px !important;
+}
+
+.qr-error-msg {
+  color:red;
+  font-weight:bold;
+}
+
+.qr-video-error video{
+  border-color:red !important;
 }

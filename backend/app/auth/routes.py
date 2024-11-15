@@ -60,6 +60,22 @@ def signinEmail():
     else:
         return jsonify(False)  # or handle the case where the customer is not found
 
+@auth_bp.route("/signin/qr", methods=["POST"])
+def authenticateLogin():
+    customerLogin = request.get_json()
+    isValidLogin = False
+
+    queryCustomer = Customer.query.filter_by(email=customerLogin["email"]).first()
+
+    if (queryCustomer):
+        isValidLogin = ((customerLogin.customer_id == queryCustomer.customer_id) and (customerLogin.first_name == queryCustomer.first_name) and (customerLogin.last_name == queryCustomer.last_name) and (customerLogin.beast_points == queryCustomer.beast_points))
+    
+    if (isValidLogin):
+        return jsonify(True)
+    else:
+        return jsonify(False)
+
+
 
 @auth_bp.route("/login/db", methods=["POST"])
 def authenticate_db():
