@@ -1,4 +1,5 @@
 from .extensions import db
+from datetime import datetime, timezone
 
 class ProductItem(db.Model):
     __tablename__ = 'product_item'
@@ -47,3 +48,43 @@ class User(db.Model):
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
     role = db.Column(db.String(20), nullable=False)
+
+
+class Order(db.Model):
+    __tablename__ = 'order'
+
+    order_id = db.Column(db.Integer, primary_key=True)
+    order_date_time = db.Column(db.DateTime, nullable=False, default=datetime.now(timezone.utc))
+    employee_id = db.Column(db.Integer, db.ForeignKey('employee_info.employee_id'), nullable=True)
+    total_price = db.Column(db.Numeric(7, 2), nullable=False)
+
+    order_menu_items = db.relationship('OrderMenuItem', backref='order', lazy=True)
+
+class OrderMenuItem(db.Model):
+    __tablename__ = 'order_menu_item'
+
+    order_menu_item_id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.Integer, db.ForeignKey('order.order_id'), nullable=False)
+    menu_item_id = db.Column(db.Integer, db.ForeignKey('menu_item.menu_item_id'), nullable=False)
+    subtotal_price = db.Column(db.Numeric(7, 2), nullable=False)
+
+    order_menu_item_products = db.relationship('OrderMenuItemProduct', backref='order_menu_item', lazy=True)
+
+class OrderMenuItemProduct(db.Model):
+    __tablename__ = 'order_menu_item_product'
+
+    order_menu_item_product_id = db.Column(db.Integer, primary_key=True)
+    order_menu_item_id = db.Column(db.Integer, db.ForeignKey('order_menu_item.order_menu_item_id'), nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey('product_item.product_id'), nullable=False)
+
+class EmployeeInfo(db.Model):
+    __tablename__ = 'employee_info'
+
+    employee_id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(50), nullable=False)
+    password = db.Column(db.String(255), nullable=False)
+    first_name = db.Column(db.String(50), nullable=False)
+    last_name = db.Column(db.String(50), nullable=False)
+    role = db.Column(db.String(20), nullable=False)
+
+    orders = db.relationship('Order', backref='employee', lazy=True)

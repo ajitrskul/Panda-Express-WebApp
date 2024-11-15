@@ -3,6 +3,9 @@ from flask import request, jsonify
 from sqlalchemy import text
 from app.extensions import db
 
+from app.models import Order, OrderMenuItem, OrderMenuItemProduct, MenuItem, ProductItem, EmployeeInfo
+from datetime import datetime, timezone
+
 @kiosk_bp.route('/', methods=['GET'])
 def customer_kiosk_home():
     return {"message": "Welcome to the Customer Kiosk"}
@@ -243,3 +246,129 @@ def get_desserts():
     ]
 
     return jsonify(desserts_list), 200
+
+
+@kiosk_bp.route('/orders', methods=['POST'])
+def create_order():
+    data = request.get_json()
+    total_price = data.get('total_price')
+    cart_items = data.get('cart_items')
+
+    if not cart_items or not total_price:
+        return jsonify({'error': 'Invalid order data'}), 400
+
+    try:
+        # Start a transaction
+        with db.session.begin_nested():
+            # Create the Order
+            order = Order(
+                order_date_time=datetime.now(timezone.utc),
+                total_price=total_price,
+                employee_id=None
+                # You can include employee_id if applicable
+            )
+            db.session.add(order)
+            db.session.flush()  # To get the order_id
+
+            # For each cart item, create OrderMenuItem and OrderMenuItemProduct
+            for cart_item in cart_items:
+                name = cart_item.get('name')
+                quantity = cart_item.get('quantity', 1)
+                base_price = cart_item.get('basePrice')
+                premium_multiplier = cart_item.get('premiumMultiplier')
+                components = cart_item.get('components')
+
+                # Get the MenuItem by name
+                menu_item = MenuItem.query.filter_by(item_name=name).first()
+                if not menu_item:
+                    return jsonify({'error': f'Menu item "{name}" not found'}), 400
+
+                # Calculate subtotal_price for this cart item
+                subtotal_price = get_item_price(cart_item)
+
+                # Create OrderMenuItem entries based on quantity
+                for _ in range(quantity):
+                    order_menu_item = OrderMenuItem(
+                        order_id=order.order_id,
+                        menu_item_id=menu_item.menu_item_id,
+                        subtotal_price=subtotal_price / quantity
+                    )
+                    db.session.add(order_menu_item)
+                    db.session.flush()  # To get the order_menu_item_id
+
+                    # Add OrderMenuItemProduct entries for sides and entrees
+                    # Sides
+                    for side in components.get('sides', []):
+                        product_id = side.get('product_id')
+                        if not product_id:
+                            return jsonify({'error': 'Product ID missing in side item'}), 400
+                        # Verify that the product exists
+                        product = ProductItem.query.get(product_id)
+                        if not product:
+                            return jsonify({'error': f'Product with ID {product_id} not found'}), 400
+                        # Create OrderMenuItemProduct
+                        order_menu_item_product = OrderMenuItemProduct(
+                            order_menu_item_id=order_menu_item.order_menu_item_id,
+                            product_id=product_id
+                        )
+                        db.session.add(order_menu_item_product)
+                    # Entrees
+                    for entree in components.get('entrees', []):
+                        product_id = entree.get('product_id')
+                        if not product_id:
+                            return jsonify({'error': 'Product ID missing in entree item'}), 400
+                        # Verify that the product exists
+                        product = ProductItem.query.get(product_id)
+                        if not product:
+                            return jsonify({'error': f'Product with ID {product_id} not found'}), 400
+                        # Create OrderMenuItemProduct
+                        order_menu_item_product = OrderMenuItemProduct(
+                            order_menu_item_id=order_menu_item.order_menu_item_id,
+                            product_id=product_id
+                        )
+                        db.session.add(order_menu_item_product)
+
+                # Handle simple items (e.g., drinks, appetizers)
+                if not components:
+                    # Create OrderMenuItem entries based on quantity
+                    for _ in range(quantity):
+                        order_menu_item = OrderMenuItem(
+                            order_id=order.order_id,
+                            menu_item_id=menu_item.menu_item_id,
+                            subtotal_price=subtotal_price / quantity
+                        )
+                        db.session.add(order_menu_item)
+                        db.session.flush()
+
+            # Commit the transaction
+            db.session.commit()
+        return jsonify({'message': 'Order created successfully', 'order_id': order.order_id}), 201
+    except Exception as e:
+        db.session.rollback()
+        print('Error creating order:', e)
+        return jsonify({'error': 'An error occurred while creating the order.'}), 500
+
+def get_item_price(item):
+    # Implement the pricing logic
+    quantity = item.get('quantity', 1)
+    if 'basePrice' in item and 'premiumMultiplier' in item and 'components' in item:
+        base_price = float(item['basePrice'])
+        premium_multiplier = float(item['premiumMultiplier'])
+        components = item['components']
+        total_premium_addition = 0.0
+        # Sides
+        for side in components.get('sides', []):
+            if side.get('is_premium'):
+                total_premium_addition += float(side.get('premium_addition', 0))
+        # Entrees
+        for entree in components.get('entrees', []):
+            if entree.get('is_premium'):
+                total_premium_addition += float(entree.get('premium_addition', 0))
+        total_price = base_price + premium_multiplier * total_premium_addition
+        return round(total_price * quantity, 2)
+    elif 'price' in item:
+        return round(float(item['price']) * quantity, 2)
+    elif 'premium_addition' in item:
+        return round(float(item.get('premium_addition', 0)) * quantity, 2)
+    else:
+        return 0.0

@@ -1,19 +1,54 @@
-import React, { useState, useContext } from 'react';
-import { useEffect } from 'react';
+// Cart.js
+import React, { useState, useContext, useEffect } from 'react';
 import { FaTimes, FaPlus, FaMinus } from 'react-icons/fa';
 import '../../../styles/kiosk/cart.css';
 import ConfirmDialog from './ConfirmDialog'; 
 import { CartContext } from './CartContext';
+import api from '../../../services/api';
 
 function Cart({ isOpen, toggleCart, cartItems }) {
   const [showOverlay, setShowOverlay] = useState(false);
-  const [overlayClass, setOverlayClass] = useState(''); // FADE CLASS THINGY
+  const [overlayClass, setOverlayClass] = useState('');
 
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [itemToRemove, setItemToRemove] = useState(null);
 
+  const [showOrderConfirmation, setShowOrderConfirmation] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
   const { setCartItems } = useContext(CartContext);
 
+  const handleCheckout = async () => {
+    try {
+      const orderData = {
+        total_price: calculateTotal(cartItems).toFixed(2),
+        cart_items: cartItems,
+      };
+
+      // Send the order data to the backend
+      const response = await api.post('/kiosk/orders', orderData);
+
+      if (response.status === 201) {
+        // Order created successfully
+        console.log('Order created:', response.data);
+
+        // Clear the cart
+        setCartItems([]);
+        toggleCart();
+
+        // Show order confirmation
+        setShowOrderConfirmation(true);
+      } else {
+        // Handle unexpected responses
+        console.error('Unexpected response:', response);
+        setErrorMessage('An unexpected error occurred. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error during checkout:', error);
+      // Handle error, show a message to the user
+      setErrorMessage('Unable to process your order. Please try again.');
+    }
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -71,6 +106,14 @@ function Cart({ isOpen, toggleCart, cartItems }) {
   const cancelRemoveItem = () => {
     setShowConfirmDialog(false);
     setItemToRemove(null);
+  };
+
+  const closeOrderConfirmation = () => {
+    setShowOrderConfirmation(false);
+  };
+
+  const closeErrorMessage = () => {
+    setErrorMessage('');
   };
 
   return (
@@ -164,9 +207,12 @@ function Cart({ isOpen, toggleCart, cartItems }) {
               <span>${calculateTotal(cartItems).toFixed(2)}</span>
             </div>
           </div>
-          <button className="checkout-footer-button">Checkout</button>
+          <button className="checkout-footer-button" onClick={handleCheckout}>
+            Checkout
+          </button>
         </div>
 
+        {/* Confirmation Dialog for Removing Items */}
         {showConfirmDialog && (
           <ConfirmDialog
             message={`Are you sure you want to remove "${
@@ -177,6 +223,30 @@ function Cart({ isOpen, toggleCart, cartItems }) {
           />
         )}
       </div>
+
+      {/* Order Confirmation Dialog */}
+      {showOrderConfirmation && (
+        <div className="order-confirmation-overlay">
+          <div className="order-confirmation-dialog">
+            <p>Your order has been placed successfully!</p>
+            <button className="close-confirmation-button" onClick={closeOrderConfirmation}>
+              OK
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Error Message Dialog */}
+      {errorMessage && (
+        <div className="order-error-overlay">
+          <div className="order-error-dialog">
+            <p>{errorMessage}</p>
+            <button className="close-error-button" onClick={closeErrorMessage}>
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 }
@@ -185,26 +255,11 @@ function getItemImage(item) {
   // Return the main item's image if available
   if (item.image) {
     return item.image;
-  // } else if (item.name) {
-  //   // Fallback to a default image based on item name
-  //   return getDefaultImageForItem(item.name);
   } else {
     // Fallback to a placeholder image
     return '/path/to/placeholder-image.png';
   }
 }
-
-// function getDefaultImageForItem(itemName) {
-//   // Map item names to their corresponding images
-//   const imageMap = {
-//     Bowl: require('../../../assets/bowl.png'),
-//     Plate: require('../../../assets/plate.png'),
-//     'Bigger Plate': require('../../../assets/bigger-plate.png'),
-//     // Add mappings for other items as needed
-//   };
-
-//   return imageMap[itemName] || require('../../../assets/placeholder-image.png');
-// }
 
 function getItemPrice(item) {
   if (item.basePrice !== undefined && item.premiumMultiplier !== undefined && item.components) {
@@ -236,12 +291,12 @@ function getItemPrice(item) {
     return totalPrice;
   } else if (item.price !== undefined) {
     // Simple item with a direct price
-      return item.price;
+    return item.price;
   } else if (item.premium_addition !== undefined) {
     // For individual products like drinks or appetizers
-      return item.premium_addition || 0;
+    return item.premium_addition || 0;
   } else {
-      return 0;
+    return 0;
   }
 }
 

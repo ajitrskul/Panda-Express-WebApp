@@ -1,7 +1,7 @@
-// OrderSelection.js
 import React, { useState, useContext, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import '../../styles/kiosk.css';
+import '../../styles/kiosk/addToCartButton.css';
 import SelectionGrid from './components/SelectionGrid';
 import SideSelection from './components/SideSelection';
 import EntreeSelection from './components/EntreeSelection';
@@ -60,11 +60,10 @@ const OrderSelection = () => {
           entrees: selectedEntrees
         },
         quantity: 1,
-        basePrice: basePrice, // Include basePrice
-        premiumMultiplier: premiumMultiplier // Include premiumMultiplier
+        basePrice: basePrice,
+        premiumMultiplier: premiumMultiplier
       };
 
-      // Check if an identical composed item already exists in the cart
       const existingItemIndex = cartItems.findIndex(cartItem => 
         cartItem.name === mainItem.name &&
         JSON.stringify(cartItem.components) === JSON.stringify(mainItem.components)
@@ -78,7 +77,6 @@ const OrderSelection = () => {
         setCartItems([...cartItems, mainItem]);
       }
 
-      // Optionally reset selections
       setSelectedSides(Array(numSides).fill(null));
       setSelectedEntrees(Array(numEntrees).fill(null));
     }
@@ -95,6 +93,13 @@ const OrderSelection = () => {
           selectedEntrees={selectedEntrees}
         />
       </div>
+
+      {/* Add "Add to Cart" button near the selection grid */}
+      {isSelectionComplete && (
+        <div className="add-to-cart-container-top">
+          <button className="add-to-cart-button" onClick={handleAddToCart}>Add to Cart</button>
+        </div>
+      )}
       
       <div className="container-fluid mt-4">
         {selectedSection === "side" && (
@@ -104,12 +109,6 @@ const OrderSelection = () => {
           <EntreeSelection onItemSelect={(item) => handleItemSelect(item, 'entree')} />
         )}
       </div>
-
-      {isSelectionComplete && (
-        <div className="add-to-cart-container">
-          <button className="add-to-cart-button" onClick={handleAddToCart}>Add to Cart</button>
-        </div>
-      )}
     </div>
   );
 };
