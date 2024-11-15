@@ -18,12 +18,15 @@ function Cart({ isOpen, toggleCart, cartItems }) {
   useEffect(() => {
     if (isOpen) {
       setShowOverlay(true);
-      setOverlayClass('fade-in');
+      setTimeout(() => {
+        setOverlayClass('fade-in');
+      }, 10);
     } else {
-      setOverlayClass('fade-out')
+      setOverlayClass('fade-out');
       setTimeout(() => {
         setShowOverlay(false);
-      }, 300);
+        setOverlayClass(''); 
+      }, 300); 
     }
   }, [isOpen]);
   
