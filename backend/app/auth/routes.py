@@ -87,18 +87,14 @@ def callback():
         flow.fetch_token(authorization_response=request.url)
 
         credentials = flow.credentials
-        request_session = requests.session()
-        cached_session = cachecontrol.CacheControl(request_session)
-        token_request = google.auth.transport.requests.Request(session=cached_session)
 
-        id_info = id_token.verify_oauth2_token(
-            id_token=credentials._id_token,
-            request=token_request,
-            audience=GOOGLE_CLIENT_ID,
-            clock_skew_in_seconds=6000
-        )
-
-        email = id_info.get("email")
+        id_token_str = credentials._id_token
+        token_parts = id_token_str.split('.')
+        payload_encoded = token_parts[1]
+        padding = '=' * (4 - len(payload_encoded) % 4)
+        payload_decoded = base64.urlsafe_b64decode(payload_encoded + padding)
+        payload_json = json.loads(payload_decoded)
+        email = payload_json.get("email")
 
         with db.session.begin():
             employee = db.session.query(Employee).filter_by(email=email).first()
@@ -108,8 +104,8 @@ def callback():
                 re_route_link = current_app.config['base_url'] + "/manager"
             else:
                 re_route_link = current_app.config['base_url'] + "/pos"
-            session["name"] = id_info.get("name")
-            session["email"] = id_info.get("email")
+            session["name"] = payload_json.get("name")
+            session["email"] = payload_json.get("email")
             return redirect(re_route_link)
         else:
             re_route_link = current_app.config['base_url'] + "/auth/signin/error"
