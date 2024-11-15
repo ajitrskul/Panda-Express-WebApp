@@ -106,6 +106,7 @@
         float: right;
         font-size: 25px;
         color: #a3080c;
+       
     }
 
     .report-card-icon-big{
@@ -131,9 +132,51 @@
         display: none;
     }
     #orders-by-hour{
-        font-size: 500px;
-        display:none;
+        display: none;
+        padding: 20px;
     }
+    .table-title{
+       width: 100%;
+       margin: 10px;
+     }
+     .table-title-container{
+        background-color:lightgray;
+        width: 100%;
+        height: 100%;
+        
+        margin-bottom: 2px;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+        font-size: 15px;
+        color:  rgb(98, 98, 98);
+        display: flex;
+     }
+    .orders-by-hour-elem{
+       background-color:rgb(235, 235, 235);
+       width: 100%;
+       height: 100%;
+       padding: 5px;
+       margin: 2px;
+       font-size: 15px;
+       color:  rgb(98, 98, 98);
+    }
+    .orders-by-hour-row{
+        width: 100%;
+        display: flex;
+       
+     }
+     .barchart-container{
+        width:fit-content;
+        font-size: 20px;
+       margin-left: auto;
+       margin-right: auto;
+     }
+     .piechart-container{
+        width:fit-content;
+        font-size: 20px;
+       margin-left: auto;
+       margin-right: auto;
+     }
 }
 @media (min-width: 1200px) {
 
@@ -184,7 +227,7 @@
 
     .report-card{
         margin-right: 20px;
-        color: rgb(117, 117, 117);
+        color: rgb(98, 98, 98);
         font-size: 25px;
         padding: 25px;
         width: 100%;
@@ -203,7 +246,7 @@
         height: 400px;
         background-color: white;
         border-radius: 15px;
-        box-shadow: 1px 1px 5px gray
+        box-shadow: 1px 1px 5px gray;
     }
 
     .report-card-drop{
@@ -227,7 +270,7 @@
         padding-bottom: 20px;
         margin-top: 0;
         margin-right: 50px;
-        border-top: 3px solid rgb(98, 98, 98);;
+        border-top: 3px solid rgb(98, 98, 98);
         opacity: .5;
         z-index: -100;
     }
@@ -263,8 +306,49 @@
     }
 
     #orders-by-hour{
-        font-size: 500px;
         display: none;
+        padding: 20px;
     }
-
+    .table-title{
+       width: 100%;
+       margin: 15px;
+     }
+     .table-title-container{
+        background-color:lightgray;
+        width: 100%;
+        height: 100%;
+        margin-bottom: 2px;
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+        font-size: 25px;
+        color:  rgb(98, 98, 98);
+        display: flex;
+     }
+    .orders-by-hour-elem{
+       background-color:rgb(235, 235, 235);
+       width: 100%;
+       height: 100%;
+       padding: 15px;
+       margin: 2px;
+       font-size: 25px;
+       color:  rgb(98, 98, 98);
+    }
+    .orders-by-hour-row{
+        width: 100%;
+        display: flex;
+       
+     }
+     .barchart-container{
+        width:fit-content;
+        font-size: 20px;
+       margin-left: auto;
+       margin-right: auto;
+       padding-right: 20px;
+     }
+     .piechart-container{
+        width:fit-content;
+        font-size: 20px;
+       margin-left: auto;
+       margin-right: auto;
+     }
 }
