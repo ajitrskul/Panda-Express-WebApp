@@ -7,6 +7,8 @@ import { CartContext } from './CartContext';
 
 function Cart({ isOpen, toggleCart, cartItems }) {
   const [showOverlay, setShowOverlay] = useState(false);
+  const [overlayClass, setOverlayClass] = useState(''); // FADE CLASS THINGY
+
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [itemToRemove, setItemToRemove] = useState(null);
 
@@ -16,11 +18,12 @@ function Cart({ isOpen, toggleCart, cartItems }) {
   useEffect(() => {
     if (isOpen) {
       setShowOverlay(true);
-      setTimeout(() => {
-        document.querySelector('.cart-overlay')?.classList.add('fade-in');
-      }, 10); 
+      setOverlayClass('fade-in');
     } else {
-      setShowOverlay(false);
+      setOverlayClass('fade-out')
+      setTimeout(() => {
+        setShowOverlay(false);
+      }, 300);
     }
   }, [isOpen]);
   
@@ -69,7 +72,12 @@ function Cart({ isOpen, toggleCart, cartItems }) {
 
   return (
     <>
-      {showOverlay && <div className="cart-overlay" onClick={handleOverlayClick}></div>}
+      {showOverlay && (
+        <div
+          className={`cart-overlay ${overlayClass}`}
+          onClick={handleOverlayClick}
+        ></div>
+      )}
       <div className={`cart-offcanvas ${isOpen ? 'open' : ''}`}>
         <div className="cart-header">
           <h2>Your Cart</h2>
