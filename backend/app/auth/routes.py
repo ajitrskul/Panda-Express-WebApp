@@ -14,10 +14,9 @@ import base64
 import json
 import requests
 import os
-from dotenv import load_dotenv
 
-GOOGLE_CLIENT_ID = "691942944903-g8cmnfe0iu3jujav9jpgonda6dkj9b8u.apps.googleusercontent.com"
 HASH_API_KEY = os.getenv('HASH_API_KEY')
+GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
 
 @auth_bp.route('/', methods=['GET'])
 def auth_home():
@@ -76,6 +75,7 @@ def authenticate_db():
 def authenticate_google():
     flow = current_app.config['OAUTH_FLOW']
     authorization_url, state = flow.authorization_url()
+    session.clear()
     session['state'] = state
     return redirect(authorization_url)
 
@@ -86,9 +86,6 @@ def callback():
         flow = current_app.config['OAUTH_FLOW']
         flow.fetch_token(authorization_response=request.url)
 
-        if not session.get("state") == request.args.get("state"):
-            abort(500)
-
         credentials = flow.credentials
         request_session = requests.session()
         cached_session = cachecontrol.CacheControl(request_session)
@@ -98,7 +95,7 @@ def callback():
             id_token=credentials._id_token,
             request=token_request,
             audience=GOOGLE_CLIENT_ID,
-            clock_skew_in_seconds=60
+            clock_skew_in_seconds=6000
         )
 
         email = id_info.get("email")
@@ -111,7 +108,6 @@ def callback():
                 re_route_link = current_app.config['base_url'] + "/manager"
             else:
                 re_route_link = current_app.config['base_url'] + "/pos"
-            session.clear()
             session["name"] = id_info.get("name")
             session["email"] = id_info.get("email")
             return redirect(re_route_link)
