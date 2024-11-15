@@ -6,56 +6,121 @@ import "../../styles/signin/SignInQR.css";
 
 export default function SignInQR() {
   const videoRef = useRef(null);
-  let stream = null;
 
-  const getVideo = async () => {
-    try {
-      stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      if (videoRef.current) {
-        const video = videoRef.current;
-        video.srcObject = stream;
+  //   let stream = null;
+  //   const getVideo = async () => {
+  //   try {
+  //     stream = await navigator.mediaDevices.getUserMedia({ video: true });
+  //     if (videoRef.current) {
+  //       const video = videoRef.current;
+  //       video.srcObject = stream;
 
-        // Wait until the video is ready before playing
-        video.oncanplay = () => {
-          video.play().catch((error) => {
-            console.error('Error playing the video:', error);
-          });
-        };
+  //       // Wait until the video is ready before playing
+  //       video.oncanplay = () => {
+  //         video.play().catch((error) => {
+  //           console.error('Error playing the video:', error);
+  //         });
+  //       };
+  //     }
+  //   } catch (err) {
+  //     console.error('Error accessing media devices:', err);
+  //   }
+  // };
+
+  // if (location.path === '/auth/signin/QR') {
+  //   getVideo();
+  // }
+
+
+
+  // useEffect(() => {
+  //   getVideo();
+
+  //   // Clean up the stream when the component unmounts or visibility changes
+  //   return () => {
+  //     if (stream) {
+  //       stream.getTracks().forEach(track => track.stop());
+  //     }
+  //   };
+  // });
+
+  const stopCamera = () => {
+    if (videoRef.current) {
+      // Pause and reset the video element
+      // videoRef.current.pause();
+      // videoRef.current.currentTime = 0;
+  
+      // Get the media stream and stop all its tracks
+      if (videoRef.current.srcObject) {
+        (videoRef.current.srcObject).getTracks().forEach(track => {
+          track.stop(); // Stops each media track, including video and audio
+        });
+        videoRef.current.srcObject = null; // Detach the stream from the video element
       }
-    } catch (err) {
-      console.error('Error accessing media devices:', err);
     }
+  
+    // Check if any streams are still active and remove them if necessary
+    // navigator.mediaDevices.getUserMedia({ video: true })
+    //   .then(stream => {
+    //     stream.getTracks().forEach(track => track.stop());
+    //   })
+    //   .catch(error => {
+    //     console.warn("Error stopping additional media streams:", error);
+    //   });
   };
 
+
+
   useEffect(() => {
+    let stream;
+    const getVideo = async () => {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        if (videoRef.current) {
+          //const video = videoRef.current;
+          videoRef.current.srcObject = stream;
+          // Wait until the video is ready before playing
+          videoRef.current.oncanplay = () => {
+            videoRef.current.play().catch((error) => {
+              console.error('Error playing the video:', error);
+            });
+          };
+        }
+      } catch (err) {
+        console.error('Error accessing media devices:', err);
+      }
+    };
     getVideo();
 
-    // Clean up the stream when the component unmounts or visibility changes
+    // const stopCamera = () => {
+    //   if (videoRef.current) {
+    //     videoRef.current.pause();
+    //     videoRef.current.currentTime = 0;
+  
+    //     //stream = videoRef.current.srcObject;
+    //     if (videoRef.current.srcObject) {
+    //       videoRef.current.srcObject.getTracks().forEach(track => track.stop()); // Stop the camera
+    //       videoRef.current.srcObject = null; // Detach the stream
+    //     }
+    //   }
+    // };
     return () => {
-      if (stream) {
-        stream.getTracks().forEach(track => track.stop());
-      }
+      // if (videoRef.current.srcObject) {
+      // // Pause and reset the video element
+      // // videoRef.current.pause();
+      // // videoRef.current.currentTime = 0;
+  
+      // // Get the media stream and stop all its tracks
+      //   if (videoRef.current.srcObject) {
+      //     (videoRef.current.srcObject).getTracks().forEach(track => {
+      //       track.stop(); // Stops each media track, including video and audio
+      //     });
+      //     videoRef.current.srcObject = null; // Detach the stream from the video element
+      //   }
+      // }
+      //stopCamera();
     };
-  });
-
-  const handleVisibilityChange = () => {
-    if (document.hidden && videoRef.current) {
-      videoRef.current.pause();
-      videoRef.current.currentTime = 0;
-      videoRef.current.srcObject = null; // Detach the stream
-    } else if (!document.hidden) {
-      // Reinitialize the video when the page is visible again
-      getVideo();
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  });
+  }, [])
 
   return (
     <>
@@ -78,6 +143,7 @@ export default function SignInQR() {
                   <p className="qr-margin">Return to <Link to="/kiosk">Kiosk</Link></p>
                   <p style={{fontWeight: 'bold'}}>OR</p>
                   <p>Login with Username and Password <Link to="/auth/signin">Here.</Link></p>
+                  <button onClick={stopCamera}>STOP CAMERA</button>
                 </div>
               </div>
             </div>
