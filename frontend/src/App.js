@@ -13,7 +13,7 @@ import { CartProvider } from './pages/kiosk/components/CartContext';
 import KioskOrderLayout from './pages/kiosk/KioskOrderLayout';
 
 //Customer Context API
-import { CustomerProvider } from './pages/auth/components/CustomerContext';
+import { AccountProvider } from './pages/auth/components/AccountContext';
 
 function App() {
   /* Reload the page when kiosk is clicked, so that google translate element will initialize*/
@@ -23,7 +23,7 @@ function App() {
     document.cookie="googtrans=/en/en;"
   }
   return (
-    <CustomerProvider>
+    <AccountProvider>
       <CartProvider>
         <Router>
           <Routes>
@@ -77,7 +77,7 @@ function App() {
           </Routes>
         </Router>
       </CartProvider>
-    </CustomerProvider>
+    </AccountProvider>
   );
 }
 

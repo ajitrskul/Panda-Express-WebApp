@@ -4,11 +4,11 @@ import { NavBar } from "../kiosk/components/NavBar";
 import { QrReader } from 'react-qr-reader';
 import api from '../../services/api';
 import "../../styles/signin/SignInQR.css";
-import { CustomerContext } from './components/CustomerContext';
+import { AccountContext } from './components/AccountContext';
 
 
 export default function SignInQR() {
-  const { signIn } = useContext(CustomerContext);
+  const { customerSignIn } = useContext(AccountContext);
   
   const [QRStatus, setQRStatus] = useState({
     isLoading: false,
@@ -38,7 +38,7 @@ export default function SignInQR() {
   const testSignIn = async (customerLogin) => {
     const signinSuccess = await api.post("/auth/signin/qr", customerLogin);
     if (signinSuccess.data) {
-      signIn(customerLogin);
+      customerSignIn(customerLogin);
       navigate("/auth/signin/success");
       window.location.reload()
       return;

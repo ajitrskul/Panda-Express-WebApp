@@ -2,10 +2,10 @@ import { useContext } from 'react';
 import { Route, Routes, Link } from "react-router-dom";
 import { NavBar } from "../kiosk/components/NavBar";
 import "../../styles/signin/SignInSuccess.css";
-import { CustomerContext } from './components/CustomerContext';
+import { AccountContext } from './components/AccountContext';
 
 export default function SignInSuccess() {
-  const { customer } = useContext(CustomerContext);
+  const { customer } = useContext(AccountContext);
   return (
     <Routes>
       <Route
