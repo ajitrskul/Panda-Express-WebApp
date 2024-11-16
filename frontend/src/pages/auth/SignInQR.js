@@ -9,22 +9,14 @@ import { CustomerContext } from './components/CustomerContext';
 
 export default function SignInQR() {
   const { signIn } = useContext(CustomerContext);
-
-  const [data, setData] = useState({
-    customer_id: null,
-    email: "",
-    first_name: "",
-    last_name: "",
-    beast_points: null
-  });
   
-  const [error, setError] = useState({
+  const [QRStatus, setQRStatus] = useState({
+    isLoading: false,
+    loadingVisual: false,
     videoClass: "col-12 qr-video",
     errorMsg: "",
-    errorFrame: "qr-frame"
+    QRFrame: "qr-frame"
   });
-
-  const [loading, setLoading] = useState(false)
 
   const navigate = useNavigate();
 
@@ -43,20 +35,31 @@ export default function SignInQR() {
     }
   });
 
-  const testSignIn = async () => {
-    const signinSuccess = await api.post("auth/signin/qr", data);
-    if (signinSuccess) {
-      signIn(data);
-      // navigate("/auth/signin/success");
-      setTimeout(() => {
-        navigate("/auth/signin/success");
-        window.location.reload()}, 1000);
+  const testSignIn = async (customerLogin) => {
+    const signinSuccess = await api.post("/auth/signin/qr", customerLogin);
+    if (signinSuccess.data) {
+      signIn(customerLogin);
+      navigate("/auth/signin/success");
+      window.location.reload()
+      return;
     }
     else {
-      setError({
+      setQRStatus({
+        isLoading: true,
+        loadingVisual: false,
         videoClass: "col-12 qr-video qr-video-error",
         errorMsg: 'Invalid QR Code',
-        errorFrame: "qr-frame qr-frame-error"});
+        QRFrame: "qr-frame qr-frame-error"});
+
+      setTimeout(() => { //delay before resetting to no error frame
+        setQRStatus({
+          isLoading: false,
+          loadingVisual: false,
+          videoClass: "col-12 qr-video",
+          errorMsg: "",
+          QRFrame: 'qr-frame'
+        });
+      },2000)
     }
   };
 
@@ -71,53 +74,99 @@ export default function SignInQR() {
           </h1>
           <div className="row justify-content-center qr-row">
             <QrReader onResult={(result) => {
-              if (result) {
-                try {
-                  setLoading(true);
-                  setError({
-                    ...error,
-                    errorFrame: 'qr-frame qr-frame-loading',
-                    videoClass: "col-12 qr-video qr-video-loading"
-                  })
+              if (QRStatus.isLoading || !result) { //return immediately if function already running or there is no qr code
+                return;
+              }
+              else { //there is a qr code & function not running
+                setQRStatus({ //set loading & visuals
+                  isLoading: true,
+                  loadingVisual: true,
+                  videoClass: "col-12 qr-video qr-video-loading",
+                  errorMsg: "",
+                  QRFrame: 'qr-frame qr-frame-loading',
+                })
+                let customerLogin  = {}
+                try { //attempt to parse QR code into JSON
                   const scannedInfo = JSON.parse(result.text);
-                  setData({
-                    customer_id: scannedInfo.customer_id,
-                    email: scannedInfo.email,
-                    first_name: scannedInfo.first_name,
-                    last_name: scannedInfo.last_name,
-                    beast_points: scannedInfo.beast_points
-                  });
-                } catch(err) {
-                  setLoading(false);
-                  setError({
-                    videoClass: "col-12 qr-video qr-video-error",
-                    errorMsg: 'Invalid QR Code',
-                    errorFrame: 'qr-frame qr-frame-error'});
+                  
+                  //check that all fields are present before setting customerLogin
+                  if (
+                    scannedInfo.customer_id != null &&
+                    scannedInfo.email != null &&
+                    scannedInfo.first_name != null &&
+                    scannedInfo.last_name != null &&
+                    scannedInfo.beast_points != null
+                  ) {
+                    customerLogin = {
+                      customer_id: scannedInfo.customer_id,
+                      email: scannedInfo.email,
+                      first_name: scannedInfo.first_name,
+                      last_name: scannedInfo.last_name,
+                      beast_points: scannedInfo.beast_points
+                    };
 
-                    setTimeout(() => {
-                      setError({
+                    try { //all fields were present -> authenticate user
+                      testSignIn(customerLogin);
+                    } catch(err) { //error authenticating user
+                      navigate("/auth/signin/error");
+                      window.location.reload();
+                    } 
+                  }
+                  else { //if not all fields are present end function immediately
+                    setQRStatus({
+                      isLoading: true,
+                      loadingVisual: false,
+                      videoClass: "col-12 qr-video qr-video-error",
+                      errorMsg: 'Invalid QR Code',
+                      QRFrame: 'qr-frame qr-frame-error'
+                    });
+
+                    setTimeout(() => { //delay before resetting to no error frame
+                      setQRStatus({
+                        isLoading: false,
+                        loadingVisual: false,
                         videoClass: "col-12 qr-video",
                         errorMsg: "",
-                        errorFrame: 'qr-frame'
+                        QRFrame: 'qr-frame'
                       });
                     },2000)
-                  return;
-                }   
+                    return;
+                  }
+                } catch(err) { //error parsing Login (invalid QR code most likely)
+                  setQRStatus({
+                    isLoading: true,
+                    loadingVisual: false,
+                    videoClass: "col-12 qr-video qr-video-error",
+                    errorMsg: 'Invalid QR Code',
+                    QRFrame: 'qr-frame qr-frame-error'});
 
-                try {
-                  testSignIn();
-                } catch(err) {
-                  navigate("/auth/signin/error");
-                  window.location.reload();
+                  setTimeout(() => { //delay before resetting to no error frame
+                    setQRStatus({
+                      isLoading: false,
+                      loadingVisual: false,
+                      videoClass: "col-12 qr-video",
+                      errorMsg: "",
+                      QRFrame: 'qr-frame'
+                    });
+                  },2000)
+                  return;
                 }
+
+                setQRStatus({ //function done running
+                  isLoading: false,
+                  loadingVisual: false,
+                  videoClass: "col-12 qr-video",
+                  errorMsg: "",
+                  QRFrame: 'qr-frame'
+                });
               }
-            }}
-            className={error.videoClass}
+              }}
+              className={QRStatus.videoClass}
             />
-            {error && <p className="qr-error-msg text-center">{error.errorMsg}</p>}
-            {loading && <div className="spinner-border qr-loading" role="status"></div>}
-            {loading && <div className="qr-loading-bg"></div>} 
-            <div className={error.errorFrame}></div>
+            <p className="qr-error-msg text-center">{QRStatus.errorMsg}</p>
+            {QRStatus.loadingVisual && <div className="spinner-border qr-loading" role="status"></div>}
+            {QRStatus.loadingVisual && <div className="qr-loading-bg"></div>} 
+            <div className={QRStatus.QRFrame}></div>
           </div>
           <div className="row justify-content-center">
             <button className="qr-navigate col-6" id="qr-kiosk" onClick={leavePage}>Return to Kiosk</button>

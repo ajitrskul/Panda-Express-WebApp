@@ -10,8 +10,10 @@ from google_auth_oauthlib.flow import Flow
 from pip._vendor import cachecontrol
 import google.auth.transport.requests
 from flask import current_app
+import threading
 
 GOOGLE_CLIENT_ID = "691942944903-g8cmnfe0iu3jujav9jpgonda6dkj9b8u.apps.googleusercontent.com"
+lock = threading.Lock()
 
 @auth_bp.route('/', methods=['GET'])
 def auth_home():
@@ -41,10 +43,10 @@ def emailExists():
     customerEmail = request.get_data()
     customerEmail = customerEmail.decode('utf-8')
 
-    with db.session.begin():
-        matchingEmail = db.session.query(Customer).filter_by(email=customerEmail).first()
+    #returns instance of customer model
+    customer = Customer.query.filter_by(email=customerEmail).first()
 
-    if (matchingEmail == None):
+    if (customer == None):
         return jsonify(True)
     else:
         return jsonify(False)
@@ -54,7 +56,9 @@ def signinEmail():
     customerEmail = request.get_data()
     customerEmail = customerEmail.decode('utf-8')
 
+    #returns instance of customer model
     customer = Customer.query.filter_by(email=customerEmail).first()
+
     if customer:
         return jsonify(customer.password) #return password for given email if in database
     else:
@@ -62,18 +66,20 @@ def signinEmail():
 
 @auth_bp.route("/signin/qr", methods=["POST"])
 def authenticateLogin():
-    customerLogin = request.get_json()
-    isValidLogin = False
+    customerLogin = request.get_json() #get_json returns python dictionary
 
+    #returns instance of customer model
     queryCustomer = Customer.query.filter_by(email=customerLogin["email"]).first()
 
-    if (queryCustomer):
-        isValidLogin = ((customerLogin.customer_id == queryCustomer.customer_id) and (customerLogin.first_name == queryCustomer.first_name) and (customerLogin.last_name == queryCustomer.last_name) and (customerLogin.beast_points == queryCustomer.beast_points))
-    
-    if (isValidLogin):
-        return jsonify(True)
-    else:
+    if (queryCustomer == None):
         return jsonify(False)
+    else:
+        isValidLogin = ((customerLogin["customer_id"] == queryCustomer.customer_id) and (customerLogin["first_name"] == queryCustomer.first_name) and (customerLogin["last_name"] == queryCustomer.last_name) and (customerLogin["beast_points"] == queryCustomer.beast_points))
+        # isValidLogin = (customerLogin["customer_id"] == queryCustomer.customer_id)
+        if (isValidLogin):
+            return jsonify(True)
+        else:
+            return jsonify(False)
 
 @auth_bp.route("/signin/customerdata", methods=["POST"])
 def getCustomerData():
