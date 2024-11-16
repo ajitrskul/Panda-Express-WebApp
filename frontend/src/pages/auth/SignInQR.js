@@ -16,8 +16,11 @@ export default function SignInQR() {
   });
   const [error, setError] = useState({
     videoClass: "col-12 qr-video",
-    errorMsg: ""
+    errorMsg: "",
+    errorFrame: "qr-frame"
   });
+
+  const [loading, setLoading] = useState(false)
 
   const navigate = useNavigate();
 
@@ -40,13 +43,14 @@ export default function SignInQR() {
     const signinSuccess = await api.post("auth/signin/qr", data);
     if (signinSuccess) {
       //account information matches an account in the database
-      navigate("/auth/signup/success");
+      navigate("/auth/signin/success");
       window.location.reload();
     }
     else {
       setError({
         videoClass: "col-12 qr-video qr-video-error",
-        errorMsg: 'Invalid QR Code'});
+        errorMsg: 'Invalid QR Code',
+        errorFrame: "qr-frame qr-frame-error"});
     }
   };
 
@@ -63,6 +67,12 @@ export default function SignInQR() {
             <QrReader onResult={(result) => {
               if (result) {
                 try {
+                  setLoading(true);
+                  setError({
+                    ...error,
+                    errorFrame: 'qr-frame qr-frame-loading',
+                    videoClass: "col-12 qr-video qr-video-loading"
+                  })
                   const scannedInfo = JSON.parse(result.text);
                   setData({
                     customer_id: scannedInfo.customer_id,
@@ -72,16 +82,26 @@ export default function SignInQR() {
                     beast_points: scannedInfo.beast_points
                   });
                 } catch(err) {
+                  setLoading(false);
                   setError({
                     videoClass: "col-12 qr-video qr-video-error",
-                    errorMsg: 'Invalid QR Code'});
+                    errorMsg: 'Invalid QR Code',
+                    errorFrame: 'qr-frame qr-frame-error'});
+
+                    setTimeout(() => {
+                      setError({
+                        videoClass: "col-12 qr-video",
+                        errorMsg: "",
+                        errorFrame: 'qr-frame'
+                      });
+                    },2000)
                   return;
                 }   
 
                 try {
                   testSignIn(data);
                 } catch(err) {
-                  navigate("/auth/signup/error");
+                  navigate("/auth/signin/error");
                   window.location.reload();
                 }
               }
@@ -89,6 +109,9 @@ export default function SignInQR() {
             className={error.videoClass}
             />
             {error && <p className="qr-error-msg text-center">{error.errorMsg}</p>}
+            {loading && <div className="spinner-border qr-loading" role="status"></div>}
+            {loading && <div className="qr-loading-bg"></div>} 
+            <div className={error.errorFrame}></div>
           </div>
           <div className="row justify-content-center">
             <button className="qr-navigate col-6" id="qr-kiosk" onClick={leavePage}>Return to Kiosk</button>

@@ -5,7 +5,7 @@ import QRCode from "../../assets/qr-code.webp"
 import "../../styles/signin/SignInPage.css";
 import api from '../../services/api';
 
-//function that handles signup page logic & frontend
+//function that handles signin page logic & frontend
 export default function SignInPage() {
   //set up useState object and functions to hold current input states
   const navigate = useNavigate();
@@ -75,7 +75,7 @@ export default function SignInPage() {
 
           //signin user
           clear();
-          navigate("/auth/signup/success");
+          navigate("/auth/signin/success");
         }
         else { //incorrect password
           setSignInError({
@@ -95,7 +95,7 @@ export default function SignInPage() {
     } catch (error) {
       //Issue from API Call
       clear();
-      navigate("/auth/signup/error");
+      navigate("/auth/signin/error");
     }
   }
 
