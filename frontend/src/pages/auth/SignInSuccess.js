@@ -1,8 +1,11 @@
+import { useContext } from 'react';
 import { Route, Routes, Link } from "react-router-dom";
 import { NavBar } from "../kiosk/components/NavBar";
 import "../../styles/signin/SignInSuccess.css";
+import { CustomerContext } from './components/CustomerContext';
 
 export default function SignInSuccess() {
+  const { customer } = useContext(CustomerContext);
   return (
     <Routes>
       <Route
@@ -21,7 +24,7 @@ export default function SignInSuccess() {
                 <div className="col-6 text-center">
                   <h1 className="signin-success-title">Signed In Successfully!</h1>
                   <p className="signin-success-links">
-                    Welcome, 
+                    Welcome {customer.first_name} {customer.last_name}
                   </p>
                   <Link className="signin-success-links" to="/kiosk" tabIndex="1">Return to Kiosk</Link>
                 </div>

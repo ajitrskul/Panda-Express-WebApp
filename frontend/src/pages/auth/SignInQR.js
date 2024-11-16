@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { NavBar } from "../kiosk/components/NavBar";
 import { QrReader } from 'react-qr-reader';
 import api from '../../services/api';
 import "../../styles/signin/SignInQR.css";
+import { CustomerContext } from './components/CustomerContext';
 
 
 export default function SignInQR() {
+  const { signIn } = useContext(CustomerContext);
+
   const [data, setData] = useState({
     customer_id: null,
     email: "",
@@ -14,6 +17,7 @@ export default function SignInQR() {
     last_name: "",
     beast_points: null
   });
+  
   const [error, setError] = useState({
     videoClass: "col-12 qr-video",
     errorMsg: "",
@@ -42,9 +46,11 @@ export default function SignInQR() {
   const testSignIn = async () => {
     const signinSuccess = await api.post("auth/signin/qr", data);
     if (signinSuccess) {
-      //account information matches an account in the database
-      navigate("/auth/signin/success");
-      window.location.reload();
+      signIn(data);
+      // navigate("/auth/signin/success");
+      setTimeout(() => {
+        navigate("/auth/signin/success");
+        window.location.reload()}, 1000);
     }
     else {
       setError({
@@ -99,7 +105,7 @@ export default function SignInQR() {
                 }   
 
                 try {
-                  testSignIn(data);
+                  testSignIn();
                 } catch(err) {
                   navigate("/auth/signin/error");
                   window.location.reload();

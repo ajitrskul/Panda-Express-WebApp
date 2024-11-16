@@ -56,9 +56,9 @@ def signinEmail():
 
     customer = Customer.query.filter_by(email=customerEmail).first()
     if customer:
-        return jsonify(customer.password)
+        return jsonify(customer.password) #return password for given email if in database
     else:
-        return jsonify(False)  # or handle the case where the customer is not found
+        return jsonify(False)  #email not in database
 
 @auth_bp.route("/signin/qr", methods=["POST"])
 def authenticateLogin():
@@ -74,6 +74,18 @@ def authenticateLogin():
         return jsonify(True)
     else:
         return jsonify(False)
+
+@auth_bp.route("/signin/customerdata", methods=["POST"])
+def getCustomerData():
+    customerEmail = request.get_data()
+    customerEmail = customerEmail.decode('utf-8')
+
+    queryCustomer = Customer.query.filter_by(email=customerEmail).first()
+    if (queryCustomer):
+        return jsonify({"customer_id": queryCustomer.customer_id, "email": queryCustomer.email, "first_name":queryCustomer.first_name, "last_name":queryCustomer.last_name, "beast_points":queryCustomer.beast_points})
+    else:
+        return jsonify(False)
+
 
 
 

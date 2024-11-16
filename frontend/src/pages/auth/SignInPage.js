@@ -1,12 +1,16 @@
+import { useContext } from 'react'; 
 import { Route, Routes, Link, useNavigate } from "react-router-dom";
 import { useState } from 'react';
 import { NavBar } from "../kiosk/components/NavBar";
 import QRCode from "../../assets/qr-code.webp"
 import "../../styles/signin/SignInPage.css";
 import api from '../../services/api';
+import { CustomerContext } from './components/CustomerContext';
 
 //function that handles signin page logic & frontend
 export default function SignInPage() {
+  const { signIn } = useContext(CustomerContext);
+
   //set up useState object and functions to hold current input states
   const navigate = useNavigate();
 
@@ -72,8 +76,9 @@ export default function SignInPage() {
 
         const validPassword = await hashResponse.json();
         if (validPassword.valid) { //correct password
-
+          const customerData = await api.post("auth/signin/customerdata", signinInput.email);
           //signin user
+          signIn(customerData.data);
           clear();
           navigate("/auth/signin/success");
         }
