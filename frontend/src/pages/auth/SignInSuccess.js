@@ -24,7 +24,7 @@ export default function SignInSuccess() {
                 <div className="col-6 text-center">
                   <h1 className="signin-success-title">Signed In Successfully!</h1>
                   <p className="signin-success-links">
-                    Welcome {customer.first_name} {customer.last_name}
+                    Welcome <span style={{fontWeight:"bold"}}>{customer.first_name} {customer.last_name}</span>
                   </p>
                   <Link className="signin-success-links" to="/kiosk" tabIndex="1">Return to Kiosk</Link>
                 </div>
