@@ -129,7 +129,7 @@ function MenuMain() {
           </div>
           <div className="row">
             <div className="col-5">
-              <img className="a-la-carte-image" src ={BowlImage}/>
+              <img className="a-la-carte-image" src ={aLaCarte.at(0).image}/>
             </div>
             <table className="col table a-la-carte-table">
               <thead>
