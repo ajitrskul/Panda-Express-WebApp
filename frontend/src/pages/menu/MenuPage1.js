@@ -9,17 +9,30 @@ import MenuBoardSide from "./components/MenuBoardSide";
 // images
 import BowlImage from '../../assets/bowl.png';
 
+const formatProductName = (name) => {
+  return name.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();
+};
+
 function MenuMain() {
   // const [menuData, setMenuData] = useState([]); // Step 1: State to hold data
   const [menuItems, setMenuItems] = useState([]);
+  const [sides, setSides] = useState([]);
+  const [aLaCarte, setALaCarte] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchMenuItems = async () => {
       try {
-        const response = await api.get('/kiosk/menu'); 
-        setMenuItems(response.data);
+
+        const [menuResponse, sideResponse, aLaCarteResponse] = await Promise.all([
+          api.get('/menu/menu'),
+          api.get('/menu/sides'),
+          api.get('/menu/alacarte')
+        ]);
+        setMenuItems(menuResponse.data);
+        setSides(sideResponse.data);
+        setALaCarte(aLaCarteResponse.data);
       } catch (err) {
         setError('Failed to fetch menu items. Please try again later.');
         console.error(err);
@@ -41,6 +54,14 @@ function MenuMain() {
       .join(' ');
   };
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
   return (
     <div className="container-fluid" /*style={{ width: "1400px"}}*/>
       <div className="row">
@@ -49,8 +70,9 @@ function MenuMain() {
             <h1>Pick Your Meal</h1>
           </div>
           <div className="row">
-            {/* <h1>Bowl</h1> */}
+            
             {menuItems.map((item) => (
+              
                 <div>
                   <MenuBoardHowTo
                   name={formatItemName(item.item_name)}
@@ -72,21 +94,34 @@ function MenuMain() {
             <MenuBoardSide name={"Super Greens"} image={<img src ={BowlImage} style={{ width: '110%'}}/>} calories={"130 cal"}/>
           </div> */}
           <div className="row">
-            <div className="col">
+
+          {sides.map((side) => (
+            
+              
+              <div className="col-6">
+                <MenuBoardSide
+                name={formatProductName(side.product_name)}
+                image={<img src ={side.image} />} 
+                calories={side.calories + " cal"} 
+
+                />
+              </div>
+            ))}
+            {/* <div className="col">
               <MenuBoardSide name={"Super Greens"} image={<img src ={BowlImage}/>} calories={"130 cal"}/>
             </div>
             <div className="col">
               <MenuBoardSide name={"Chow Mein"} image={<img src ={BowlImage}/>} calories={"600 cal"}/>
-            </div>
+            </div> */}
           </div>
 
           <div className="row">
-            <div className="col">
+            {/* <div className="col">
               <MenuBoardSide name={"Fried Rice"} image={<img src ={BowlImage}/>} calories={"620 cal"}/>
             </div>
             <div className="col">
               <MenuBoardSide name={"White Steamed Rice"} image={<img src ={BowlImage}/>} calories={"520 cal"}/>
-            </div>
+            </div> */}
           </div>
 
           <div className="row row-style-1">
@@ -108,21 +143,21 @@ function MenuMain() {
               <tbody>
                 <tr>
                   <th scope="row"> Sm </th>
-                  <td> $5.20 </td>
-                  <td> $6.70 </td>
-                  <td> $4.40 </td>
+                  <td> {"$" + aLaCarte.at(2).menu_item_base_price} </td>
+                  <td> {"$" + (aLaCarte.at(2).menu_item_base_price + 1.5*aLaCarte.at(2).premium_multiplier)} </td>
+                  <td> {"$" + aLaCarte.at(0).menu_item_base_price} </td>
                 </tr>
                 <tr>
                   <th scope="row"> Med </th>
-                  <td> $8.50 </td>
-                  <td> $11.50 </td>
+                  <td> {"$" + aLaCarte.at(3).menu_item_base_price} </td>
+                  <td> {"$" + (aLaCarte.at(3).menu_item_base_price + 1.5*aLaCarte.at(3).premium_multiplier)} </td>
                   <td>  </td>
                 </tr>
                 <tr>
                   <th scope="row"> Lg </th>
-                  <td> $11.20 </td>
-                  <td> $15.70 </td>
-                  <td> $5.40 </td>
+                  <td> {"$" + aLaCarte.at(4).menu_item_base_price} </td>
+                  <td> {"$" + (aLaCarte.at(4).menu_item_base_price + 1.5*aLaCarte.at(4).premium_multiplier)} </td>
+                  <td> {"$" + aLaCarte.at(1).menu_item_base_price} </td>
                 </tr>
               </tbody>
             </table>

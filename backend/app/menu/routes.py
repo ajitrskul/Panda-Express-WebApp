@@ -5,20 +5,13 @@ from app.extensions import db
 
 @menu_bp.route('/', methods=['GET'])
 def customer_menu_home():
-    return {"message": "Welcome to the Customer Kiosk"}
+    return {"message": "Welcome to the Customer Menu"}
 
 @menu_bp.route('/menu', methods=['GET'])
 def get_menu_items():
-    single_appetizer = db.session.execute(
-        text("SELECT * FROM menu_item WHERE item_name = 'appetizerSmall' LIMIT 1")
-    ).fetchall()
 
     single_a_la_carte = db.session.execute(
         text("SELECT * FROM menu_item WHERE item_name = 'aLaCarteSideMedium' LIMIT 1")
-    ).fetchall()
-
-    single_drink = db.session.execute(
-        text("SELECT * FROM menu_item WHERE item_name = 'drinks' LIMIT 1")
     ).fetchall()
 
     all_other_items = db.session.execute(
@@ -32,7 +25,7 @@ def get_menu_items():
         """)
     ).fetchall()
 
-    menu_items = all_other_items + single_a_la_carte + single_appetizer + single_drink
+    menu_items = all_other_items + single_a_la_carte
 
     menu_items_list = [
         {
@@ -50,7 +43,6 @@ def get_menu_items():
     ]
 
     return jsonify(menu_items_list), 200
-
 
 @menu_bp.route('/sides', methods=['GET'])
 def get_sides():
@@ -84,6 +76,31 @@ def get_sides():
 
     return jsonify(sides_list), 200
 
+@menu_bp.route('/alacarte', methods=['GET'])
+def get_a_la_carte():
+
+    a_la_carte = db.session.execute(
+        text("""SELECT * FROM menu_item 
+            WHERE item_name LIKE 'aLaCarte%' 
+            ORDER BY menu_item_id ASC""")
+    ).fetchall()
+
+    a_la_carte_list = [
+        {
+            "menu_item_id": a_la_carte_item.menu_item_id,
+            "item_name": a_la_carte_item.item_name,
+            "max_entrees": a_la_carte_item.max_entrees,
+            "max_sides": a_la_carte_item.max_sides,
+            "menu_item_base_price": a_la_carte_item.menu_item_base_price,
+            "premium_multiplier": a_la_carte_item.premium_multiplier,
+            "menu_item_description": a_la_carte_item.menu_item_description,
+            "calories": a_la_carte_item.calories,
+            "image": a_la_carte_item.image,
+        }
+        for a_la_carte_item in a_la_carte
+    ]
+
+    return jsonify(a_la_carte_list), 200
 
 @menu_bp.route('/entrees', methods=['GET'])
 def get_entrees():
@@ -117,15 +134,53 @@ def get_entrees():
 
     return jsonify(entrees_list), 200
 
+@menu_bp.route('/appdessert', methods=['GET'])
+def get_appetizers():
+    appetizers = db.session.execute(
+        text("SELECT * FROM product_item WHERE type = :type ORDER BY product_id ASC"), 
+        {'type': 'appetizer'}
+    ).fetchall()
 
-@menu_bp.route('/drinks', methods=['GET'])
+    desserts = db.session.execute(
+        text("SELECT * FROM product_item WHERE type = :type ORDER BY product_id ASC"), 
+        {'type': 'dessert'}
+    ).fetchall()
+
+    both = appetizers + desserts
+
+    appetizer_dessert_list = [
+        {
+            "product_id": item.product_id,
+            "product_name": item.product_name,
+            "type": item.type,
+            "is_seasonal": item.is_seasonal,
+            "is_available": item.is_available,
+            "servings_remaining": item.servings_remaining,
+            "allergens": item.allergens,
+            "display_icons": item.display_icons,
+            "product_description": item.product_description,
+            "premium_addition": item.premium_addition,
+            "serving_size": item.serving_size,
+            "calories": item.calories,
+            "saturated_fat": item.saturated_fat,
+            "carbohydrate": item.carbohydrate,
+            "protein": item.protein,
+            "image": item.image,
+            "is_premium": item.is_premium,
+        }
+        for item in both
+    ]
+
+    return jsonify(appetizer_dessert_list), 200
+
+@menu_bp.route('/drink', methods=['GET'])
 def get_drinks():
     drinks = db.session.execute(
         text("SELECT * FROM product_item WHERE type = :type ORDER BY product_id ASC"), 
         {'type': 'drink'}
     ).fetchall()
 
-    drinks_list = [
+    drink_list = [
         {
             "product_id": drink.product_id,
             "product_name": drink.product_name,
@@ -148,70 +203,27 @@ def get_drinks():
         for drink in drinks
     ]
 
-    return jsonify(drinks_list), 200
+    return jsonify(drink_list), 200
 
-
-@menu_bp.route('/appetizers', methods=['GET'])
-def get_appetizers():
-    appetizers = db.session.execute(
-        text("SELECT * FROM product_item WHERE type = :type ORDER BY product_id ASC"), 
-        {'type': 'appetizer'}
+@menu_bp.route('/allitems', methods=['GET'])
+def get_all_items():
+    all_items = db.session.execute(
+        text("SELECT * FROM menu_item")
     ).fetchall()
 
-    appetizers_list = [
+    items_list = [
         {
-            "product_id": appetizer.product_id,
-            "product_name": appetizer.product_name,
-            "type": appetizer.type,
-            "is_seasonal": appetizer.is_seasonal,
-            "is_available": appetizer.is_available,
-            "servings_remaining": appetizer.servings_remaining,
-            "allergens": appetizer.allergens,
-            "display_icons": appetizer.display_icons,
-            "product_description": appetizer.product_description,
-            "premium_addition": appetizer.premium_addition,
-            "serving_size": appetizer.serving_size,
-            "calories": appetizer.calories,
-            "saturated_fat": appetizer.saturated_fat,
-            "carbohydrate": appetizer.carbohydrate,
-            "protein": appetizer.protein,
-            "image": appetizer.image,
-            "is_premium": appetizer.is_premium,
+            "menu_item_id": item.menu_item_id,
+            "item_name": item.item_name,
+            "max_entrees": item.max_entrees,
+            "max_sides": item.max_sides,
+            "menu_item_base_price": item.menu_item_base_price,
+            "premium_multiplier": item.premium_multiplier,
+            "menu_item_description": item.menu_item_description,
+            "calories": item.calories,
+            "image": item.image,
         }
-        for appetizer in appetizers
+        for item in all_items
     ]
 
-    return jsonify(appetizers_list), 200
-
-
-@menu_bp.route('/desserts', methods=['GET'])
-def get_desserts():
-    desserts = db.session.execute(
-        text("SELECT * FROM product_item WHERE type = :type ORDER BY product_id ASC"), 
-        {'type': 'dessert'}
-    ).fetchall()
-
-    desserts_list = [
-        {
-            "product_id": dessert.product_id,
-            "product_name": dessert.product_name,
-            "type": dessert.type,
-            "is_seasonal": dessert.is_seasonal,
-            "is_available": dessert.is_available,
-            "servings_remaining": dessert.servings_remaining,
-            "allergens": dessert.allergens,
-            "display_icons": dessert.display_icons,
-            "product_description": dessert.product_description,
-            "premium_addition": dessert.premium_addition,
-            "serving_size": dessert.serving_size,
-            "calories": dessert.calories,
-            "saturated_fat": dessert.saturated_fat,
-            "carbohydrate": dessert.carbohydrate,
-            "protein": dessert.protein,
-            "image": dessert.image,
-            "is_premium": dessert.is_premium,
-        }
-        for dessert in desserts
-    ]
-
-    return jsonify(desserts_list), 200
+    return jsonify(items_list), 200

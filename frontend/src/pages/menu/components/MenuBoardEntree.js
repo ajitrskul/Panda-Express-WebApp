@@ -31,7 +31,7 @@ const MenuBoardEntree = ({name, image, calories, icons, isPremium, isSeasonal}) 
                     {isPremium && (
                         <div className="banner premium-banner">P</div>
                     )}
-                    {isSeasonal && (
+                    {isSeasonal && (   
                         <div className="banner seasonal-banner">S</div>
                     )}
                     </div>

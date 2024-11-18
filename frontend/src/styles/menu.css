@@ -121,8 +121,9 @@ img {
 
 .banners-container {
     display: flex;
+    margin-top: 20%;
     position: absolute;
-    bottom: 45%;
+    bottom: 50%;
     z-index: 1;
     /* right: 0%; */
 }

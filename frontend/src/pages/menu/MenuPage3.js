@@ -27,19 +27,46 @@ import BowlImage from '../../assets/bowl.png';
 // import FamilyMealImage from '../../assets/family-meal.png';
 
 function MenuMain() {
-  const [menuData, setMenuData] = useState(null); // Step 1: State to hold data
+  const [appdess, setAppDess] = useState([]);
+  const [drinks, setDrinks] = useState([]);
+  const [menuItems, setMenuItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // how to fetch api
-  const fetchAPI = async () => {
-    // Step 2: Fetch data when component loads
-    const response = await api.get("/menu"); 
-    setMenuData(response.data); 
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+
+        const [appResponse, drinkResponse, itemResponse] = await Promise.all([
+          api.get('/menu/appdessert'),
+          api.get('/menu/drink'),
+          api.get('/menu/allitems')
+        ]);
+        setAppDess(appResponse.data);
+        setDrinks(drinkResponse.data);
+        setMenuItems(itemResponse.data);
+      } catch (err) {
+        setError('Failed to fetch menu items. Please try again later.');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchItems();
+  }, []);
+
+  const formatProductName = (name) => {
+    return name.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();
   };
 
-  // fetch data on component load
-  useEffect(() => {
-    fetchAPI();
-  }, []);
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   return (
     <div className="container-fluid" /*style={{ width: "1400px"}}*/>
@@ -61,15 +88,15 @@ function MenuMain() {
         <tbody>
           <tr>
             <th scope="row"> Sm </th>
-            <td> $5.20 </td>
+            <td> {"$" + menuItems[17].menu_item_base_price} </td>
           </tr>
           <tr>
             <th scope="row"> Med </th>
-            <td> $8.50 </td>
+            <td> {"$" + menuItems[14].menu_item_base_price} </td>
           </tr>
           <tr>
             <th scope="row"> Lg </th>
-            <td> $11.20 </td>
+            <td> {"$" + menuItems[15].menu_item_base_price} </td>
           </tr>
         </tbody>
       </table>
@@ -91,23 +118,13 @@ function MenuMain() {
         </div>
       </div>
     </div>
-    <div className="row">
-      <div className="col">
-        <MenuBoardDrinks name={"chicken egg roll"} price={"130 cal"}/>
-      </div>
-    </div>
-    <div className="row">
-      <div className="col">
-        <MenuBoardDrinks name={"Beastmode Energy Drink"} price={"130 cal"}/>
-      </div>
-    </div>
-    <div className="row">
-      <div className="col">
-        <MenuBoardDrinks name={"chicken egg roll"} price={"130 cal"}/>
-      </div>
-    </div>
-    
-    
+      {drinks.map((drink) => (
+        <div className="row">
+          <div className="col">
+            <MenuBoardDrinks name={formatProductName(drink.product_name)} price={"$" + (menuItems[16].menu_item_base_price + drink.premium_addition)}/>
+          </div>
+        </div>
+        ))}
   </div>
   <div className="col-6">
     <div className="row row-style-1">
@@ -115,28 +132,85 @@ function MenuMain() {
     </div>
     <div className="row">
       <div className="col">
-        <MenuBoardAppetizer name={"chicken egg roll"} calories={"130 cal"} isPremium = {true} isSeasonal = {true} image={<img src ={BowlImage}/>}/>
+        <MenuBoardAppetizer 
+        name={formatProductName(appdess.at(0).product_name)}
+        smPrice = {"4.5"}
+        mdPrice = {"4.5"}
+        lgPrice = {"4.5"}
+        isPremium = {appdess[0].is_premium}
+        isSeasonal = {appdess[0].is_seasonal}
+        image={<img src ={appdess[0].image}/>}/>
       </div>
       <div className="col">
-        <MenuBoardAppetizer name={"chicken egg roll"} calories={"130 cal"} isPremium = {true} isSeasonal = {true}/>
+        <MenuBoardAppetizer 
+        name={formatProductName(appdess.at(1).product_name)}
+        smPrice = {"4.5"}
+        mdPrice = {"4.5"}
+        lgPrice = {"4.5"}
+        isPremium = {appdess[1].is_premium}
+        isSeasonal = {appdess[1].is_seasonal}
+        image={<img src ={appdess[1].image}/>}/>
       </div>
     </div>
 
     <div className="row">
       <div className="col">
-        <MenuBoardAppetizer name={"chicken egg roll"} calories={"130 cal"} smPrice={"$2.30"} mdPrice={"$2.30"} lgPrice={"$2.30"} isPremium = {true} isSeasonal = {true} image={<img src ={BowlImage}/>}/>
+        <MenuBoardAppetizer 
+        name={formatProductName(appdess.at(2).product_name)}
+        smPrice = {"4.5"}
+        mdPrice = {"4.5"}
+        lgPrice = {"4.5"}
+        isPremium = {appdess[2].is_premium}
+        isSeasonal = {appdess[2].is_seasonal}
+        image={<img src ={appdess[2].image}/>}/>
       </div>
       <div className="col">
-        <MenuBoardAppetizer name={"chicken egg roll"} calories={"130 cal"} isPremium = {true} isSeasonal = {true}/>
+        {appdess[3] ? (
+          <div>
+            <MenuBoardAppetizer 
+            name={formatProductName(appdess.at(3).product_name)}
+            smPrice = {"4.5"}
+            mdPrice = {"4.5"}
+            lgPrice = {"4.5"}
+            isPremium = {appdess[3].is_premium}
+            isSeasonal = {appdess[3].is_seasonal}
+            image={<img src ={appdess[3].image}/>}/>
+          </div>) : (
+          <div> </div>
+        )}
       </div>
     </div>
 
     <div className="row">
-      <div className="col">
-        <MenuBoardAppetizer name={"chicken egg roll"} calories={"130 cal"} isPremium = {true} isSeasonal = {true}/>
+    <div className="col">
+        {appdess[4] ? (
+          <div>
+            <MenuBoardAppetizer 
+            name={formatProductName(appdess.at(4).product_name)}
+            smPrice = {"4.5"}
+            mdPrice = {"4.5"}
+            lgPrice = {"4.5"}
+            isPremium = {appdess[4].is_premium}
+            isSeasonal = {appdess[4].is_seasonal}
+            image={<img src ={appdess[4].image}/>}/>
+          </div>) : (
+          <div> </div>
+        )}
       </div>
       <div className="col">
-        <MenuBoardAppetizer name={"chicken egg roll"} calories={"130 cal"} isPremium = {true} isSeasonal = {true}/>
+        {appdess[5] ? (
+          <div>
+            <MenuBoardAppetizer 
+            name={formatProductName(appdess.at(5).product_name)}
+            smPrice = {"4.5"}
+            mdPrice = {"4.5"}
+            lgPrice = {"4.5"}
+            isPremium = {appdess[5].is_premium}
+            isSeasonal = {appdess[5].is_seasonal}
+            image={<img src ={appdess[5].image}/>}/>
+          </div>) : (
+          <div> </div>
+        )}
       </div>
     </div>
     
