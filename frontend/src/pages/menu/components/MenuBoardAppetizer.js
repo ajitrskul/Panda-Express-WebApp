@@ -46,10 +46,10 @@ const MenuBoardAppetizer = ({name, image, smPrice, mdPrice, lgPrice, isPremium, 
                             <th scope="row"> Sm </th>
                             <td> {smPrice} </td>
                         </tr>
-                        <tr>
+                        {/* <tr>
                             <th scope="row"> Med </th>
                             <td> {mdPrice} </td>
-                        </tr>
+                        </tr> */}
                         <tr>
                             <th scope="row"> Lg </th>
                             <td> {lgPrice} </td>

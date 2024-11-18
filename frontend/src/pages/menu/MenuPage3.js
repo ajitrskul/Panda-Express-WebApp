@@ -121,7 +121,7 @@ function MenuMain() {
       {drinks.map((drink) => (
         <div className="row">
           <div className="col">
-            <MenuBoardDrinks name={formatProductName(drink.product_name)} price={"$" + (menuItems[16].menu_item_base_price + drink.premium_addition)}/>
+            <MenuBoardDrinks name={formatProductName(drink.product_name)} price={"$" + (1*menuItems[16].menu_item_base_price + 1*drink.premium_addition)}/>
           </div>
         </div>
         ))}
@@ -134,9 +134,8 @@ function MenuMain() {
       <div className="col">
         <MenuBoardAppetizer 
         name={formatProductName(appdess.at(0).product_name)}
-        smPrice = {"4.5"}
-        mdPrice = {"4.5"}
-        lgPrice = {"4.5"}
+        smPrice = {"$" + (1*menuItems[4].menu_item_base_price + 1*appdess[0].premium_addition)}
+        lgPrice = {"$" + (1*menuItems[5].menu_item_base_price + 1*appdess[0].premium_addition)}
         isPremium = {appdess[0].is_premium}
         isSeasonal = {appdess[0].is_seasonal}
         image={<img src ={appdess[0].image}/>}/>
@@ -144,9 +143,8 @@ function MenuMain() {
       <div className="col">
         <MenuBoardAppetizer 
         name={formatProductName(appdess.at(1).product_name)}
-        smPrice = {"4.5"}
-        mdPrice = {"4.5"}
-        lgPrice = {"4.5"}
+        smPrice = {"$" + (1*menuItems[4].menu_item_base_price + 1*appdess[1].premium_addition)}
+        lgPrice = {"$" + (1*menuItems[5].menu_item_base_price + 1*appdess[1].premium_addition)}
         isPremium = {appdess[1].is_premium}
         isSeasonal = {appdess[1].is_seasonal}
         image={<img src ={appdess[1].image}/>}/>
@@ -157,9 +155,8 @@ function MenuMain() {
       <div className="col">
         <MenuBoardAppetizer 
         name={formatProductName(appdess.at(2).product_name)}
-        smPrice = {"4.5"}
-        mdPrice = {"4.5"}
-        lgPrice = {"4.5"}
+        smPrice = {"$" + (1*menuItems[4].menu_item_base_price + 1*appdess[2].premium_addition)}
+        lgPrice = {"$" + (1*menuItems[5].menu_item_base_price + 1*appdess[2].premium_addition)}
         isPremium = {appdess[2].is_premium}
         isSeasonal = {appdess[2].is_seasonal}
         image={<img src ={appdess[2].image}/>}/>
@@ -169,9 +166,8 @@ function MenuMain() {
           <div>
             <MenuBoardAppetizer 
             name={formatProductName(appdess.at(3).product_name)}
-            smPrice = {"4.5"}
-            mdPrice = {"4.5"}
-            lgPrice = {"4.5"}
+            smPrice = {"$" + (1*menuItems[4].menu_item_base_price + 1*appdess[3].premium_addition)}
+            lgPrice = {"$" + (1*menuItems[5].menu_item_base_price + 1*appdess[3].premium_addition)}
             isPremium = {appdess[3].is_premium}
             isSeasonal = {appdess[3].is_seasonal}
             image={<img src ={appdess[3].image}/>}/>
