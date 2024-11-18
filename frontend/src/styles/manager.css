@@ -226,7 +226,7 @@
         padding-bottom: 20px;
         margin-top: 0;
         margin-right: 50px;
-        border-top: 3px solid rgb(98, 98, 98);;
+        border-top: 3px solid rgb(98, 98, 98);
         opacity: .5;
         z-index: -100;
     }
@@ -268,6 +268,16 @@
 
 }
 
+.inventory-divider-big{
+    padding-bottom: 20px;
+    margin-top: 0;
+    margin-right: 50px;
+    border-top: 3px solid rgb(98, 98, 98);
+    opacity: .5;
+    z-index: -100;
+    width: 100%;
+}
+
 .inventory-page {
     background-color: rgb(235, 235, 235);
     min-height: 100vh;
@@ -294,20 +304,6 @@
     font-size: 50px;
     color: rgb(98, 98, 98);
   }
-  
-.restock-button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-.restock-button:hover {
-    background-color: #0056b3;
-  }
-
 
 .inventory-card {
     display: flex;
@@ -325,7 +321,7 @@
     
 .inventory-card h5 {
     font-size: 24px;
-    color: rgb(98, 98, 98);
+    color: rgb(70, 70, 70);
     margin-bottom: 10px;
     overflow-wrap: break-word;
     }

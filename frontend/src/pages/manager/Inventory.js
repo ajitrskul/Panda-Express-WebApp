@@ -63,6 +63,7 @@ function Inventory() {
       <div className="inventory-background-container">
         <div className="container inventory-background">
           <h2 className="inventory-title text-center">Inventory Management</h2>
+          <hr class="inventory-divider-big"></hr>
           <div className="row">
             {inventory.map((item) => (
               <div
@@ -71,7 +72,7 @@ function Inventory() {
               >
                 <div
                   className={`card h-100 w-100 d-flex align-content-center p-3 mb-2 ${
-                    item.inventoryRemaining < 5 ? "bg-danger text-dark inventory-card" : "bg-white inventory-card"
+                    item.inventoryRemaining < 5 ? "bg-danger inventory-card" : "bg-white inventory-card"
                   }`}
                 >
                   <div className="card-body">
