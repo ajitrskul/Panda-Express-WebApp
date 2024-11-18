@@ -109,7 +109,7 @@ def authenticate_db():
         if employee.role == 'manager':
             return jsonify({"success": True, "password": employee.password, "route": "/manager"})
         elif employee.role == 'fired':
-            return jsonify({"success": True, "password": employee.password, "route": "/auth/signin/error"})
+            return jsonify({"success": True, "password": employee.password, "route": "/auth/error"})
         else:
             return jsonify({"success": True, "password": employee.password, "route": "/pos"})
     else:
@@ -148,14 +148,14 @@ def callback():
             if employee.role == 'manager':
                 re_route_link = current_app.config['base_url'] + "/manager"
             elif employee.role == 'fired':
-                re_route_link = current_app.config['base_url'] + "/auth/signin/error"
+                re_route_link = current_app.config['base_url'] + "/auth/error"
             else:
                 re_route_link = current_app.config['base_url'] + "/pos"
             session["name"] = payload_json.get("name")
             session["email"] = payload_json.get("email")
             return redirect(re_route_link)
         else:
-            re_route_link = current_app.config['base_url'] + "/auth/signin/error"
+            re_route_link = current_app.config['base_url'] + "/auth/error"
             session.clear()
             return redirect(re_route_link)
     except Exception as e:
