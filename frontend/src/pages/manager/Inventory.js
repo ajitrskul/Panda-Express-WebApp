@@ -30,16 +30,8 @@ function Inventory() {
   const handleRestock = async (itemName) => {
     try {
       const amount = restockAmounts[itemName];
-      await api.post("/inventory/restock", { itemName, amount }); // Backend updates
-  
-      setInventory((prev) => {
-        const updatedInventory = prev.map((item) =>
-          item.name === itemName
-            ? { ...item, inventoryRemaining: item.inventoryRemaining + amount }
-            : item
-        );
-        return updatedInventory;
-      });
+      await api.post("/manager/inventory/restock", { itemName, amount });
+      window.location.reload();
     } catch (error) {
       console.error(`Error restocking item "${itemName}":`, error);
     }

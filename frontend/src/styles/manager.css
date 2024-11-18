@@ -281,20 +281,20 @@
 .inventory-page {
     background-color: rgb(235, 235, 235);
     min-height: 100vh;
-  }
+}
   
 .inventory-background-container {
     padding-bottom: 20px;
     padding-left: 350px;
     height: fit-content;
     background-color:rgb(235, 235, 235);
-  }
+}
   
 .inventory-background {
     background-color: rgb(235, 235, 235);
     padding: 30px;
     border-radius: 10px;
-  }
+}
   
 .inventory-title {
     font-weight:200px;
@@ -303,7 +303,7 @@
     padding-top: 30px;
     font-size: 50px;
     color: rgb(98, 98, 98);
-  }
+}
 
 .inventory-card {
     display: flex;
@@ -317,14 +317,14 @@
     box-shadow: 1px 1px 5px gray;
     text-align: center;
     width: 100%;
-    }
+}
     
 .inventory-card h5 {
     font-size: 24px;
     color: rgb(70, 70, 70);
     margin-bottom: 10px;
     overflow-wrap: break-word;
-    }
+}
     
 .inventory-card .restock-input {
     width: 60px;
@@ -332,7 +332,7 @@
     text-align: center;
     align-items: center;
     margin: 10px;
-    }
+}
 
 .inventory-card .inventory-restock {
     display: flex;
@@ -340,6 +340,6 @@
     align-items: center;
     gap: 10px;
     margin-top: 10px;
-    }
+}
   
   
