@@ -264,8 +264,8 @@ def create_order():
             order = Order(
                 order_date_time=datetime.now(timezone.utc),
                 total_price=total_price,
-                employee_id=None
-                # You can include employee_id if applicable
+                employee_id=None,
+                is_ready= False
             )
             db.session.add(order)
             db.session.flush()  # To get the order_id

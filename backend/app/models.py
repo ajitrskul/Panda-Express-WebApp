@@ -57,6 +57,7 @@ class Order(db.Model):
     order_date_time = db.Column(db.DateTime, nullable=False, default=datetime.now(timezone.utc))
     employee_id = db.Column(db.Integer, db.ForeignKey('employee_info.employee_id'), nullable=True)
     total_price = db.Column(db.Numeric(7, 2), nullable=False)
+    is_ready = db.Column(db.Boolean, nullable=True)
 
     order_menu_items = db.relationship('OrderMenuItem', backref='order', lazy=True)
 
