@@ -22,6 +22,20 @@ def inventory_items():
         print(f"An error occurred: {e}")
         return {}
 
+@manager_bp.route('/inventory/low', methods=["GET"])
+def inventory_items_low():
+    try:
+        with db.session.begin():
+            product_inventory = db.session.query(ProductItem).with_entities(ProductItem.product_name, ProductItem.quantity_in_cases).filter(ProductItem.quantity_in_cases < 5).order_by(ProductItem.product_id).all()
+
+        inventory_data = [
+            {"name": name_helper(product.product_name), "inventoryRemaining": product.quantity_in_cases} for product in product_inventory
+        ]
+        return jsonify(inventory_data)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return {}
+
 @manager_bp.route('/inventory/restock', methods=["POST"])
 def restock():
     try:
