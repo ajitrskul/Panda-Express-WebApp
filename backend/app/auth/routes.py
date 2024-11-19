@@ -77,10 +77,10 @@ def authenticateLogin():
     if (queryCustomer == None):
         return jsonify(False)
     else:
-        isValidLogin = ((customerLogin["customer_id"] == queryCustomer.customer_id) and (customerLogin["first_name"] == queryCustomer.first_name) and (customerLogin["last_name"] == queryCustomer.last_name) and (customerLogin["beast_points"] == queryCustomer.beast_points))
+        isValidLogin = (customerLogin["password"] == queryCustomer.password)
         # isValidLogin = (customerLogin["customer_id"] == queryCustomer.customer_id)
         if (isValidLogin):
-            return jsonify(True)
+            return jsonify({"customer_id":queryCustomer.customer_id, "email":queryCustomer.email, "first_name":queryCustomer.first_name, "last_name":queryCustomer.last_name, "beast_points":queryCustomer.beast_points})
         else:
             return jsonify(False)
 

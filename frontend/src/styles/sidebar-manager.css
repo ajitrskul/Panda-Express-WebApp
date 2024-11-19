@@ -1,8 +1,8 @@
 
 .manager-sidebar{
-    padding: 0;
+    /* padding: 0; */
     position: absolute;
-    left:0;
+    /* left:0; */
     width: 300px;
     background-color:#a3080c ;
     box-shadow: 5px 0px 10px rgba(0, 0, 0, 0.2);
@@ -79,6 +79,7 @@
     align-items: center;
     text-decoration: none;
     cursor:pointer;
+    background-color:#a3080c ;
 }
 
 .sidebar-item:hover{

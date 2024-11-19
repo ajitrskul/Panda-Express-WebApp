@@ -38,7 +38,7 @@ export default function SignInQR() {
   const testSignIn = async (customerLogin) => {
     const signinSuccess = await api.post("/auth/signin/qr", customerLogin);
     if (signinSuccess.data) {
-      customerSignIn(customerLogin);
+      customerSignIn(signinSuccess.data);
       navigate("/auth/signin/success");
       window.location.reload()
       return;
@@ -91,18 +91,12 @@ export default function SignInQR() {
                   
                   //check that all fields are present before setting customerLogin
                   if (
-                    scannedInfo.customer_id != null &&
                     scannedInfo.email != null &&
-                    scannedInfo.first_name != null &&
-                    scannedInfo.last_name != null &&
-                    scannedInfo.beast_points != null
+                    scannedInfo.password != null
                   ) {
                     customerLogin = {
-                      customer_id: scannedInfo.customer_id,
                       email: scannedInfo.email,
-                      first_name: scannedInfo.first_name,
-                      last_name: scannedInfo.last_name,
-                      beast_points: scannedInfo.beast_points
+                      password: scannedInfo.password,
                     };
 
                     try { //all fields were present -> authenticate user
