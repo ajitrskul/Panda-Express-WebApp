@@ -63,6 +63,24 @@ def restock():
         print(f"Error: {e}")
         return jsonify({"error": "An error occurred while restocking inventory"}), 500
 
+@manager_bp.route('/inventory/restock/low', methods=["POST"])
+def restock_low():
+    try:
+        with db.session.begin():
+            product_inventory = db.session.query(ProductItem).with_entities(ProductItem.product_name, ProductItem.quantity_in_cases).filter(ProductItem.quantity_in_cases < 5).all()
+
+            for item in product_inventory:
+                item.quantity_in_cases = 5
+
+            db.session.commit()
+
+        return {}
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error: {e}")
+        return jsonify({"error": "An error occurred while restocking inventory"}), 500
+
 
 def name_helper(text):
     words = re.findall(r'[A-Z][a-z]*|[a-z]+', text)

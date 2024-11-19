@@ -40,11 +40,8 @@ function RestockReports() {
 
   const handleRestockAll = async () => {
     try {
-      for (const item of inventory) {
-        const amount = restockAmounts[item.name];
-        await api.post("/manager/inventory/restock", { itemName: item.name, amount });
-      }
-      window.location.reload(); // Reload after all items are restocked
+      await api.post("/manager/inventory/restock/low", {});
+      window.location.reload();
     } catch (error) {
       console.error("Error restocking all items:", error);
     }
