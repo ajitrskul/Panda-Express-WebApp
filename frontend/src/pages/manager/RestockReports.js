@@ -38,6 +38,19 @@ function RestockReports() {
     }
   };
 
+  const handleRestockAll = async () => {
+    try {
+      for (const item of inventory) {
+        const amount = restockAmounts[item.name];
+        await api.post("/manager/inventory/restock", { itemName: item.name, amount });
+      }
+      window.location.reload(); // Reload after all items are restocked
+    } catch (error) {
+      console.error("Error restocking all items:", error);
+    }
+  };
+
+
   const handleInputChange = (e, itemName) => {
     const value = parseInt(e.target.value, 10) || 0;
     setRestockAmounts((prev) => ({
@@ -57,6 +70,14 @@ function RestockReports() {
         <div className="container inventory-background">
           <h2 className="inventory-title text-center">Restock Report</h2>
           <hr class="inventory-divider-big"></hr>
+          <div className="text-center mb-4">
+            <button
+              onClick={handleRestockAll}
+              className="btn btn-success"
+            >
+              Restock All
+            </button>
+          </div>
           <div className="row">
             {inventory.map((item) => (
               <div
