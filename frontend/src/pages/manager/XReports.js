@@ -45,7 +45,7 @@ function XReports() {
     
       
       <div class="reports-background-container"> 
-      <SidebarManager></SidebarManager>
+      <SidebarManager />
       <div class="reports-background"> 
       <div class="title-container">
       <div class="reports-title">

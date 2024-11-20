@@ -1,17 +1,16 @@
-import { Route, Routes, Link } from "react-router-dom";
-import { NavBar } from "../kiosk/components/NavBar";
+import { Route, Routes } from "react-router-dom";
+//import { useState } from 'react';
 import "../../styles/signup/SignUpError.css";
 
-export default function SignUpError() {
+export default function AuthError() {
   return (
     <Routes>
       <Route
         path="/"
         element = {
-          <>
+          <>  
             <div className="signup-error-bg"></div>
             <div className="container-fluid">
-              <NavBar></NavBar>
               <div className="row justify-content-center">
                 <div className="col-sm-4 container-fluid signup-error-container">
                   <div className="row justify-content-center">
@@ -27,12 +26,11 @@ export default function SignUpError() {
                   <div className="row justify-content-center">
                     <div className="col-sm-9 text-center">
                       <p className="signup-error-text">
-                        There was an error processing your request.
+                        Your Account was not found.
                       </p>
                       <p className="signup-error-text">
-                        Please try again later.
+                        Please talk to your manager to register an account with us
                       </p>
-                      <Link className="signup-error-text" to="/kiosk" tabIndex="1">Return to Kiosk</Link>
                     </div>
                   </div>
                 </div>

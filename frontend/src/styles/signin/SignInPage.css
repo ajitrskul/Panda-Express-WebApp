@@ -1,0 +1,186 @@
+@import url('https://fonts.googleapis.com/css2?family=Jaldi:wght@400;700&family=Jomhuria&family=Julius+Sans+One&display=swap');
+
+
+.signin-title {
+  font-family:'Jomhuria', Garamond;
+  color:black;
+}
+
+.signin-label {
+  font-family:Jaldi, Arial;
+  font-size:18px;
+}
+
+.signin-bg {
+  background: url(../../assets/SignUpBg.jpg) no-repeat center center fixed;
+  background-size: cover;
+
+  /* Set rules to fill background */
+  min-height: 100%;
+  min-width: 1024px;
+	
+  /* Set up proportionate scaling */
+  width: 100%;
+  height: auto;
+	
+  /* Set up positioning */
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  z-index:100;
+}
+
+.signin-bg2-container {
+  position:fixed;
+  z-index:200;
+  top:0px;
+  bottom:0px;
+
+  opacity:0.9;
+}
+
+.signin-bg2-row {
+  height:100%
+}
+
+.signin-bg2 {
+  height:100%;
+  background-color:white;
+
+  box-shadow: 
+    5px 5px 15px rgb(206,157,55,0.8),
+    -5px -5px 15px rgb(206,157,55,0.8);
+}
+
+.signin-form {
+  position:absolute;
+  z-index:300;
+  
+  top:50%;
+  transform: translateY(-50%);
+}
+
+.signin-input {
+  border:solid;
+  border-radius:5px;
+  border-color:black;
+  border-width:1px;
+
+  background-color: rgb(255,255,255);
+}
+
+@media (width >= 576px) {
+  .signin-remove-padding {
+    padding-left:0px !important;
+  }
+}
+
+@media (width < 576px) {
+  .signin-remove-padding {
+    padding-left:0px !important;
+    padding-right:0px !important;
+  }
+}
+
+.signin-required-fields {
+  color:black;
+  font-family: 'Julius Sans One';
+  margin-bottom:0px;
+}
+
+.signin-submit {
+  background-color: #A3080C;
+  font-family: 'Julius Sans One', Copperplate;
+  border:none;
+  border-radius:25px;
+  padding:4px 50px !important;
+  font-size:20px;
+
+  border:solid;
+  border-color: #A3080C;
+  border-width:1px;
+
+  color:black;
+  position:relative;
+}
+
+.signin-submit:hover {
+  color:white;
+  background-color: #cd0c13;
+}
+
+.signin-submit:active {
+  background-color:#fe0b13;
+  opacity:0.8
+}
+
+.signin-navigate-login {
+  color:black;
+  font-family: Julius Sans One;
+}
+
+.error-message {
+  color:red;
+  font-family: Joldi, Arial;
+  font-size:14px;
+
+  margin-bottom:5px !important;
+}
+
+.invalid-input {
+  border-color:red;
+}
+
+.signin-submission-loading {
+  opacity:0.8;
+  cursor:default;
+  background-color: #fe0b13;
+}
+
+.signin-spinning-loader {
+  position:absolute;
+  left:76.9125px;
+  color:white;
+  opacity:0;
+}
+
+.signin-loader-opacity {
+  opacity:1;
+}
+
+.signin-or {
+  margin:10px 0px !important;
+}
+
+.signin-QR {
+  background-color: #A3080C;
+  font-family: 'Julius Sans One', Copperplate;
+  border:none;
+  border-radius:25px;
+  padding:4px 30px !important;
+  font-size:20px;
+
+  border:solid;
+  border-color: #A3080C;
+  border-width:2px;
+
+  color:black;
+  position:relative;  
+}
+
+.signin-QR:hover {
+  color:white;
+  background-color: #cd0c13;
+}
+
+.signin-qr-img {
+  height: 30px;
+  width: 30px;
+  object-fit: cover;
+}
+
+.signin-QR:hover .signin-qr-img {
+  filter: invert(100%) sepia(100%) saturate(18%) hue-rotate(310deg) brightness(104%) contrast(104%);
+}
+
