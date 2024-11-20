@@ -2,6 +2,8 @@ from . import manager_bp
 from flask import jsonify, request
 from app.extensions import db
 from app.models import ProductItem
+from datetime import datetime
+from sqlalchemy import text
 import re
 
 @manager_bp.route('/', methods=['GET'])
@@ -88,15 +90,65 @@ def product_usage_info():
         { "productName": "Product B", "servingsUsed": 30 },
         { "productName": "Product C", "servingsUsed": 20 }
     ]
+    try:
+        data = request.get_json()
+        start = convert_to_postgres_timestamp(data.get("startDate"))
+        end = convert_to_postgres_timestamp(data.get("endDate"))
+        
+        query = """
+                    SELECT 
+                        p.product_name, 
+                        SUM(
+                            CASE 
+                                WHEN mi.item_name = 'appetizerMedium' THEN 2 
+                                WHEN mi.item_name = 'appetizerLarge' THEN 3 
+                                WHEN mi.item_name = 'aLaCarteMedium' THEN 2 
+                                WHEN mi.item_name = 'aLaCarteLarge' THEN 3 
+                                WHEN mi.item_name = 'drinkMedium' THEN 2 
+                                WHEN mi.item_name = 'drinkLarge' THEN 3 
+                                ELSE 1 
+                            END
+                        ) AS total_servings_used 
+                    FROM 
+                        order_menu_item_product omip
+                    JOIN 
+                        product_item p ON omip.product_id = p.product_id
+                    JOIN 
+                        order_menu_item omi ON omip.order_menu_item_id = omi.order_menu_item_id
+                    JOIN 
+                        menu_item mi ON omi.menu_item_id = mi.menu_item_id
+                    JOIN 
+                        "order" o ON omi.order_id = o.order_id
+                    WHERE 
+                        o.order_date_time BETWEEN :start_date AND :end_date
+                    GROUP BY 
+                        p.product_name
+                """
+        results = db.session.execute(
+                    text(query), 
+                    {'start_date': start, 'end_date': end}
+                ).fetchall()
+        
+        usage = [
+            {"productName": row[0], "servingsUsed": row[1]}for row in results
+        ]
 
-    data = request.get_json()
-    print(data)
-
-    return jsonify(info)
+        return jsonify(usage)
+    
+    except Exception as e:
+        print(f"Error: {e}")
 
 def name_helper(text):
     words = re.findall(r'[A-Z][a-z]*|[a-z]+', text)
     return ' '.join(word.capitalize() for word in words)
+
+def convert_to_postgres_timestamp(iso_timestamp):
+    try:
+        parsed_time = datetime.strptime(iso_timestamp, "%Y-%m-%dT%H:%M")
+        postgres_timestamp = parsed_time.strftime("%Y-%m-%d %H:%M:%S")
+        return postgres_timestamp
+    except ValueError as e:
+        return f"Error: {e}"
 
 def to_camel_case(input_string):
     words = input_string.split()
