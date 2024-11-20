@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 // Import all pages
 import { MenuMain } from './pages/menu';
 import { KitchenMain } from './pages/kitchen';
-import { ManagerMain,XReports,ZReports, RestockReports, Employees, Products, Inventory} from './pages/manager';
+import { ManagerMain,XReports,ZReports, RestockReports, Employees, Products, Inventory, ProductUsage} from './pages/manager';
 import { KioskMain, KioskLanding, OrderSelection, DrinkSelection, AppsAndMoreSelection } from './pages/kiosk';
 import { PosMain } from './pages/pos';
 import { AuthMain, SignUpPage, SignUpError, SignUpSuccess, SignInError } from './pages/auth';
@@ -54,7 +54,8 @@ function App() {
           <Route path="/manager/employees" element={<Employees />} />
           <Route path="/manager/products" element={<Products/>} />
           <Route path="/manager/inventory" element={<Inventory />} />
-            <Route path="/manager" element={<ManagerMain />} />
+          <Route path="/manager/productusage" element={<ProductUsage />} />
+          <Route path="/manager" element={<ManagerMain />} />
 
           {/* ... other routes */}
           <Route path="/kiosk" element={<KioskLanding />} />

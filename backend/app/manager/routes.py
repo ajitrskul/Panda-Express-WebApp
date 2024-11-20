@@ -81,6 +81,18 @@ def restock_low():
         print(f"Error: {e}")
         return jsonify({"error": "An error occurred while restocking inventory"}), 500
 
+@manager_bp.route('/productUsage', methods=["POST"])
+def product_usage_info():
+    info = [
+        { "productName": "Product A", "servingsUsed": 50 },
+        { "productName": "Product B", "servingsUsed": 30 },
+        { "productName": "Product C", "servingsUsed": 20 }
+    ]
+
+    data = request.get_json()
+    print(data)
+
+    return jsonify(info)
 
 def name_helper(text):
     words = re.findall(r'[A-Z][a-z]*|[a-z]+', text)

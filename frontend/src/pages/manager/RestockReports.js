@@ -61,12 +61,12 @@ function RestockReports() {
   }
 
   return (
-    <div className="container-fluid inventory-page">
+    <div className="container-fluid page">
       <SidebarManager />
-      <div className="inventory-background-container">
-        <div className="container inventory-background">
-          <h2 className="inventory-title text-center">Restock Report</h2>
-          <hr class="inventory-divider-big"></hr>
+      <div className="page-background-container">
+        <div className="container page-background">
+          <h2 className="page-title text-center">Restock Report</h2>
+          <hr class="page-divider-big"></hr>
           <div className="text-center mb-4">
             <button
               onClick={handleRestockAll}

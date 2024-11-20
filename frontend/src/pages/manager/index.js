@@ -5,3 +5,4 @@ export { default as RestockReports } from './RestockReports';
 export { default as Employees } from './Employees';
 export { default as Products } from './Products';
 export { default as Inventory } from './Inventory';
+export { default as ProductUsage } from './ProductUsage';
