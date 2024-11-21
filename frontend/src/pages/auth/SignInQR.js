@@ -23,11 +23,11 @@ export default function SignInQR() {
   const leavePage = ((event) => {
     switch (event.target.id) {
       case 'qr-kiosk':
-        navigate('/kiosk');
+        navigate('/kiosk')
         window.location.reload();
         break;
       case 'qr-login':
-        navigate('/auth/signin');
+        navigate('/auth/signin')
         window.location.reload();
         break
       default:
