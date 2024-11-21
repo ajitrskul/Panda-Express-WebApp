@@ -1,7 +1,7 @@
 //import { BarChart, Bar, XAxis, YAxis } from 'recharts';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css"
-import { format } from 'date-fns';
+// import { format } from 'date-fns';
 import { useState } from 'react';
 import { SidebarManager } from './components/SidebarManager';
 import '../../styles/manager/salesreports.css';

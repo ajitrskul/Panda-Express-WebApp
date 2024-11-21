@@ -18,7 +18,7 @@ function XReports() {
   useEffect(() => {
     const reportDropupIcon=document.getElementById("report-dropup-icon");
     reportDropupIcon.style.display="none";
-    
+    fetchXReport();
     //fetchXReport();
   }, []); 
 
