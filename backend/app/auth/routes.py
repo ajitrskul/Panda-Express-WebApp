@@ -74,7 +74,9 @@ def authenticate_db():
 @auth_bp.route("/signin/google", methods=["GET"])
 def authenticate_google():
     flow = current_app.config['OAUTH_FLOW']
-    authorization_url, _ = flow.authorization_url(state=None)
+    print("before url")
+    authorization_url, _ = flow.authorization_url(state="mystate")
+    print("after url:", authorization_url)
     return redirect(authorization_url)
 
 
@@ -82,6 +84,7 @@ def authenticate_google():
 def callback():
     try:
         flow = current_app.config['OAUTH_FLOW']
+        print("request url:", request.url)
         flow.fetch_token(authorization_response=request.url)
 
         credentials = flow.credentials
