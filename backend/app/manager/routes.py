@@ -85,11 +85,6 @@ def restock_low():
 
 @manager_bp.route('/productUsage', methods=["POST"])
 def product_usage_info():
-    info = [
-        { "productName": "Product A", "servingsUsed": 50 },
-        { "productName": "Product B", "servingsUsed": 30 },
-        { "productName": "Product C", "servingsUsed": 20 }
-    ]
     try:
         data = request.get_json()
         start = convert_to_postgres_timestamp(data.get("startDate"))
@@ -130,7 +125,7 @@ def product_usage_info():
                 ).fetchall()
         
         usage = [
-            {"productName": row[0], "servingsUsed": row[1]}for row in results
+            {"productName": name_helper(row[0]), "servingsUsed": row[1]}for row in results
         ]
 
         return jsonify(usage)
