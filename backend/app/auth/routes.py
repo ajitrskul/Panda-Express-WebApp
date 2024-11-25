@@ -84,7 +84,6 @@ def authenticate_google():
 def callback():
     try:
         flow = current_app.config['OAUTH_FLOW']
-        print("request url:", request.url)
         flow.fetch_token(authorization_response=request.url)
 
         credentials = flow.credentials
