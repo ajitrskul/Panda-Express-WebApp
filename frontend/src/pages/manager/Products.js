@@ -8,6 +8,24 @@ function Products() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [newProduct, setNewProduct] = useState(null);
+  const [authenticated, setAuthenticated] = useState(null);
+
+  useEffect(() => {
+    const authenticate = async () => {
+      try {
+        const response = await api.get("/auth/manager/permission");
+        if (response.data.authenticate) {
+          setAuthenticated(true);
+        } else {
+          setAuthenticated(false);
+        }
+      } catch (error) {
+        console.error("Error Authenticating", error);
+        setAuthenticated(false); // Deny access on error
+      }
+    };
+    authenticate();
+  }, []);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -73,6 +91,14 @@ function Products() {
   const closeModal = async () => {
     setNewProduct(null);
   };
+
+  if (authenticated === null) {
+    return <div>Checking Permission...</div>;
+  }
+
+  if (!authenticated) {
+    return <div>Access Denied</div>;
+  }
 
   if (loading) {
     return <div>Loading...</div>;
