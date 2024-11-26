@@ -37,12 +37,12 @@ function Products() {
     }
   };
 
-  const deleteProduct = async () => {
+  const deleteProduct = async (id) => {
     try {
-      await api.post("/manager/inventory/restock", {  });
+      await api.post("/manager/products/delete", { id });
       window.location.reload();
     } catch (error) {
-      console.error("Error restocking all items:", error);
+      console.error("Error deleting product:", error);
     }
   };
 
@@ -105,7 +105,7 @@ function Products() {
                   <div className="card-body">
                     <h5 className="card-text">{item.product_name}</h5>
                     <button
-                        onClick={() => deleteProduct(item.product_name)}
+                        onClick={() => deleteProduct(item.product_id)}
                         className="btn btn-danger delete-button"
                       >
                         Delete

@@ -69,7 +69,7 @@ def restock():
 def restock_low():
     try:
         with db.session.begin():
-            product_inventory = db.session.query(ProductItem).with_entities(ProductItem.product_name, ProductItem.quantity_in_cases).filter(ProductItem.quantity_in_cases < 5).all()
+            product_inventory = db.session.query(ProductItem).filter(ProductItem.quantity_in_cases < 5).all()
 
             for item in product_inventory:
                 item.quantity_in_cases = 5
@@ -138,6 +138,7 @@ def get_products():
     try:
         with db.session.begin():
             products = db.session.query(ProductItem).with_entities( 
+                        ProductItem.product_id,
                         ProductItem.product_name,
                         ProductItem.type,
                         ProductItem.is_seasonal,
@@ -157,7 +158,8 @@ def get_products():
                         ProductItem.cost_per_case).order_by(ProductItem.product_id).all()
 
         product_data = [
-            {"product_name": name_helper(product.product_name),
+            {   "product_id": product.product_id,
+                "product_name": name_helper(product.product_name),
                 "type": product.type,
                 "is_seasonal": product.is_seasonal,
                 "is_available": product.is_available,
@@ -183,8 +185,74 @@ def get_products():
 @manager_bp.route('/products/update', methods=["POST"])
 def update_products():
     data = request.get_json()
-    print(data)
-    return {}
+    id = data.get("product_id")
+    try:
+        with db.session.begin():
+            product = db.session.query(ProductItem).filter_by(product_id=id).first()
+
+            if product:
+                product.product_name = to_camel_case(data.get("product_name"))
+                product.type = data.get("type")
+                product.is_seasonal = data.get("is_seasonal")
+                product.is_available = data.get("is_available")
+                product.servings_remaining = data.get("servings_remaining")
+                product.allergens = data.get("allergens")
+                product.display_icons = data.get("display_icons")
+                product.product_description = data.get("product_description")
+                product.premium_addition = data.get("premium_addition")
+                product.serving_size = data.get("serving_size")
+                product.calories = data.get("calories")
+                product.saturated_fat = data.get("saturated_fat")
+                product.carbohydrate = data.get("carbohydrate")
+                product.protein = data.get("protein")
+                product.image = data.get("image")
+                product.is_premium = data.get("is_premium")
+                product.cost_per_case = data.get("cpc")
+            else:
+                new_product = ProductItem(
+                    product_name = to_camel_case(data.get("product_name")),
+                    type = data.get("type"),
+                    is_seasonal = data.get("is_seasonal"),
+                    is_available = data.get("is_available"),
+                    servings_remaining = data.get("servings_remaining"),
+                    allergens = data.get("allergens"),
+                    display_icons = data.get("display_icons"),
+                    product_description = data.get("product_description"),
+                    premium_addition = data.get("premium_addition"),
+                    serving_size = data.get("serving_size"),
+                    calories = data.get("calories"),
+                    saturated_fat = data.get("saturated_fat"),
+                    carbohydrate = data.get("carbohydrate"),
+                    protein = data.get("protein"),
+                    image = data.get("image"),
+                    is_premium = data.get("is_premium"),
+                    quantity_in_cases = 0,
+                    servings_per_case = 50,
+                    cost_per_case = data.get("cpc")
+                )
+                db.session.add(new_product)
+
+            db.session.commit()
+        return {}
+    except Exception as e:
+        db.session.rollback()
+        print(f"An error occurred: {e}")
+        return {}
+
+@manager_bp.route('/products/delete', methods=["POST"])
+def delete_products():
+    data = request.get_json()
+    id = data.get("id")
+    try:
+        with db.session.begin():
+            product = db.session.query(ProductItem).filter_by(product_id=id).first()
+            db.session.delete(product)
+        return {}
+    except Exception as e:
+        db.session.rollback()
+        print(f"An error occurred: {e}")
+        return {}
+
 def name_helper(text):
     words = re.findall(r'[A-Z][a-z]*|[a-z]+', text)
     return ' '.join(word.capitalize() for word in words)
