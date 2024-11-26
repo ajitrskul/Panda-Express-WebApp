@@ -133,6 +133,58 @@ def product_usage_info():
     except Exception as e:
         print(f"Error: {e}")
 
+@manager_bp.route('/products', methods=["GET"])
+def get_products():
+    try:
+        with db.session.begin():
+            products = db.session.query(ProductItem).with_entities( 
+                        ProductItem.product_name,
+                        ProductItem.type,
+                        ProductItem.is_seasonal,
+                        ProductItem.is_available,
+                        ProductItem.servings_remaining,
+                        ProductItem.allergens,
+                        ProductItem.display_icons,
+                        ProductItem.product_description,
+                        ProductItem.premium_addition,
+                        ProductItem.serving_size,
+                        ProductItem.calories,
+                        ProductItem.saturated_fat,
+                        ProductItem.carbohydrate,
+                        ProductItem.protein,
+                        ProductItem.image,
+                        ProductItem.is_premium,
+                        ProductItem.cost_per_case).order_by(ProductItem.product_id).all()
+
+        product_data = [
+            {"product_name": name_helper(product.product_name),
+                "type": product.type,
+                "is_seasonal": product.is_seasonal,
+                "is_available": product.is_available,
+                "servings_remaining": product.servings_remaining,
+                "allergens": product.allergens,
+                "display_icons": product.display_icons,
+                "product_description": product.product_description,
+                "premium_addition": product.premium_addition,
+                "serving_size": product.serving_size,
+                "calories": product.calories,
+                "saturated_fat": product.saturated_fat,
+                "carbohydrate": product.carbohydrate,
+                "protein": product.protein,
+                "image": product.image,
+                "is_premium": product.is_premium,
+                "cpc": product.cost_per_case} for product in products
+        ]
+        return jsonify(product_data)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return {}
+
+@manager_bp.route('/products/update', methods=["POST"])
+def update_products():
+    data = request.get_json()
+    print(data)
+    return {}
 def name_helper(text):
     words = re.findall(r'[A-Z][a-z]*|[a-z]+', text)
     return ' '.join(word.capitalize() for word in words)
