@@ -13,7 +13,7 @@ const formatProductName = (name) => {
   return name.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();
 };
 
-function MenuMain() {
+function MenuMain1() {
   // const [menuData, setMenuData] = useState([]); // Step 1: State to hold data
   const [menuItems, setMenuItems] = useState([]);
   const [sides, setSides] = useState([]);
@@ -144,19 +144,19 @@ function MenuMain() {
                 <tr>
                   <th scope="row"> Sm </th>
                   <td> {"$" + aLaCarte.at(2).menu_item_base_price} </td>
-                  <td> {"$" + (aLaCarte.at(2).menu_item_base_price + 1.5*aLaCarte.at(2).premium_multiplier)} </td>
+                  <td> {"$" + (parseFloat(aLaCarte.at(2).menu_item_base_price) + parseFloat(1.5*aLaCarte.at(2).premium_multiplier)).toFixed(2)} </td>
                   <td> {"$" + aLaCarte.at(0).menu_item_base_price} </td>
                 </tr>
                 <tr>
                   <th scope="row"> Med </th>
                   <td> {"$" + aLaCarte.at(3).menu_item_base_price} </td>
-                  <td> {"$" + (aLaCarte.at(3).menu_item_base_price + 1.5*aLaCarte.at(3).premium_multiplier)} </td>
+                  <td> {"$" + (parseFloat(aLaCarte.at(3).menu_item_base_price) + parseFloat(1.5*aLaCarte.at(3).premium_multiplier)).toFixed(2)} </td>
                   <td>  </td>
                 </tr>
                 <tr>
                   <th scope="row"> Lg </th>
                   <td> {"$" + aLaCarte.at(4).menu_item_base_price} </td>
-                  <td> {"$" + (aLaCarte.at(4).menu_item_base_price + 1.5*aLaCarte.at(4).premium_multiplier)} </td>
+                  <td> {"$" + (parseFloat(aLaCarte.at(4).menu_item_base_price) + parseFloat(1.5*aLaCarte.at(4).premium_multiplier)).toFixed(2)} </td>
                   <td> {"$" + aLaCarte.at(1).menu_item_base_price} </td>
                 </tr>
               </tbody>
@@ -172,4 +172,4 @@ function MenuMain() {
   );
 }
 
-export default MenuMain;
+export default MenuMain1;
