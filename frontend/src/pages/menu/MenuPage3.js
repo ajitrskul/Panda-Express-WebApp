@@ -63,7 +63,7 @@ function MenuMain3() {
     dots: true,
     infinite: true,
     autoplay: true,
-    autoplaySpeed: 5000
+    autoplaySpeed: 4000
   };
 
   if(!appdess[6]){

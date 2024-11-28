@@ -59,13 +59,6 @@ function MenuMain1() {
     return <div>{error}</div>;
   }
 
-  var settings = {
-    dots: true,
-    infinite: true,
-    autoplay: true,
-    autoplaySpeed: 5000
-  };
-
   return (
     <div className="container-fluid" /*style={{ width: "1400px"}}*/>
       <div className="row">
