@@ -6,9 +6,6 @@ import '../../styles/menu.css';
 import MenuBoardHowTo from "./components/MenuBoardHowTo";
 import MenuBoardSide from "./components/MenuBoardSide";
 
-// images
-import BowlImage from '../../assets/bowl.png';
-
 const formatProductName = (name) => {
   return name.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();
 };
@@ -62,6 +59,13 @@ function MenuMain1() {
     return <div>{error}</div>;
   }
 
+  var settings = {
+    dots: true,
+    infinite: true,
+    autoplay: true,
+    autoplaySpeed: 5000
+  };
+
   return (
     <div className="container-fluid" /*style={{ width: "1400px"}}*/>
       <div className="row">
@@ -70,9 +74,7 @@ function MenuMain1() {
             <h1>Pick Your Meal</h1>
           </div>
           <div className="row">
-            
             {menuItems.map((item) => (
-              
                 <div>
                   <MenuBoardHowTo
                   name={formatItemName(item.item_name)}
@@ -80,7 +82,6 @@ function MenuMain1() {
                   calories={item.calories} 
                   description={item.menu_item_description || 'No description available'} 
                   price={"$"+item.menu_item_base_price}
-
                   />
                 </div>
               ))}
@@ -90,38 +91,17 @@ function MenuMain1() {
           <div className="row row-style-1">
             <h1>Sides</h1>
           </div>
-          {/* <div className="row">
-            <MenuBoardSide name={"Super Greens"} image={<img src ={BowlImage} style={{ width: '110%'}}/>} calories={"130 cal"}/>
-          </div> */}
           <div className="row">
 
-          {sides.map((side) => (
-            
-              
+          {(sides.slice(0,4)).map((side) => (
               <div className="col-6">
                 <MenuBoardSide
                 name={formatProductName(side.product_name)}
                 image={<img src ={side.image} />} 
                 calories={side.calories + " cal"} 
-
                 />
               </div>
             ))}
-            {/* <div className="col">
-              <MenuBoardSide name={"Super Greens"} image={<img src ={BowlImage}/>} calories={"130 cal"}/>
-            </div>
-            <div className="col">
-              <MenuBoardSide name={"Chow Mein"} image={<img src ={BowlImage}/>} calories={"600 cal"}/>
-            </div> */}
-          </div>
-
-          <div className="row">
-            {/* <div className="col">
-              <MenuBoardSide name={"Fried Rice"} image={<img src ={BowlImage}/>} calories={"620 cal"}/>
-            </div>
-            <div className="col">
-              <MenuBoardSide name={"White Steamed Rice"} image={<img src ={BowlImage}/>} calories={"520 cal"}/>
-            </div> */}
           </div>
 
           <div className="row row-style-1">
@@ -135,29 +115,29 @@ function MenuMain1() {
               <thead>
                 <tr>
                   <th scope="col">  </th>
-                  <th scope="col"> Entrees </th>
-                  <th scope="col"> Premium </th>
-                  <th scope="col"> Sides </th>
+                  <th scope="col"> <h3> Entrees </h3> </th>
+                  <th scope="col"> <h3> Premium </h3> </th>
+                  <th scope="col"> <h3> Sides </h3> </th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <th scope="row"> Sm </th>
-                  <td> {"$" + aLaCarte.at(2).menu_item_base_price} </td>
-                  <td> {"$" + (parseFloat(aLaCarte.at(2).menu_item_base_price) + parseFloat(1.5*aLaCarte.at(2).premium_multiplier)).toFixed(2)} </td>
-                  <td> {"$" + aLaCarte.at(0).menu_item_base_price} </td>
+                  <th scope="row"> <h3> Sm </h3> </th>
+                  <td> <h4> {"$" + aLaCarte.at(2).menu_item_base_price} </h4> </td>
+                  <td> <h4> {"$" + (parseFloat(aLaCarte.at(2).menu_item_base_price) + parseFloat(1.5*aLaCarte.at(2).premium_multiplier)).toFixed(2)} </h4> </td>
+                  <td> <h4> {"$" + aLaCarte.at(0).menu_item_base_price} </h4> </td>
                 </tr>
                 <tr>
-                  <th scope="row"> Med </th>
-                  <td> {"$" + aLaCarte.at(3).menu_item_base_price} </td>
-                  <td> {"$" + (parseFloat(aLaCarte.at(3).menu_item_base_price) + parseFloat(1.5*aLaCarte.at(3).premium_multiplier)).toFixed(2)} </td>
+                  <th scope="row"> <h3> Med </h3> </th>
+                  <td> <h4> {"$" + aLaCarte.at(3).menu_item_base_price} </h4> </td>
+                  <td> <h4> {"$" + (parseFloat(aLaCarte.at(3).menu_item_base_price) + parseFloat(1.5*aLaCarte.at(3).premium_multiplier)).toFixed(2)} </h4> </td>
                   <td>  </td>
                 </tr>
                 <tr>
-                  <th scope="row"> Lg </th>
-                  <td> {"$" + aLaCarte.at(4).menu_item_base_price} </td>
-                  <td> {"$" + (parseFloat(aLaCarte.at(4).menu_item_base_price) + parseFloat(1.5*aLaCarte.at(4).premium_multiplier)).toFixed(2)} </td>
-                  <td> {"$" + aLaCarte.at(1).menu_item_base_price} </td>
+                  <th scope="row"> <h3> Lg </h3> </th>
+                  <td> <h4> {"$" + aLaCarte.at(4).menu_item_base_price} </h4> </td>
+                  <td> <h4> {"$" + (parseFloat(aLaCarte.at(4).menu_item_base_price) + parseFloat(1.5*aLaCarte.at(4).premium_multiplier)).toFixed(2)} </h4> </td>
+                  <td> <h4> {"$" + aLaCarte.at(1).menu_item_base_price} </h4> </td>
                 </tr>
               </tbody>
             </table>
