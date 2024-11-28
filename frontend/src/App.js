@@ -3,14 +3,17 @@ import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 // Import all pages
 import { MenuMain } from './pages/menu';
 import { KitchenMain } from './pages/kitchen';
-import { ManagerMain,XReports,ZReports, RestockReports, Employees, Products, Inventory, ProductUsage} from './pages/manager';
+import { ManagerMain,XReports,ZReports, RestockReports, Employees, Products, Inventory, ProductUsage, SalesReports} from './pages/manager';
 import { KioskMain, KioskLanding, OrderSelection, DrinkSelection, AppsAndMoreSelection } from './pages/kiosk';
 import { PosMain } from './pages/pos';
-import { AuthMain, SignUpPage, SignUpError, SignUpSuccess, SignInError } from './pages/auth';
+import { AuthMain, SignUpPage, SignUpError, SignUpSuccess, AuthError, SignInPage, SignInQR, SignInSuccess, SignInError } from './pages/auth';
 
 // Cart Context API
 import { CartProvider } from './pages/kiosk/components/CartContext';
 import KioskOrderLayout from './pages/kiosk/KioskOrderLayout';
+
+//Customer Context API
+import { AccountProvider } from './pages/auth/components/AccountContext';
 
 function App() {
   /* Reload the page when kiosk is clicked, so that google translate element will initialize*/
@@ -20,8 +23,9 @@ function App() {
     document.cookie="googtrans=/en/en;"
   }
   return (
-    <CartProvider>
-      <Router>
+    <AccountProvider>
+      <CartProvider>
+        <Router>
           <Routes>
             <Route
               path="/"
@@ -56,27 +60,33 @@ function App() {
           <Route path="/manager/inventory" element={<Inventory />} />
           <Route path="/manager/productusage" element={<ProductUsage />} />
           <Route path="/manager" element={<ManagerMain />} />
+          <Route path="/manager/salesreports" element={<SalesReports />} />
 
-          {/* ... other routes */}
-          <Route path="/kiosk" element={<KioskLanding />} />
-          <Route path="/kiosk/order/*" element={<KioskOrderLayout />}>
-            <Route index element={<KioskMain />} />
-            <Route path=":itemName" element={<OrderSelection />} />
-            <Route path="drink" element={<DrinkSelection />} />
-            <Route path="appetizers-&-more" element={<AppsAndMoreSelection />} />
-          </Route>
-          {/* ... other routes */}
+            {/* ... other routes */}
+            <Route path="/kiosk" element={<KioskLanding />} />
+            <Route path="/kiosk/order/*" element={<KioskOrderLayout />}>
+              <Route index element={<KioskMain />} />
+              <Route path=":itemName" element={<OrderSelection />} />
+              <Route path="drink" element={<DrinkSelection />} />
+              <Route path="appetizers-&-more" element={<AppsAndMoreSelection />} />
+            </Route>
+            {/* ... other routes */}
 
-            <Route path="/pos" element={<PosMain />} />
+              <Route path="/pos" element={<PosMain />} />
 
-          <Route path="/auth" element={<AuthMain />} />
-          <Route path="/auth/signup" element={<SignUpPage />}></Route>
-          <Route path="/auth/signup/error" element={<SignUpError />}></Route>
-          <Route path="/auth/signup/success" element={<SignUpSuccess />}></Route>
-          <Route path="/auth/signin/error" element={<SignInError />}></Route>
-        </Routes>
-    </Router>
-    </CartProvider>
+            <Route path="/auth" element={<AuthMain />} />
+            <Route path="/auth/signup" element={<SignUpPage />}></Route>
+            <Route path="/auth/signup/error" element={<SignUpError />}></Route>
+            <Route path="/auth/signup/success" element={<SignUpSuccess />}></Route>
+            <Route path="/auth/signin" element={<SignInPage />}></Route>
+            <Route path="/auth/signin/success" element={<SignInSuccess />}></Route>
+            <Route path="/auth/signin/error" element={<SignInError />}></Route>
+            <Route path="/auth/signin/QR" element={<SignInQR />}></Route>
+            <Route path="/auth/error" element={<AuthError />}></Route>
+          </Routes>
+        </Router>
+      </CartProvider>
+    </AccountProvider>
   );
 }
 

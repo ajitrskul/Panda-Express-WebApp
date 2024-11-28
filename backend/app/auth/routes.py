@@ -44,13 +44,56 @@ def emailExists():
     customerEmail = request.get_data()
     customerEmail = customerEmail.decode('utf-8')
 
-    with db.session.begin():
-        matchingEmail = db.session.query(Customer).filter_by(email=customerEmail).first()
+    #returns instance of customer model
+    customer = Customer.query.filter_by(email=customerEmail).first()
 
-    if (matchingEmail == None):
+    if (customer == None):
         return jsonify(True)
     else:
         return jsonify(False)
+
+@auth_bp.route("/signin/email", methods=['POST'])
+def signinEmail():
+    customerEmail = request.get_data()
+    customerEmail = customerEmail.decode('utf-8')
+
+    #returns instance of customer model
+    customer = Customer.query.filter_by(email=customerEmail).first()
+
+    if customer:
+        return jsonify(customer.password) #return password for given email if in database
+    else:
+        return jsonify(False)  #email not in database
+
+@auth_bp.route("/signin/qr", methods=["POST"])
+def authenticateLogin():
+    customerLogin = request.get_json() #get_json returns python dictionary
+
+    #returns instance of customer model
+    queryCustomer = Customer.query.filter_by(email=customerLogin["email"]).first()
+
+    if (queryCustomer == None):
+        return jsonify(False)
+    else:
+        isValidLogin = (customerLogin["password"] == queryCustomer.password)
+        # isValidLogin = (customerLogin["customer_id"] == queryCustomer.customer_id)
+        if (isValidLogin):
+            return jsonify({"customer_id":queryCustomer.customer_id, "email":queryCustomer.email, "first_name":queryCustomer.first_name, "last_name":queryCustomer.last_name, "beast_points":queryCustomer.beast_points})
+        else:
+            return jsonify(False)
+
+@auth_bp.route("/signin/customerdata", methods=["POST"])
+def getCustomerData():
+    customerEmail = request.get_data()
+    customerEmail = customerEmail.decode('utf-8')
+
+    queryCustomer = Customer.query.filter_by(email=customerEmail).first()
+    if (queryCustomer):
+        return jsonify({"customer_id": queryCustomer.customer_id, "email": queryCustomer.email, "first_name":queryCustomer.first_name, "last_name":queryCustomer.last_name, "beast_points":queryCustomer.beast_points})
+    else:
+        return jsonify(False)
+
+
 
 
 @auth_bp.route("/login/db", methods=["POST"])
@@ -70,6 +113,8 @@ def authenticate_db():
         current_app.config["email"] = employee.email
         if employee.role == 'manager':
             return jsonify({"success": True, "password": employee.password, "route": "/manager"})
+        elif employee.role == 'fired':
+            return jsonify({"success": True, "password": employee.password, "route": "/auth/error"})
         else:
             return jsonify({"success": True, "password": employee.password, "route": "/pos"})
     else:
@@ -113,6 +158,8 @@ def callback():
             
             if employee.role == 'manager':
                 re_route_link = current_app.config['base_url'] + "/manager"
+            elif employee.role == 'fired':
+                re_route_link = current_app.config['base_url'] + "/auth/error"
             else:
                 re_route_link = current_app.config['base_url'] + "/pos"
 
@@ -121,7 +168,8 @@ def callback():
             current_app.config["email"] = id_info.get("email")
             return redirect(re_route_link)
         else:
-            re_route_link = current_app.config['base_url'] + "/auth/signin/error"
+            re_route_link = current_app.config['base_url'] + "/auth/error"
+            session.clear()
             return redirect(re_route_link)
     except Exception as e:
         re_route_link = current_app.config['base_url'] + "/auth/signup/error"
@@ -130,7 +178,7 @@ def callback():
 
 @auth_bp.route("/manager/permission")
 def manager_perm():
-    if("role" in current_app.config and current_app.config["role"] == 'manager'):
+    if("role" in current_app.config and current_app.config["role"] == 'cashier'):
         to_return = {"authenticate": True}
         return jsonify(to_return)
     else:

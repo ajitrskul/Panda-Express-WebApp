@@ -30,6 +30,11 @@ export function SidebarManager(){
         document.getElementById("productusage").style.backgroundColor="#77070a";
         document.getElementById("reports").style.backgroundColor="#8c070c";
       }
+      if ((location.pathname)==="/manager/salesreports"){
+        dropdownFunction();
+        document.getElementById("salesreports").style.backgroundColor="#77070a";
+        document.getElementById("reports").style.backgroundColor="#8c070c";
+      }
       if ((location.pathname)==="/manager/employees"){
         document.getElementById("employees").style.backgroundColor="#8c070c";
       }
@@ -70,6 +75,9 @@ export function SidebarManager(){
             break;
           case "restockreports":
             navigate("/manager/restockreports");
+            break;
+          case "salesreports":
+            navigate("/manager/salesreports");
             break;
           case "employees":
             navigate("/manager/employees");
@@ -112,9 +120,8 @@ export function SidebarManager(){
         }
       };
       useEffect(() => {
-        InitColors();
-        
-      }, [] );
+        InitColors(); 
+      });
     return (
         <div class="manager-sidebar" id="manager-sidebar">
           <div class="logo-display" id="manager" onClick={SidebarClick}>
@@ -124,47 +131,47 @@ export function SidebarManager(){
           
           <hr class="sidebar-divider"></hr>
   
-          <a class="sidebar-item" id="login" onClick={SidebarClick}>
+          <div class="sidebar-item" id="login" onClick={SidebarClick}>
             <i class="bi bi-person-circle sidebar-icon"></i>
             <div class="manager-sidebar-text2">Logout</div>
-          </a>
+          </div>
     
           <hr class="sidebar-divider"></hr>
         
-          <a class="sidebar-item" id="pos" onClick={SidebarClick}>
+          <div class="sidebar-item" id="pos" onClick={SidebarClick}>
             <i class="bi bi-columns-gap sidebar-icon"></i>
             <div class="manager-sidebar-text2">POS</div>
             {/*<i class="bi bi-lock-fill sidebar-icon-right"></i>*/}
-          </a>
+          </div>
     
-          <a class="sidebar-item" id="kiosk" onClick={SidebarClick}>
+          <div class="sidebar-item" id="kiosk" onClick={SidebarClick}>
             <i class="bi bi-shop sidebar-icon"></i>
             <div class="manager-sidebar-text2">Kiosk</div>
             {/*<i class="bi bi-lock-fill sidebar-icon-right"></i>*/}
-          </a>
+          </div>
           
-          <a class="sidebar-item" id="menu" onClick={SidebarClick}>
+          <div class="sidebar-item" id="menu" onClick={SidebarClick}>
             <i class="bi bi-card-heading sidebar-icon"></i>
             <div class="manager-sidebar-text2">Menu Boards</div>
             {/*<i class="bi bi-lock-fill sidebar-icon-right"></i>*/}
-          </a>
+          </div>
 
-          <a class="sidebar-item" id="kitchen" onClick={SidebarClick}>
+          <div class="sidebar-item" id="kitchen" onClick={SidebarClick}>
             <i class="bi bi-menu-button-wide sidebar-icon"></i>
             <div class="manager-sidebar-text2">Kitchen View</div>
             {/*<i class="bi bi-lock-fill sidebar-icon-right"></i>*/}
-          </a>
+          </div>
 
           <hr class="sidebar-divider"></hr>
 
-          <a class="sidebar-item" id="reports" onClick={dropdownFunction}>
+          <div class="sidebar-item" id="reports" onClick={dropdownFunction}>
             <i class="bi bi-bar-chart sidebar-icon"></i>
             <div class="manager-sidebar-text2">Reports</div>
             <i id="dropdown-icon" class="bi bi-chevron-down sidebar-dropdown-icon" ></i>
             <i id="dropup-icon" class="bi bi-chevron-up sidebar-dropup-icon" ></i>
-          </a>
+          </div>
     
-          <a class="sidebar-drop-items" id="sidebar-drop">
+          <div class="sidebar-drop-items" id="sidebar-drop">
 
             <div class="sidebar-drop-item" id="xreports" onClick={SidebarClick}>
               <div class="manager-sidebar-text3">X Reports</div>
@@ -181,23 +188,27 @@ export function SidebarManager(){
             <div class="sidebar-drop-item"  id="productusage" onClick={SidebarClick}>
               <div class="manager-sidebar-text3">Product Usage</div>
             </div>
+            
+            <div class="sidebar-drop-item"  id="salesreports" onClick={SidebarClick}>
+              <div class="manager-sidebar-text3">Sales Reports</div>
+            </div>
 
-          </a>
+          </div>
 
-          <a class="sidebar-item" id="employees" onClick={SidebarClick}>
+          <div class="sidebar-item" id="employees" onClick={SidebarClick}>
             <i class="bi bi-people-fill sidebar-icon"></i>
             <div class="manager-sidebar-text2">Employees</div>
-          </a>
+          </div>
           
-          <a class="sidebar-item" id="products" onClick={SidebarClick}>
+          <div class="sidebar-item" id="products" onClick={SidebarClick}>
             <i class="bi bi-cup-straw sidebar-icon"></i>
             <div class="manager-sidebar-text2">Products</div>
-          </a>
+          </div>
           
-          <a class="sidebar-item" id="inventory" onClick={SidebarClick}>
+          <div class="sidebar-item" id="inventory" onClick={SidebarClick}>
             <i class="bi bi-box-seam sidebar-icon"></i>
             <div class="manager-sidebar-text2">Inventory</div>
-          </a>
+          </div>
         
         </div>
     );

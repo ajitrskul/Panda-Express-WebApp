@@ -543,13 +543,16 @@ with open("populate_order.sql", 'w') as file2:
     else:
       if (currentDate.hour == 12): #lunch time
         # currentDate = incrementTime(currentDate, randrange(5, 61))
-        currentDate += timedelta(seconds=randrange(5, 61))
-      elif (6 <= currentDate.hour <= 8): #dinner time
-        #currentDate = incrementTime(currentDate, randrange(5, 91)) 
-        currentDate += timedelta(seconds=randrange(5, 91))
+        currentDate += timedelta(seconds=randrange(31, 61))
+      elif (currentDate.hour == 11 or currentDate.hour == 13):
+        currentDate += timedelta(seconds=randrange(41, 91))
+      elif (currentDate.hour == 18 or currentDate.hour == 20): #dinner time 
+        currentDate += timedelta(seconds=randrange(51, 91))
+      elif currentDate.hour == 19:
+        currentDate += timedelta(seconds=randrange(41, 81))
       else:
         # currentDate = incrementTime(currentDate, randrange(10, 1201)) #10s-20 minutes
-        currentDate += timedelta(seconds=randrange(10, 1201))
+        currentDate += timedelta(seconds=randrange(10, 801))
 
     #check time between panda hours
     if (currentDate.time() < openTime) or (currentDate.time() > closeTime):
