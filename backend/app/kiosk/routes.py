@@ -349,26 +349,79 @@ def create_order():
         return jsonify({'error': 'An error occurred while creating the order.'}), 500
 
 def get_item_price(item):
-    # Implement the pricing logic
     quantity = item.get('quantity', 1)
     if 'basePrice' in item and 'premiumMultiplier' in item and 'components' in item:
-        base_price = float(item['basePrice'])
-        premium_multiplier = float(item['premiumMultiplier'])
+        # Convert base price and premium multiplier with error handling
+        try:
+            base_price = float(item.get('basePrice') or 0)
+        except ValueError:
+            base_price = 0.0
+        try:
+            premium_multiplier = float(item.get('premiumMultiplier') or 1)
+        except ValueError:
+            premium_multiplier = 1.0
         components = item['components']
         total_premium_addition = 0.0
         # Sides
         for side in components.get('sides', []):
-            if side.get('is_premium'):
-                total_premium_addition += float(side.get('premium_addition', 0))
+            is_premium = side.get('is_premium', False)
+            if isinstance(is_premium, str):
+                is_premium = is_premium.lower() == 'true'
+            if is_premium:
+                try:
+                    premium_addition = float(side.get('premium_addition') or 0)
+                except ValueError:
+                    premium_addition = 0.0
+                total_premium_addition += premium_addition
         # Entrees
         for entree in components.get('entrees', []):
-            if entree.get('is_premium'):
-                total_premium_addition += float(entree.get('premium_addition', 0))
+            is_premium = entree.get('is_premium', False)
+            if isinstance(is_premium, str):
+                is_premium = is_premium.lower() == 'true'
+            if is_premium:
+                try:
+                    premium_addition = float(entree.get('premium_addition') or 0)
+                except ValueError:
+                    premium_addition = 0.0
+                total_premium_addition += premium_addition
         total_price = base_price + premium_multiplier * total_premium_addition
         return round(total_price * quantity, 2)
     elif 'price' in item:
-        return round(float(item['price']) * quantity, 2)
+        try:
+            return round(float(item.get('price') or 0) * quantity, 2)
+        except ValueError:
+            return 0.0
     elif 'premium_addition' in item:
-        return round(float(item.get('premium_addition', 0)) * quantity, 2)
+        try:
+            return round(float(item.get('premium_addition') or 0) * quantity, 2)
+        except ValueError:
+            return 0.0
     else:
         return 0.0
+
+
+
+# def get_item_price(item):
+#     # Implement the pricing logic
+#     quantity = item.get('quantity', 1)
+#     if 'basePrice' in item and 'premiumMultiplier' in item and 'components' in item:
+#         base_price = float(item['basePrice'])
+#         premium_multiplier = float(item['premiumMultiplier'])
+#         components = item['components']
+#         total_premium_addition = 0.0
+#         # Sides
+#         for side in components.get('sides', []):
+#             if side.get('is_premium'):
+#                 total_premium_addition += float(side.get('premium_addition', 0))
+#         # Entrees
+#         for entree in components.get('entrees', []):
+#             if entree.get('is_premium'):
+#                 total_premium_addition += float(entree.get('premium_addition', 0))
+#         total_price = base_price + premium_multiplier * total_premium_addition
+#         return round(total_price * quantity, 2)
+#     elif 'price' in item:
+#         return round(float(item['price']) * quantity, 2)
+#     elif 'premium_addition' in item:
+#         return round(float(item.get('premium_addition', 0)) * quantity, 2)
+#     else:
+#         return 0.0
