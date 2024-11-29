@@ -6,6 +6,9 @@ import ConfirmDialog from './ConfirmDialog';
 import { CartContext } from './CartContext';
 import api from '../../../services/api';
 
+import { useNavigate } from 'react-router-dom';
+
+
 function Cart({ isOpen, toggleCart, cartItems }) {
   const [showOverlay, setShowOverlay] = useState(false);
   const [overlayClass, setOverlayClass] = useState('');
@@ -17,6 +20,9 @@ function Cart({ isOpen, toggleCart, cartItems }) {
   const [errorMessage, setErrorMessage] = useState('');
 
   const { setCartItems } = useContext(CartContext);
+
+  const navigate = useNavigate();
+
 
   const handleCheckout = async () => {
     try {
@@ -38,6 +44,11 @@ function Cart({ isOpen, toggleCart, cartItems }) {
 
         // Show order confirmation
         setShowOrderConfirmation(true);
+
+        // Navigate to the kiosk option after a short delay
+        setTimeout(() => {
+          navigate('/kiosk');
+        }, 2000);
       } else {
         // Handle unexpected responses
         console.error('Unexpected response:', response);

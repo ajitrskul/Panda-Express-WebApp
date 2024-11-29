@@ -7,6 +7,9 @@ import SideSelection from './components/SideSelection';
 import EntreeSelection from './components/EntreeSelection';
 import { CartContext } from './components/CartContext';
 
+import { useNavigate } from 'react-router-dom';
+
+
 const OrderSelection = () => {
   const location = useLocation();
   const { numSides, numEntrees, itemName, realItemName, itemImage, basePrice, premiumMultiplier } = location.state;
@@ -19,6 +22,9 @@ const OrderSelection = () => {
   const [selectedEntrees, setSelectedEntrees] = useState([]);
 
   const { cartItems, setCartItems } = useContext(CartContext);
+
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     setSelectedSides(Array(numSides).fill(null));
@@ -53,7 +59,7 @@ const OrderSelection = () => {
   const handleAddToCart = () => {
     if (isSelectionComplete) {
       const mainItem = {
-        name: realItemName,
+        name: realItemName, 
         image: itemImage,
         components: {
           sides: selectedSides,
@@ -79,6 +85,8 @@ const OrderSelection = () => {
 
       setSelectedSides(Array(numSides).fill(null));
       setSelectedEntrees(Array(numEntrees).fill(null));
+
+      navigate('/kiosk/order');
     }
   };
 

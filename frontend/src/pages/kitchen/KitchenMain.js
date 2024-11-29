@@ -10,11 +10,13 @@ function KitchenMain() {
   const fetchOrders = async () => {
     try {
       const response = await api.get("/kitchen/orders"); 
+      console.log('API Response:', response.data); // Debugging line 
       setOrders(response.data); 
     } catch (error) {
       console.error("Error fetching orders:", error);
     }
   };
+  
 
   // Fetch orders on component mount and set up polling
   useEffect(() => {
