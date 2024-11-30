@@ -2,12 +2,10 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { FaTimes, FaPlus, FaMinus } from 'react-icons/fa';
 import '../../../styles/kiosk/cart.css';
-import ConfirmDialog from './ConfirmDialog'; 
+import ConfirmDialog from './ConfirmDialog';
 import { CartContext } from './CartContext';
 import api from '../../../services/api';
-
 import { useNavigate } from 'react-router-dom';
-
 
 function Cart({ isOpen, toggleCart, cartItems }) {
   const [showOverlay, setShowOverlay] = useState(false);
@@ -22,7 +20,6 @@ function Cart({ isOpen, toggleCart, cartItems }) {
   const { setCartItems } = useContext(CartContext);
 
   const navigate = useNavigate();
-
 
   const handleCheckout = async () => {
     try {
@@ -71,11 +68,11 @@ function Cart({ isOpen, toggleCart, cartItems }) {
       setOverlayClass('fade-out');
       setTimeout(() => {
         setShowOverlay(false);
-        setOverlayClass(''); 
-      }, 300); 
+        setOverlayClass('');
+      }, 300);
     }
   }, [isOpen]);
-  
+
   const handleOverlayClick = (e) => {
     if (e.target.classList.contains('cart-overlay')) {
       toggleCart();
@@ -161,7 +158,10 @@ function Cart({ isOpen, toggleCart, cartItems }) {
                   className="cart-item-image"
                 />
                 <div className="cart-item-details">
-                  <p className="cart-item-name">{item.product_name || item.name}</p>
+                  <p className="cart-item-name">
+                    {formatProductName(item.product_name || item.name)}
+                    {item.size && ` (${item.size.display_name})`}
+                  </p>
                   {item.components && (
                     <div className="cart-item-components">
                       {item.components.sides.length > 0 && (
@@ -169,7 +169,7 @@ function Cart({ isOpen, toggleCart, cartItems }) {
                           <strong>Sides:</strong>
                           <ul>
                             {item.components.sides.map((side, idx) => (
-                              <li key={`side-${idx}`}>{side.product_name || side.name}</li>
+                              <li key={`side-${idx}`}>{formatProductName(side.product_name || side.name)}</li>
                             ))}
                           </ul>
                         </div>
@@ -179,7 +179,7 @@ function Cart({ isOpen, toggleCart, cartItems }) {
                           <strong>Entrees:</strong>
                           <ul>
                             {item.components.entrees.map((entree, idx) => (
-                              <li key={`entree-${idx}`}>{entree.product_name || entree.name}</li>
+                              <li key={`entree-${idx}`}>{formatProductName(entree.product_name || entree.name)}</li>
                             ))}
                           </ul>
                         </div>
@@ -227,8 +227,8 @@ function Cart({ isOpen, toggleCart, cartItems }) {
         {showConfirmDialog && (
           <ConfirmDialog
             message={`Are you sure you want to remove "${
-              itemToRemove.item.product_name || itemToRemove.item.name
-            }" from your cart?`}
+              formatProductName(itemToRemove.item.product_name || itemToRemove.item.name)
+            }${itemToRemove.item.size ? ` (${itemToRemove.item.size.display_name})` : ''}" from your cart?`}
             onConfirm={confirmRemoveItem}
             onCancel={cancelRemoveItem}
           />
@@ -272,42 +272,52 @@ function getItemImage(item) {
   }
 }
 
+function formatProductName(name) {
+  return name.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();
+}
+
 function getItemPrice(item) {
-  if (item.basePrice !== undefined && item.premiumMultiplier !== undefined && item.components) {
-    // Convert basePrice and premiumMultiplier to numbers
+  if (item.basePrice !== undefined && item.premiumMultiplier !== undefined) {
+    // Complex item (e.g., Bowl, Plate, Drink)
     const basePrice = parseFloat(item.basePrice) || 0;
     const premiumMultiplier = parseFloat(item.premiumMultiplier) || 1;
-    const { components } = item;
-
-    // Sum up premium additions for premium subitems
     let totalPremiumAddition = 0;
 
-    // Sum premium additions for sides
-    if (components.sides && components.sides.length > 0) {
-      components.sides.forEach(side => {
-        let isPremium = side.is_premium;
-        if (typeof isPremium === 'string') {
-          isPremium = isPremium.toLowerCase() === 'true';
-        }
-        if (isPremium) {
-          const premiumAddition = parseFloat(side.premium_addition) || 0;
-          totalPremiumAddition += premiumAddition;
-        }
-      });
+    // For drinks and fountain drinks
+    if (item.is_premium) {
+      const premiumAddition = parseFloat(item.premium_addition) || 0;
+      totalPremiumAddition += premiumAddition;
     }
 
-    // Sum premium additions for entrees
-    if (components.entrees && components.entrees.length > 0) {
-      components.entrees.forEach(entree => {
-        let isPremium = entree.is_premium;
-        if (typeof isPremium === 'string') {
-          isPremium = entree.is_premium.toLowerCase() === 'true';
-        }
-        if (isPremium) {
-          const premiumAddition = parseFloat(entree.premium_addition) || 0;
-          totalPremiumAddition += premiumAddition;
-        }
-      });
+    // Process components if they exist
+    if (item.components) {
+      // Sum premium additions for sides
+      if (item.components.sides && item.components.sides.length > 0) {
+        item.components.sides.forEach(side => {
+          let isPremium = side.is_premium;
+          if (typeof isPremium === 'string') {
+            isPremium = isPremium.toLowerCase() === 'true';
+          }
+          if (isPremium) {
+            const premiumAddition = parseFloat(side.premium_addition) || 0;
+            totalPremiumAddition += premiumAddition;
+          }
+        });
+      }
+
+      // Sum premium additions for entrees
+      if (item.components.entrees && item.components.entrees.length > 0) {
+        item.components.entrees.forEach(entree => {
+          let isPremium = entree.is_premium;
+          if (typeof isPremium === 'string') {
+            isPremium = isPremium.toLowerCase() === 'true';
+          }
+          if (isPremium) {
+            const premiumAddition = parseFloat(entree.premium_addition) || 0;
+            totalPremiumAddition += premiumAddition;
+          }
+        });
+      }
     }
 
     const totalPrice = basePrice + premiumMultiplier * totalPremiumAddition;
@@ -315,14 +325,10 @@ function getItemPrice(item) {
   } else if (item.price !== undefined) {
     // Simple item with a direct price
     return parseFloat(item.price) || 0;
-  } else if (item.premium_addition !== undefined) {
-    // For individual products like drinks or appetizers
-    return parseFloat(item.premium_addition) || 0;
   } else {
     return 0;
   }
 }
-
 
 function calculateSubtotal(cartItems) {
   return cartItems.reduce(
