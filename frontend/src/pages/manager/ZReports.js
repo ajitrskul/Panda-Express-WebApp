@@ -3,21 +3,27 @@ import api from '../../services/api';
 
 import { SidebarManager } from './components/SidebarManager';
 import '../../styles/manager.css';
+import {ResponsiveContainer,LineChart,Line,XAxis,YAxis, PieChart, Pie,  Cell, Legend } from 'recharts';
 
 function ZReports() {
   const [ZReportsData, setZReportsData] = useState(null);
+  const colors=["#77070a","#a3080c","rgb(98, 98, 98)","gray","rgb(163, 163, 163)"];
 
   const fetchZReport = async () => {
-    const response = await api.get('/manager/xreports'); 
+    const response = await api.get('/manager/xzreports'); 
     setZReportsData(response.data);
-    
+    await api.post('/manager/xzreports', "PULL", {
+      headers: {
+        'Content-Type': 'text/plain'
+      }
+    });
   };
 
   useEffect(() => {
     const reportDropupIcon=document.getElementById("report-dropup-icon");
     reportDropupIcon.style.display="none";
-    
     fetchZReport();
+    
   }, []); 
 
 
@@ -83,15 +89,57 @@ function ZReports() {
       
       <div class="report-container">
         <div class="report-card-big">
-        Sales Data
+        Sales ($)
         <hr class="report-divider"></hr>
-        
-        </div>
-        <div class="report-card-big">
-        Top 5 Products
-        <hr class="report-divider"></hr>
+       
+        <div class="barchart-container"><ResponsiveContainer width="100%">
+        {ZReportsData ? (
+        <LineChart width={100} height={100} data={ZReportsData.chartArr}>
+
+          <XAxis dataKey="hour" tick={{dy:10}}/>
+          <YAxis tick={{dx:-10}}></YAxis>
+          <Line dataKey="sales" stroke="#a3080c" strokeWidth={2}></Line>
           
+        </LineChart>
+        
+          ) : (
+            <div></div>
+          )}
+        </ResponsiveContainer>
         </div>
+        </div>
+        
+        <div class="report-card-big">
+        Top Products Today
+        <hr class="report-divider"></hr>
+        <div class ="piechart-container">
+        <ResponsiveContainer width="100%">
+        {ZReportsData ? (
+            
+              
+              <PieChart>
+              <Pie
+              data={ZReportsData.pieArr}
+              dataKey="value"
+              nameKey="name"
+              outerRadius={"100vw"}
+              fill="#a3080c"
+              >
+                {(ZReportsData.pieArr).map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+                ))}
+              </Pie>
+             <Legend layout="vertical" align="right" verticalAlign="middle" wrapperStyle={{fontSize: '1.1vw'}}/>
+            </PieChart>
+            
+            
+          ) : (
+            <div></div>
+          )}
+          </ResponsiveContainer>
+          </div>
+        </div>
+       
        
         </div>
         <div class="report-container">
@@ -130,7 +178,7 @@ function ZReports() {
         <i id="report-dropup-icon"  class="bi bi-chevron-up"></i>
         </div>
         </div>
-        
+
       </div>
       </div>
      

@@ -4,27 +4,14 @@ import api from '../../services/api';
 
 import { SidebarManager } from './components/SidebarManager';
 import '../../styles/manager.css';
-import {LineChart,Line,XAxis,YAxis, PieChart, Pie,  Cell, Legend } from 'recharts';
+import {ResponsiveContainer,LineChart,Line,XAxis,YAxis, PieChart, Pie,  Cell, Legend } from 'recharts';
 
 function XReports() {
-  /*const data1=[
-    {name: "l", sales:250,orders:100},
-    {name: "2", sales:180,orders:200},
-    {name: "3", sales:300,orders:250},
-    {name: "4", sales:200,orders:50},
-    {name: "5", sales:50,orders:75},
-  ];*/
-  const data2=[
-    {name: "Product l", value:400},
-    {name: "Product 2", value:300},
-    {name: "Product 3", value:150},
-    {name: "Product 4", value:100},
-    {name: "Product 5", value:50},
-  ];
+
   const colors=["#77070a","#a3080c","rgb(98, 98, 98)","gray","rgb(163, 163, 163)"];
   const [XReportsData, setXReportsData] = useState(null);
   const fetchXReport = async () => {
-    const response = await api.get('/manager/xreports'); 
+    const response = await api.get('/manager/xzreports'); 
     setXReportsData(response.data);
     
     
@@ -113,48 +100,57 @@ function XReports() {
       
       <div class="report-container">
         <div class="report-card-big">
-        Sales
+        Sales ($)
         <hr class="report-divider"></hr>
-        <div class="barchart-container">
-        
+       
+        <div class="barchart-container"><ResponsiveContainer width="100%">
         {XReportsData ? (
-        <LineChart width={550} height={250} data={XReportsData.chartArr}>
+        <LineChart width={100} height={100} data={XReportsData.chartArr}>
 
           <XAxis dataKey="hour" tick={{dy:10}}/>
           <YAxis tick={{dx:-10}}></YAxis>
           <Line dataKey="sales" stroke="#a3080c" strokeWidth={2}></Line>
-          {/*<Legend layout="vertical" align="left" verticalAlign="middle"/>*/}
+          
         </LineChart>
         
           ) : (
             <div></div>
           )}
-       
+        </ResponsiveContainer>
         </div>
         </div>
+        
         <div class="report-card-big">
         Top Products Today
         <hr class="report-divider"></hr>
-        <div class="piechart-container">
-        <PieChart width={350} height={250}>
-          <Pie
-          data={data2}
-          outerRadius={100}
-          fill="#a3080c"
-          >
-            {data2.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
-            ))}
-          </Pie>
-          <Legend layout="vertical" align="right" verticalAlign="middle"/>
-        </PieChart>
-        {/*{XReportsData ? (
-            <div> {XReportsData.products} </div>
+        <div class ="piechart-container">
+        <ResponsiveContainer width="100%">
+        {XReportsData ? (
+            
+              
+              <PieChart>
+              <Pie
+              data={XReportsData.pieArr}
+              dataKey="value"
+              nameKey="name"
+              outerRadius={"100vw"}
+              fill="#a3080c"
+              >
+                {(XReportsData.pieArr).map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+                ))}
+              </Pie>
+             <Legend layout="vertical" align="right" verticalAlign="middle" wrapperStyle={{fontSize: '1.1vw'}}/>
+            </PieChart>
+            
+            
           ) : (
             <div></div>
-          )}*/}
+          )}
+          </ResponsiveContainer>
+          </div>
         </div>
-        </div>
+       
        
         </div>
         <div class="report-container">
