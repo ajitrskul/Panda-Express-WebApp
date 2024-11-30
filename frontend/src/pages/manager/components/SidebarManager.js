@@ -20,6 +20,11 @@ export function SidebarManager(){
         document.getElementById("zreports").style.backgroundColor="#77070a";
         document.getElementById("reports").style.backgroundColor="#8c070c";
       }
+      if ((location.pathname)==="/manager/pairreports"){
+        dropdownFunction();
+        document.getElementById("pairreports").style.backgroundColor="#77070a";
+        document.getElementById("reports").style.backgroundColor="#8c070c";
+      }
       if ((location.pathname)==="/manager/restockreports"){
         dropdownFunction();
         document.getElementById("restockreports").style.backgroundColor="#77070a";
@@ -65,6 +70,9 @@ export function SidebarManager(){
             break;
           case "restockreports":
             navigate("/manager/restockreports");
+            break;
+          case "pairreports":
+            navigate("/manager/pairreports");
             break;
           case "employees":
             navigate("/manager/employees");
@@ -170,6 +178,9 @@ export function SidebarManager(){
               <div class="manager-sidebar-text3">Restock Reports</div>
             </div>
 
+            <div class="sidebar-drop-item"  id="pairreports" onClick={SidebarClick}>
+              <div class="manager-sidebar-text3">Paired Products Report</div>
+            </div>
           </a>
 
           <a class="sidebar-item" id="employees" onClick={SidebarClick}>

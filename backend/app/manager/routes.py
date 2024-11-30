@@ -121,3 +121,10 @@ def xreports_data():
                 "pieArr": pieArr
                 }
     return returnDict
+
+@manager_bp.route('/pairreports', methods=['GET','POST'])
+def pair_reports():
+    prodQuery= db.session.execute(
+    text(f"""SELECT count(product_id) FROM product_item;""")
+    ).fetchall()
+    prodCount=int(prodQuery[0][0])
