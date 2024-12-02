@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 
 // Import all pages
-import { MenuMain } from './pages/menu';
+import { MenuCarousel } from './pages/menu';
 import { KitchenMain } from './pages/kitchen';
 import { ManagerMain,XReports,ZReports, RestockReports, Employees, Products, Inventory, ProductUsage, SalesReports} from './pages/manager';
 import { KioskMain, KioskLanding, OrderSelection, DrinkSelection, AppsAndMoreSelection } from './pages/kiosk';
@@ -47,7 +47,7 @@ function App() {
                 </>
               }
             />
-            <Route path="/menu" element={<MenuMain />} />
+            <Route path="/menu" element={<MenuCarousel />} />
 
             <Route path="/kitchen" element={<KitchenMain />} />
 
