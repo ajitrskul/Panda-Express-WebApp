@@ -53,7 +53,7 @@ function MenuMain2() {
   };
 
   // if not more than 15 entrees, one page, else, carousel for the entrees
-  if (entrees.at(16)){
+  if (!entrees.at(16)){
     return (
       <div className="container-fluid">
         <div className="row">
