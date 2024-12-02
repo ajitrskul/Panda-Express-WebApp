@@ -1,0 +1,155 @@
+@import url('https://fonts.googleapis.com/css2?family=Jaldi:wght@400;700&family=Jomhuria&family=Julius+Sans+One&display=swap');
+
+.qr-bg {
+  background: url(../../assets/signin_background.png) no-repeat center center fixed;
+  background-size: cover;
+
+  /* Set rules to fill background */
+  min-height: 100%;
+  min-width: 1024px;
+	
+  /* Set up proportionate scaling */
+  width: 100%;
+  height: auto;
+	
+  /* Set up positioning */
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  z-index:100;
+}
+
+.qr-container {
+  position:fixed;
+  top:0;
+  bottom:0;
+  left:50%;
+  transform:translateX(-50%);
+  z-index: 200;
+  width:40vw;
+  background-color: rgba(255, 255, 255, 0.8);
+
+  box-shadow: 
+    5px 5px 15px rgba(206, 157, 55, 0.8),
+    -5px -5px 15px rgb(206,157,55,0.8);
+}
+
+.qr-title {
+  font-family:'Jomhuria';
+  font-size:60px;
+  margin-bottom:0;
+}
+
+.qr-video {
+  height:300px !important;
+  width:300px !important;
+  padding:0px !important;
+}
+
+@media (width <= 1000px) {
+  .qr-container {
+    width: 100vw;
+    top:80px;
+  }
+}
+
+.qr-video video{
+  object-fit: cover !important; /* Ensure the video fills the container while maintaining aspect ratio */
+
+  border: solid;
+  border-color:black;
+  border-width:3px;
+  border-radius:20px;
+  padding:0px !important;
+}
+
+.qr-video-container {
+  position:absolute;
+  top:50%;
+  transform: translateX(-50%) translateY(-40%);
+  left:50%;
+}
+
+.qr-margin {
+  margin-top: 20px;
+}
+
+.qr-navigate {
+  background-color: #A3080C;
+  font-family: 'Julius Sans One', Copperplate;
+  border:none;
+  border-radius:25px;
+  padding:10px 0 !important;
+  font-size:15px;
+
+  border:solid;
+  border-color: #A3080C;
+  border-width:1px;
+
+  color:black;
+}
+
+.qr-navigate:hover {
+  color:white;
+  background-color: #cd0c13;
+}
+
+.qr-navigate:active {
+  background-color:#fe0b13;
+  opacity:0.8
+}
+
+.qr-or {
+  margin-top:5px !important;
+  margin-bottom: 5px !important;
+}
+
+.qr-error-msg {
+  color:red;
+}
+
+.qr-video-error video{
+  border-color:red !important;
+}
+
+.qr-row {
+  position:relative;
+}
+
+.qr-frame {
+  background: url(../../assets/qr-frame.png) no-repeat center center fixed;
+  background-size: contain;
+
+  position:absolute;
+  height:280px;
+
+  top:10px;
+}
+
+.qr-frame-error {
+  filter: invert(22%) sepia(85%) saturate(7411%) hue-rotate(357deg) brightness(102%) contrast(116%);
+}
+
+.qr-loading {
+  position:absolute;
+  top: 45%;
+  color:white;
+  z-index:200;
+}
+
+.qr-loading-bg {
+  position:absolute;
+  background-color:rgba(255,255,255,0.4);
+  height:300px;
+  width:300px !important;
+  border-radius:20px;
+}
+
+.qr-frame-loading {
+  filter: invert(74%) sepia(59%) saturate(600%) hue-rotate(344deg) brightness(86%) contrast(84%);
+}
+
+.qr-video-loading video{
+  border-color: rgb(206, 157, 55)
+}

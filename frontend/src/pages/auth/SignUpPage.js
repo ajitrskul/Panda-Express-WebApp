@@ -1,5 +1,6 @@
 import { Route, Routes, Link, useNavigate } from "react-router-dom";
 import { useState } from 'react';
+import { NavBar } from "../kiosk/components/NavBar";
 import "../../styles/signup/SignUpPage.css";
 import api from '../../services/api';
 
@@ -82,19 +83,23 @@ export default function SignUpPage() {
         //email exists
       }
       else { //email does not exist in database (valid email)
-        try {
-          await api.post("/auth/signup", signupInput);
+        const hashData = await fetch(`${process.env.REACT_APP_HASH_API_KEY}hash?plain=${signupInput.password}`);
+
+        const hashPassword = await hashData.json();
+        if (hashPassword) {
+          await api.post("/auth/signup", {...signupInput, password: hashPassword["hashed"]});
+
           //adding to database successful
           clear();
           navigate("/auth/signup/success");
-        } catch (error) {
-          //issue adding signup info to database
+        }
+        else { //hash unable to be retrieved
           clear();
           navigate("/auth/signup/error");
         }
       }
     } catch (error) {
-      //issue checking for redundant email in database
+      //Issue from API Call
       clear();
       navigate("/auth/signup/error");
     }
@@ -275,6 +280,7 @@ export default function SignUpPage() {
         path="/"
         element={
         <>
+          <NavBar></NavBar>
           <div className="signup-bg"></div>
           <div className="container-fluid signup-bg2-container">
             <div className="row signup-bg2-row justify-content-center">
@@ -284,9 +290,10 @@ export default function SignUpPage() {
           <div className="container-fluid signup-form">
             <h1 className="text-center display-1 signup-title">Sign Up</h1>
             <form method="POST" onSubmit={validateSignUpInput}>
-              <div className="row justify-content-center align-items-end">
-                <label className="col-6 col-sm-2 signup-label signup-remove-padding" htmlFor="signup-email">Email:</label>
-                <p className="col-6 col-sm-3 text-end signup-required-fields">*All fields are required</p>
+              <div className="row justify-content-center">
+                <div className="col-xs-12 col-sm-5 signup-remove-padding">
+                  <label className="text-start signup-label" htmlFor="signup-email">Email:</label>
+                </div>
               </div>
               <div className="row justify-content-center">
                 <input value={signupInput.email} className={signupError.valid_email.email_class} id="signup-email" name="email" placeholder="Email" tabIndex="1" onChange={({ target }) => {
@@ -346,7 +353,7 @@ export default function SignUpPage() {
               <div className="row justify-content-center">
                 <div className="col-sm-5 text-center">
                   <p className="signup-navigate-login">
-                    Already have an account? <Link to="/auth" tabIndex="6">Log in.</Link>
+                    Already have an account? <Link to="/auth/signin" tabIndex="6">Log in.</Link>
                   </p>
                 </div>
               </div>
