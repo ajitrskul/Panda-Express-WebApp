@@ -69,7 +69,7 @@ function MenuMain3() {
   if(!appdess[6]){
 
   return (
-    <div className="container-fluid" /*style={{ width: "1400px"}}*/>
+    <div className="container-fluid fullscreen-menu" /*style={{ width: "1400px"}}*/>
 <div className="row">
   <div className="col-3">
     <div className="row row-style-1">
