@@ -1,13 +1,28 @@
 import React from "react";
 
-function OrderSection({ orderNumber, currentOrder, total, onCheckout, onCancel }) {
+function OrderSection({ orderNumber, currentOrder, total, onCheckout, onCancel, formatItemName }) {
   return (
     <div className="order-section">
-      <h2>Order #{orderNumber}</h2>
+      <h2 style={{marginBottom: '0px', textAlign: 'center'}}>Order #{orderNumber}</h2>
+      <hr></hr>
       <div className="order-items">
         {currentOrder.length > 0 ? (
           currentOrder.map((item, index) => (
-            <p key={index}>{item.item_name}</p>
+            <div key={index} className="order-item">
+              <p>
+                <strong>{item.name.toUpperCase()}</strong>{" "}
+                <span>${item.price.toFixed(2)}</span>
+              </p>
+              {item.subitems && (
+                <ul>
+                  {item.subitems.map((subitem, subIndex) => (
+                    <li key={subIndex} className="order-subitem">
+                      {formatItemName(subitem)}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           ))
         ) : (
           <p>No items added yet.</p>
