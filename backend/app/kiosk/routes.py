@@ -121,8 +121,8 @@ def get_entrees():
 @kiosk_bp.route('/drinks', methods=['GET'])
 def get_drinks():
     drinks = db.session.execute(
-        text("SELECT * FROM product_item WHERE type = :type ORDER BY product_id ASC"), 
-        {'type': 'drink'}
+        text("SELECT * FROM product_item WHERE type = :type1 OR type = :type2 ORDER BY product_id ASC"), 
+        {'type1': 'drink', 'type2': 'fountainDrink'}
     ).fetchall()
 
     drinks_list = [
