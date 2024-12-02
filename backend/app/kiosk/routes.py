@@ -3,7 +3,7 @@ from flask import request, jsonify
 from sqlalchemy import text
 from app.extensions import db
 
-from app.models import Order, OrderMenuItem, OrderMenuItemProduct, MenuItem, ProductItem, EmployeeInfo
+from app.models import Order, OrderMenuItem, OrderMenuItemProduct, MenuItem, ProductItem, Employee
 from datetime import datetime, timezone
 
 @kiosk_bp.route('/', methods=['GET'])
