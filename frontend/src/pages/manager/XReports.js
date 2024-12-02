@@ -103,8 +103,10 @@ function XReports() {
         Sales ($)
         <hr class="report-divider"></hr>
        
-        <div class="barchart-container"><ResponsiveContainer width="100%">
+        <div class="barchart-container">
+        <ResponsiveContainer width="100%">
         {XReportsData ? (
+      
         <LineChart width={100} height={100} data={XReportsData.chartArr}>
 
           <XAxis dataKey="hour" tick={{dy:10}}/>
@@ -114,7 +116,7 @@ function XReports() {
         </LineChart>
         
           ) : (
-            <div></div>
+            <div>Loading...</div>
           )}
         </ResponsiveContainer>
         </div>
@@ -126,8 +128,6 @@ function XReports() {
         <div class ="piechart-container">
         <ResponsiveContainer width="100%">
         {XReportsData ? (
-            
-              
               <PieChart>
               <Pie
               data={XReportsData.pieArr}

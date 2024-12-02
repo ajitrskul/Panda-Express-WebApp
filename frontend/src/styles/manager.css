@@ -166,17 +166,144 @@
        
      }
      .barchart-container{
-        width:fit-content;
+        width:100%;
+        height: 75%;
         font-size: 20px;
        margin-left: auto;
        margin-right: auto;
      }
      .piechart-container{
-        width:fit-content;
+        width:100%;
+        height: 75%;
         font-size: 20px;
        margin-left: auto;
        margin-right: auto;
      }
+     #date-pair{
+        color:rgb(98,98,98);
+        padding: 5px;
+        background-color: lightgray;
+        border: none;
+        border-radius: 10px;
+        margin-left: 20px;
+     }
+     .pair-row{
+        display: flex;
+     }
+     .pair-elem{
+        font-size: 10px;
+        padding: 1px;
+        width: 10px;
+        height: 10px;
+        margin: 1px;
+        text-align: center;
+        
+        border: gray 0.5px solid;
+       
+     }
+     .pair-back{
+        width: fit-content;
+        background-color:white;
+        margin-top: 2px;
+        height: fit-content;
+        
+        
+     }
+     .pair-yaxis-name{
+     /*background-color: aqua;*/
+     width: fit-content;
+     padding: 0;
+     text-align: right;
+     margin-left: auto;
+     height: 12px;
+     font-size: 10px;
+     margin-right: 5px;
+     }
+     .pair-xaxis-name{
+        width: fit-content;
+        padding: 0;
+        text-align: right;
+        margin-left: auto;
+        height: 12px;
+        font-size: 10px;
+        
+       
+    }
+    
+    .pair-xaxis{
+        width: fit-content;
+        font-size: 10px;
+        display: flex;
+        transform: rotate(-90deg);
+        position: relative;
+        left: 302px;
+        bottom: 120px;
+        }
+     .pair-chart-container{
+        padding-left: 40px;
+        display: flex;
+        
+     }
+     .pair-table-elem{
+        background-color:rgb(235, 235, 235);
+        width: 100%;
+        height: 100%;
+        padding: 10px;
+        margin: 2px;
+        font-size: 15px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        color:  rgb(98, 98, 98);
+        white-space: nowrap;
+        
+     }
+     .pair-table-row{
+         width: 100%;
+         display: flex;
+        
+      }
+      .pair-table-title-container{
+        background-color:lightgray;
+        width: 100%;
+        height: 100%;
+        
+        margin-bottom: 2px;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        font-size: 15px;
+        color:  rgb(98, 98, 98);
+        display: flex;
+     }
+     .pair-table-title{
+        width: 100%;
+        margin: 15px;
+      }
+      .report-card-large{
+        font-size: 35px;
+        margin-right: 20px;
+        color: rgb(117, 117, 117);
+        overflow: hidden;
+        padding: 25px;
+        width: 100%;
+        height: 670px;
+        background-color: white;
+        border-radius: 15px;
+        margin-top: 30px;
+        box-shadow: 1px 1px 5px gray;
+    }
+    .report-card-pair{
+        margin-right: 20px;
+        color: rgb(98, 98, 98);
+        font-size: 25px;
+        padding: 25px;
+        width: 100%;
+        height: 100px;
+        background-color: white;
+        border-radius: 15px;
+        /*text-align: center;*/
+        margin-bottom: 30px;
+        box-shadow: 1px 1px 5px gray
+    }
 }
 @media (min-width: 1200px) {
 
@@ -236,6 +363,18 @@
         border-radius: 15px;
         box-shadow: 1px 1px 5px gray
     }
+    .report-card-pair{
+        margin-right: 20px;
+        color: rgb(98, 98, 98);
+        font-size: 25px;
+        padding: 25px;
+        width: 100%;
+        height: 100px;
+        background-color: white;
+        border-radius: 15px;
+        /*text-align: center;*/
+        box-shadow: 1px 1px 5px gray
+    }
 
     .report-card-big{
         margin-right: 20px;
@@ -248,7 +387,18 @@
         border-radius: 15px;
         box-shadow: 1px 1px 5px gray;
     }
-
+    .report-card-large{
+        font-size: 35px;
+        margin-right: 20px;
+        color: rgb(117, 117, 117);
+        overflow: hidden;
+        padding: 25px;
+        width: 100%;
+        height: 670px;
+        background-color: white;
+        border-radius: 15px;
+        box-shadow: 1px 1px 5px gray;
+    }
     .report-card-drop{
         margin-right: 20px;
         color: rgb(117, 117, 117);
@@ -339,16 +489,117 @@
        
      }
      .barchart-container{
-        width:fit-content;
+        width:100%;
+        height: 75%;
         font-size: 20px;
        margin-left: auto;
        margin-right: auto;
        padding-right: 20px;
      }
      .piechart-container{
-        width:fit-content;
+        width:100%;
+        height: 75%;
         font-size: 20px;
        margin-left: auto;
        margin-right: auto;
      }
+     #date-pair{
+        color:rgb(98,98,98);
+        padding: 5px;
+        background-color: lightgray;
+        border: none;
+        border-radius: 10px;
+        margin-left: 20px;
+     }
+     .pair-row{
+        display: flex;
+     }
+     .pair-elem{
+        font-size: 10px;
+        padding: 1px;
+        width: 10px;
+        height: 10px;
+        margin: 1px;
+        text-align: center;
+        
+        border: gray 0.5px solid;
+       
+     }
+     .pair-back{
+        width: fit-content;
+        background-color:white;
+        margin-top: 2px;
+        height: fit-content;
+        
+        
+     }
+     .pair-yaxis-name{
+     /*background-color: aqua;*/
+     width: fit-content;
+     padding: 0;
+     text-align: right;
+     margin-left: auto;
+     height: 12px;
+     font-size: 10px;
+     margin-right: 5px;
+     }
+     .pair-xaxis-name{
+        width: fit-content;
+        padding: 0;
+        text-align: right;
+        margin-left: auto;
+        height: 12px;
+        font-size: 10px;
+        
+       
+    }
+    
+    .pair-xaxis{
+        width: fit-content;
+        font-size: 10px;
+        display: flex;
+        transform: rotate(-90deg);
+        position: relative;
+        left: 302px;
+        bottom: 120px;
+        }
+     .pair-chart-container{
+        padding-left: 40px;
+        display: flex;
+        
+     }
+     .pair-table-elem{
+        background-color:rgb(235, 235, 235);
+        width: 100%;
+        height: 100%;
+        padding: 10px;
+        margin: 2px;
+        font-size: 15px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        color:  rgb(98, 98, 98);
+        white-space: nowrap;
+        
+     }
+     .pair-table-row{
+         width: 100%;
+         display: flex;
+        
+      }
+      .pair-table-title-container{
+        background-color:lightgray;
+        width: 100%;
+        height: 100%;
+        
+        margin-bottom: 2px;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        font-size: 15px;
+        color:  rgb(98, 98, 98);
+        display: flex;
+     }
+     .pair-table-title{
+        width: 100%;
+        margin: 15px;
+      }
 }

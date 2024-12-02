@@ -4,6 +4,8 @@ from sqlalchemy import text
 from app.extensions import db
 
 newPull=False
+startDatePair="2024-09-23 00:00:00"
+endDatePair="2024-09-23 00:00:00"
 
 def date_pull():
     global newPull
@@ -83,6 +85,7 @@ def xreports_data():
                  chartDict["sales"]=totSales
         chartArr+=[chartDict]
         ordersByHour+=[rowArr]
+        #print(ordersByHour)
     #Top products
     productsQuery= db.session.execute(
     text(f""" SELECT product_name, COUNT(product_name) FROM "order" o 
@@ -99,12 +102,11 @@ def xreports_data():
     newName=""
     for row in productsQuery:
         newName=""
-        lower=True
         for char in row[0]:
             if (str(char).isupper()):
                 newName+=" "
                 newName+=char
-            elif(lower):
+            else:
                 newName+=char
         newNameFinal=newName[0].upper() + newName[1:]
         pieDict["name"]=newNameFinal
@@ -124,7 +126,127 @@ def xreports_data():
 
 @manager_bp.route('/pairreports', methods=['GET','POST'])
 def pair_reports():
-    prodQuery= db.session.execute(
-    text(f"""SELECT count(product_id) FROM product_item;""")
+    
+    data=request.data.decode("utf-8")
+    global startDatePair
+    global endDatePair
+    if (data[2:7]=='sDate'):
+        startDatePair=data[10:29]
+    if (data[2:7]=='eDate'):
+        endDatePair=data[10:29]
+    print(startDatePair)
+    
+    pairProductChart=db.session.execute(
+    text(f"""
+        SELECT count(DISTINCT o.order_id), pi1.product_name, pi2.product_name, pi1.product_id,pi2.product_id
+        FROM "order" o 
+        JOIN order_menu_item om1 ON o.order_id=om1.order_id 
+        JOIN order_menu_item om2 ON o.order_id=om2.order_id 
+        JOIN order_menu_item_product p1 ON om1.order_menu_item_id=p1.order_menu_item_id 
+        JOIN order_menu_item_product p2 ON om2.order_menu_item_id=p2.order_menu_item_id 
+        JOIN product_item pi1 ON p1.product_id=pi1.product_id 
+        JOIN product_item pi2 ON p2.product_id=pi2.product_id 
+        WHERE o.order_date_time >  '{startDatePair}'
+        AND o.order_date_time <  '{endDatePair}'
+        GROUP BY pi1.product_id, pi2.product_id
+        ORDER BY pi1.product_id DESC;
+        """)
     ).fetchall()
-    prodCount=int(prodQuery[0][0])
+    pairProductsTable=db.session.execute(
+    text(f"""
+        SELECT count(DISTINCT o.order_id), pi1.product_name, pi2.product_name
+        FROM "order" o 
+        JOIN order_menu_item om1 ON o.order_id=om1.order_id 
+        JOIN order_menu_item om2 ON o.order_id=om2.order_id 
+        JOIN order_menu_item_product p1 ON om1.order_menu_item_id=p1.order_menu_item_id 
+        JOIN order_menu_item_product p2 ON om2.order_menu_item_id=p2.order_menu_item_id 
+        JOIN product_item pi1 ON p1.product_id=pi1.product_id 
+        JOIN product_item pi2 ON p2.product_id=pi2.product_id 
+        WHERE pi1.product_id < pi2.product_id
+        AND o.order_date_time >  '{startDatePair}'
+        AND o.order_date_time <  '{endDatePair}'
+        GROUP BY pi1.product_id, pi2.product_id
+        ORDER BY count(DISTINCT o.order_id) DESC LIMIT 10;
+        """)
+    ).fetchall()
+    
+    totalOrders=db.session.execute(
+    text(f"""
+        SELECT count(DISTINCT order_id)
+        FROM "order"
+        WHERE order_date_time >  '{startDatePair}'
+        AND order_date_time <  '{endDatePair}';
+        """)
+    ).fetchall()
+
+    prodNamesQuery=db.session.execute(
+    text(f"""
+         SELECT product_name from product_item
+         ORDER By product_id;
+        """)
+    ).fetchall()
+    tableArr=[]
+    for i in range(len(pairProductsTable)):
+        rowArr=[]
+        newName=""
+        for char in str(str(pairProductsTable[i][1])):
+            if (str(char).isupper()):
+                newName+=" "
+                newName+=char
+            else:
+                newName+=char
+        newNameFinal=newName[0].upper() + newName[1:]
+        rowArr+=[newNameFinal]
+        newName=""
+        for char in str(str(pairProductsTable[i][2])):
+            if (str(char).isupper()):
+                newName+=" "
+                newName+=char
+            else:
+                newName+=char
+        newNameFinal=newName[0].upper() + newName[1:]
+        rowArr+=[newNameFinal]
+        rowArr+=[str(pairProductsTable[i][0])]
+        rowArr+=[str(round(float(pairProductsTable[i][0])/float(totalOrders[0][0])*100)) + "%"]
+        tableArr+=[rowArr]
+
+    productsArr=[]
+    productsArrReverse=[]
+    prodNums=len(prodNamesQuery)
+    for i in range(prodNums):
+        newName=""
+        for char in str(prodNamesQuery[i][0]):
+            if (str(char).isupper()):
+                newName+=" "
+                newName+=char
+            else:
+                newName+=char
+        newNameFinal=newName[0].upper() + newName[1:]
+        productsArr+=[newNameFinal]
+        newName=""
+        for char in str(prodNamesQuery[prodNums-1-i][0]):
+            if (str(char).isupper()):
+                newName+=" "
+                newName+=char
+            else:
+                newName+=char
+        newNameFinal=newName[0].upper() + newName[1:]
+        productsArrReverse+=[newNameFinal]
+       
+
+    
+    crossPlotArr=[[0]*prodNums for _ in range(prodNums)]
+    maxPair=0
+    for i in range (0,len(pairProductChart)):
+        if(int(pairProductChart[i][3])==int(pairProductChart[i][4])):
+            crossPlotArr[prodNums-int(pairProductChart[i][3])][int(pairProductChart[i][4])-1]='0'
+        else:
+            crossPlotArr[prodNums-int(pairProductChart[i][3])][int(pairProductChart[i][4])-1]=pairProductChart[i][0]
+            if (int(pairProductChart[i][0])>maxPair):
+                maxPair=int(pairProductChart[i][0])
+    return {"pairChart":crossPlotArr,
+            "maxPair": str(maxPair),
+            "productsArr":productsArr,
+            "productsArrReverse":productsArrReverse,
+            "tableArr":tableArr
+            }

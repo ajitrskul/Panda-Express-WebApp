@@ -1,34 +1,51 @@
+/* navbar.css */
+
+/* Hide navbar on very small screens */
 @media (max-width: 249px) {
     .navbar {
         visibility: hidden;
     }
 }
-@media (min-width: 250px){
+
+/* Styles for screens wider than 250px */
+@media (min-width: 250px) {
     .navbar {
         position: fixed;
-        background-color:#a3080c ;
+        background-color: #a3080c;
         box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
         overflow: visible !important;
     }
 
-    .home-button {
-        height:100%;
-        width:100%;
+    /* Home Button and Back Button */
+    .home-button,
+    .back-button {
+        background: transparent;
+        height: 100%;
+        width: 100%;
         border: none;
     }
 
+    /* Logo */
     .logo {
         float: left;
         width: 60px;
         height: 60px;
-        margin-left:.5rem;
+        margin-left: 0.5rem;
     }
-         
+
+    /* Back Icon */
+    .back-icon {
+        font-size: 60px;
+        color: white;
+        margin-left: 0.5rem;
+    }
+
+    /* Login Button */
     .login-button {
         float: right;
         margin-right: 1rem;
-        height:100%;
-        width:50px;
+        height: 100%;
+        width: 50px;
         border: none;
         background: transparent;
     }
@@ -38,6 +55,7 @@
         color: white;
     }
 
+    /* Weather Button */
     .weather-button {
         float: right;
         border: none;
@@ -45,106 +63,132 @@
         white-space: nowrap;
         font-size: 15px;
         text-align: center;
-        align-self: center; 
-        padding:0 !important;
-        background: transparent;
-    }
-    
-    .weather-icon{
-        width:50px;
-    }
-            
-}
-@media (min-width: 400px){
-    .navbar {
-        position: fixed;
-        background-color:#a3080c ;
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-        overflow: visible !important;
-        
-    }
-    
-    .home-button {
-        background:transparent;
-        height:100%;
-        width:100%;
-        border: none;
-    }
-
-    .logo {
-        float: left;
-        width: 60px;
-        height: 60px;
-        margin-left:.5rem;
-    }
-            
-    .login-button {
-    float: right;
-    margin-right: 1rem;
-    height:100%;
-    width:50px;
-    border: none;
-    background: transparent;
-    }
-
-    .login-icon{
-    font-size: 25px;
-    color: white;
-    }
-    
-    .weather-button {
-        float: right;
-        border: none;
-        color: white;
-        white-space: nowrap;
-        font-size: 15px;
-        text-align: center;
-        align-self: center; 
-        padding:0 !important;
+        align-self: center;
+        padding: 0 !important;
         background: transparent;
     }
 
     .weather-icon {
-        width:50px;
+        width: 50px;
     }
-        
 }
-@media (min-width: 786px){
+
+/* Styles for screens wider than 400px */
+@media (min-width: 400px) {
     .navbar {
-        background-color:#a3080c ;
+        position: fixed;
+        background-color: #a3080c;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        overflow: visible !important;
+    }
+
+    /* Home Button and Back Button */
+    .home-button,
+    .back-button {
+        background: transparent;
+        height: 100%;
+        width: 100%;
+        border: none;
+    }
+
+    /* Logo */
+    .logo {
+        float: left;
+        width: 60px;
+        height: 60px;
+        margin-left: 0.5rem;
+    }
+
+    /* Back Icon */
+    .back-icon {
+        font-size: 60px;
+        color: white;
+        margin-left: 0.5rem;
+    }
+
+    /* Login Button */
+    .login-button {
+        float: right;
+        margin-right: 1rem;
+        height: 100%;
+        width: 50px;
+        border: none;
+        background: transparent;
+    }
+
+    .login-icon {
+        font-size: 25px;
+        color: white;
+    }
+
+    /* Weather Button */
+    .weather-button {
+        float: right;
+        border: none;
+        color: white;
+        white-space: nowrap;
+        font-size: 15px;
+        text-align: center;
+        align-self: center;
+        padding: 0 !important;
+        background: transparent;
+    }
+
+    .weather-icon {
+        width: 50px;
+    }
+}
+
+/* Styles for screens wider than 786px */
+@media (min-width: 786px) {
+    .navbar {
+        position: fixed;
+        background-color: #a3080c;
         align-content: center;
         box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
         display: flex;
     }
 
-    .home-button {
-        height:100%;
-        width:100%;
+    /* Home Button and Back Button */
+    .home-button,
+    .back-button {
+        height: 100%;
+        width: 100%;
         border: none;
         background: transparent;
     }
 
+    /* Logo */
     .logo {
         float: left;
         width: 50px;
         height: 50px;
-        margin-left:.5rem;
+        margin-left: 0.5rem;
     }
-    
-    .login-button{
+
+    /* Back Icon */
+    .back-icon {
+        font-size: 50px;
+        color: white;
+        margin-left: 0.5rem;
+    }
+
+    /* Login Button */
+    .login-button {
         float: right;
         margin-right: 1rem;
-        height:100%;
-        width:50px;
+        height: 100%;
+        width: 50px;
         border: none;
         background: transparent;
     }
-    
+
     .login-icon {
-    font-size: 30px;
-    color: white;
+        font-size: 30px;
+        color: white;
     }
 
+    /* Weather Button */
     .weather-button {
         float: right;
         border: none;
@@ -152,12 +196,11 @@
         white-space: nowrap;
         font-size: 15px;
         text-align: center;
-        align-self: center; 
+        align-self: center;
         background: transparent;
     }
 
     .weather-icon {
-        width:50px;
+        width: 50px;
     }
-    
-    }
+}
