@@ -1,31 +1,75 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import api from '../../services/api'; // Axios instance with base URL
+import '../../styles/kitchen.css'; // Create and import CSS for styling
+
 
 function KitchenMain() {
-  const [kitchenData, setKitchenData] = useState(null); // State to hold data
+  const [orders, setOrders] = useState([]); // State to hold orders
 
-  // Fetch data from /kitchen
-  const fetchAPI = async () => {
+  // Fetch pending orders from /kitchen/orders
+  const fetchOrders = async () => {
     try {
-      const response = await api.get("/kitchen"); 
-      setKitchenData(response.data); 
+      const response = await api.get("/kitchen/orders"); 
+      console.log('API Response:', response.data); // Debugging line 
+      setOrders(response.data); 
     } catch (error) {
-      console.error("Error fetching kitchen data:", error);
+      console.error("Error fetching orders:", error);
+    }
+  };
+  
+
+  // Fetch orders on component mount and set up polling
+  useEffect(() => {
+    fetchOrders(); // Initial fetch
+
+    const interval = setInterval(() => {
+      fetchOrders(); // Fetch orders every 5 seconds
+    }, 5000);
+
+    // Cleanup interval on unmount
+    return () => clearInterval(interval);
+  }, []);
+
+  // Function to mark an order as ready
+  const markOrderReady = async (orderId) => {
+    try {
+      const response = await api.post(`/kitchen/orders/${orderId}/ready`);
+      if (response.status === 200) {
+        // Remove the order from the state
+        setOrders(orders.filter(order => order.order_id !== orderId));
+      }
+    } catch (error) {
+      console.error("Error marking order as ready:", error);
     }
   };
 
-  // Fetch data on component load
-  useEffect(() => {
-    fetchAPI();
-  }, []);
-
   return (
-    <div className="container-fluid">
+    <div className="kitchen-container">
       <h1>Kitchen View</h1>
-      {kitchenData ? (
-        <p>{kitchenData.message}</p> // Display the "message" from the API response
+      {orders.length === 0 ? (
+        <p>No pending orders.</p>
       ) : (
-        <p>Loading...</p> // Show loading text while data is being fetched
+        <div className="orders-container">
+          {orders.map(order => (
+            <div key={order.order_id} className="order-card">
+              <h3>Order #{order.order_id}</h3>
+              <p>Order Time: {new Date(order.order_date_time).toLocaleTimeString()}</p>
+              <div className="order-items">
+                {order.order_menu_items.map(omi => (
+                  <div key={omi.order_menu_item_id} className="order-item">
+                    <h4>{omi.menu_item_name}</h4>
+                    <div className="components">
+                      {omi.components.map((comp, index) => (
+                        <p key={index}>{comp.type}: {comp.product_name}</p>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <button className="mark-ready-button" onClick={() => markOrderReady(order.order_id)}>Mark as Ready</button>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );

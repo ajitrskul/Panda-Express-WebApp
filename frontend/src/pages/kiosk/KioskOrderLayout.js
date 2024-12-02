@@ -1,4 +1,4 @@
-// IS THE LOADER FOR CART AND CHECKOUT BUTTON
+// loader for cart and button
 import React, { useContext } from 'react';
 import { Outlet } from 'react-router-dom';
 import CheckoutButton from './components/CheckoutButton';
@@ -8,10 +8,13 @@ import { CartContext } from './components/CartContext';
 function KioskOrderLayout() {
   const { cartItems, isCartOpen, toggleCart } = useContext(CartContext);
 
+  // handles total item quantity
+  const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
   return (
     <div className="kiosk-order-layout">
       <CheckoutButton
-        orderCount={cartItems.length}
+        orderCount={totalQuantity}
         toggleCart={toggleCart}
         isCartOpen={isCartOpen}
       />

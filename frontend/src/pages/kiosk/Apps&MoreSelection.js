@@ -1,8 +1,8 @@
-// AppsAndMoreSelection.js
 import React, { useState, useEffect, useContext } from 'react';
 import '../../styles/kiosk.css';
-import MenuItemCard from './components/MenuItemCard'; 
-import InfoCard from './components/InfoCard'; 
+import MenuItemCard from './components/MenuItemCard';
+import InfoCard from './components/InfoCard';
+import SizeSelectionDialog from './components/SizeSelectionDialog'; // Import SizeSelectionDialog
 import api from '../../services/api';
 import { CartContext } from './components/CartContext'; // Import CartContext
 import { NavBar } from "./components/NavBar";
@@ -18,7 +18,48 @@ const AppsAndMoreSelection = () => {
   const [error, setError] = useState(null);
   const [selectedInfo, setSelectedInfo] = useState(null);
 
+  // State variables for size selection
+  const [showSizeDialog, setShowSizeDialog] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+
   const { cartItems, setCartItems } = useContext(CartContext); // Access cart context
+
+  // Define size options for appetizers and desserts
+  const appetizerSizeOptions = [
+    {
+      item_name: 'appetizerSmall',
+      display_name: 'Small',
+      menu_item_base_price: 2.00,
+      premium_multiplier: 1,
+    },
+    {
+      item_name: 'appetizerLarge',
+      display_name: 'Large',
+      menu_item_base_price: 8.00,
+      premium_multiplier: 1,
+    },
+  ];
+
+  const dessertSizeOptions = [
+    {
+      item_name: 'dessertSmall',
+      display_name: 'Small',
+      menu_item_base_price: 2.00,
+      premium_multiplier: 1,
+    },
+    {
+      item_name: 'dessertMedium',
+      display_name: 'Medium',
+      menu_item_base_price: 6.20,
+      premium_multiplier: 1,
+    },
+    {
+      item_name: 'dessertLarge',
+      display_name: 'Large',
+      menu_item_base_price: 8.00,
+      premium_multiplier: 1,
+    },
+  ];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,33 +80,67 @@ const AppsAndMoreSelection = () => {
     fetchData();
   }, []);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
-  const handleItemSelect = (item) => {
+  const handleItemSelect = (item, type) => {
     console.log('Selected item:', item);
-  
-    // Manage quantities in the cart
+
+    // Determine size options based on item type
+    let sizeOptions = [];
+    if (type === 'appetizer') {
+      sizeOptions = appetizerSizeOptions;
+    } else if (type === 'dessert') {
+      sizeOptions = dessertSizeOptions;
+    }
+
+    // If there are size options, show size selection dialog
+    if (sizeOptions.length > 0) {
+      setSelectedItem({ item, sizeOptions });
+      setShowSizeDialog(true);
+    } else {
+      // If no size options, add directly to cart
+      addToCart(item);
+    }
+  };
+
+  const addToCart = (item) => {
     const existingItemIndex = cartItems.findIndex(
-      (cartItem) => cartItem.product_name === item.product_name
+      (cartItem) =>
+        cartItem.product_name === item.product_name &&
+        (cartItem.size ? cartItem.size.item_name === item.size?.item_name : true)
     );
-  
+
     if (existingItemIndex !== -1) {
       // If item exists, update quantity
       const updatedCartItems = [...cartItems];
       updatedCartItems[existingItemIndex].quantity += 1;
       setCartItems(updatedCartItems);
     } else {
-      // If item doesn't exist, add to cart with quantity 1
+      // Add to cart with quantity 1
       setCartItems([...cartItems, { ...item, quantity: 1 }]);
     }
   };
-  
+
+  const handleSizeSelect = (size) => {
+    const { item } = selectedItem;
+    const cartItem = {
+      ...item,
+      size: size, // Include size information
+      basePrice: size.menu_item_base_price,
+      premiumMultiplier: size.premium_multiplier,
+      menuItemName: size.item_name,
+    };
+
+    addToCart(cartItem);
+
+    // Close size selection dialog
+    setShowSizeDialog(false);
+    setSelectedItem(null);
+  };
+
+  const handleSizeDialogClose = () => {
+    setShowSizeDialog(false);
+    setSelectedItem(null);
+  };
+
   const handleInfoClick = (item) => {
     setSelectedInfo(item);
   };
@@ -74,23 +149,31 @@ const AppsAndMoreSelection = () => {
     setSelectedInfo(null);
   };
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   return (
     <div className="kiosk-landing-order container-fluid">
-      <NavBar></NavBar>
+      <NavBar />
       {/* Appetizers Section */}
       <div className="row pt-4 px-3 justify-content-center">
         <h2 className="text-center mb-4" style={{ color: "white", fontWeight: "bold" }}>Appetizers</h2>
         {appetizers.map((appetizer, index) => (
           <div className="col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center mb-4" key={index}>
-            <MenuItemCard 
-              name={formatProductName(appetizer.product_name)} 
+            <MenuItemCard
+              name={formatProductName(appetizer.product_name)}
               image={appetizer.image}
               description={appetizer.calories + " Calories"}
-              price={appetizer.premium_addition }
-              isPremium={appetizer.is_premium } 
-              isSeasonal={appetizer.is_seasonal }
+              price={'See Options'}
+              isPremium={appetizer.is_premium}
+              isSeasonal={appetizer.is_seasonal}
               isAvailable={appetizer.is_available}
-              onClick={() => handleItemSelect(appetizer)}
+              onClick={() => handleItemSelect(appetizer, 'appetizer')}
               onInfoClick={() => handleInfoClick(appetizer)}
             />
           </div>
@@ -102,15 +185,15 @@ const AppsAndMoreSelection = () => {
         <h2 className="text-center mb-4" style={{ color: "white", fontWeight: "bold" }}>Desserts</h2>
         {desserts.map((dessert, index) => (
           <div className="col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center mb-4" key={index}>
-            <MenuItemCard 
-              name={formatProductName(dessert.product_name)} 
+            <MenuItemCard
+              name={formatProductName(dessert.product_name)}
               image={dessert.image}
-              price={dessert.premium_addition }
-              isPremium={dessert.is_premium } 
-              isSeasonal={dessert.is_seasonal }
-              isAvailable={dessert.is_available}
               description={dessert.calories + " Calories"}
-              onClick={() => handleItemSelect(dessert)}
+              price={'See Options'}
+              isPremium={dessert.is_premium}
+              isSeasonal={dessert.is_seasonal}
+              isAvailable={dessert.is_available}
+              onClick={() => handleItemSelect(dessert, 'dessert')}
               onInfoClick={() => handleInfoClick(dessert)}
             />
           </div>
@@ -118,17 +201,27 @@ const AppsAndMoreSelection = () => {
       </div>
 
       {selectedInfo && (
-        <InfoCard 
-          title={formatProductName(selectedInfo.product_name)} 
+        <InfoCard
+          title={formatProductName(selectedInfo.product_name)}
           image={selectedInfo.image}
           description={selectedInfo.product_description}
-          allergens={selectedInfo.allergens || 'None'} 
+          allergens={selectedInfo.allergens || 'None'}
           servingSize={selectedInfo.serving_size}
           calories={selectedInfo.calories}
           saturatedFat={selectedInfo.saturated_fat}
           carbohydrate={selectedInfo.carbohydrate}
           protein={selectedInfo.protein}
-          onClose={handleCloseInfo} 
+          onClose={handleCloseInfo}
+        />
+      )}
+
+      {/* Size Selection Dialog */}
+      {showSizeDialog && (
+        <SizeSelectionDialog
+          item={selectedItem.item}
+          sizeOptions={selectedItem.sizeOptions}
+          onSizeSelect={handleSizeSelect}
+          onClose={handleSizeDialogClose}
         />
       )}
     </div>

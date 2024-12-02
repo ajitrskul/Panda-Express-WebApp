@@ -1,4 +1,3 @@
-// OrderSelection.js
 import React, { useState, useContext, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import '../../styles/kiosk.css';
@@ -6,13 +5,14 @@ import '../../styles/kiosk/addToCartButton.css';
 import SelectionGrid from './components/SelectionGrid';
 import SideSelection from './components/SideSelection';
 import EntreeSelection from './components/EntreeSelection';
-import { CartContext } from './components/CartContext'; // Corrected import path
+import { CartContext } from './components/CartContext';
 import { NavBar } from "./components/NavBar";
+import { useNavigate } from 'react-router-dom';
+
 
 const OrderSelection = () => {
   const location = useLocation();
-  const { numSides, numEntrees } = location.state;
-  const itemName = location.state.itemName || 'Custom Meal';
+  const { numSides, numEntrees, itemName, realItemName, itemImage, basePrice, premiumMultiplier } = location.state;
 
   const [selectedSection, setSelectedSection] = useState(null);
   const [selectedSideIndex, setSelectedSideIndex] = useState(null);
@@ -23,7 +23,9 @@ const OrderSelection = () => {
 
   const { cartItems, setCartItems } = useContext(CartContext);
 
-  // Initialize selectedSides and selectedEntrees arrays
+  const navigate = useNavigate();
+
+
   useEffect(() => {
     setSelectedSides(Array(numSides).fill(null));
     setSelectedEntrees(Array(numEntrees).fill(null));
@@ -57,16 +59,17 @@ const OrderSelection = () => {
   const handleAddToCart = () => {
     if (isSelectionComplete) {
       const mainItem = {
-        name: itemName,
+        name: realItemName, 
+        image: itemImage,
         components: {
           sides: selectedSides,
           entrees: selectedEntrees
         },
         quantity: 1,
-        price: 9.99 // Use a dummy price or calculate based on components
+        basePrice: basePrice,
+        premiumMultiplier: premiumMultiplier
       };
 
-      // Check if an identical composed item already exists in the cart
       const existingItemIndex = cartItems.findIndex(cartItem => 
         cartItem.name === mainItem.name &&
         JSON.stringify(cartItem.components) === JSON.stringify(mainItem.components)
@@ -80,9 +83,10 @@ const OrderSelection = () => {
         setCartItems([...cartItems, mainItem]);
       }
 
-      // Optionally reset selections
       setSelectedSides(Array(numSides).fill(null));
       setSelectedEntrees(Array(numEntrees).fill(null));
+
+      navigate('/kiosk/order');
     }
   };
 
@@ -98,6 +102,13 @@ const OrderSelection = () => {
           selectedEntrees={selectedEntrees}
         />
       </div>
+
+      {/* Add "Add to Cart" button near the selection grid */}
+      {isSelectionComplete && (
+        <div className="add-to-cart-container-top">
+          <button className="add-to-cart-button" onClick={handleAddToCart}>Add to Cart</button>
+        </div>
+      )}
       
       <div className="container-fluid mt-4">
         {selectedSection === "side" && (
@@ -107,12 +118,6 @@ const OrderSelection = () => {
           <EntreeSelection onItemSelect={(item) => handleItemSelect(item, 'entree')} />
         )}
       </div>
-
-      {isSelectionComplete && (
-        <div className="add-to-cart-container">
-          <button className="add-to-cart-button" onClick={handleAddToCart}>Add to Cart</button>
-        </div>
-      )}
     </div>
   );
 };
