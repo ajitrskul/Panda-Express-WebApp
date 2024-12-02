@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import beastLogo from "./beastLogo.png";
 import { useLocation } from 'react-router-dom';
 import { useEffect, useState } from "react";
+import api from '../../../services/api'; 
 
 export function SidebarManager(){
     const navigate = useNavigate();
@@ -41,7 +42,17 @@ export function SidebarManager(){
       }
     }
     const SidebarClick = (event) =>{
+
       const id=event.target.id;
+      if (id!="zreports"){
+        api.post('/manager/xzreports', "LEAVE", {
+          headers: {
+            'Content-Type': 'text/plain'
+          }
+        });
+      }
+
+
         switch(id){
           case "manager":
             navigate("/manager");

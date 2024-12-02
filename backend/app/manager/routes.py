@@ -3,21 +3,25 @@ from flask import request, jsonify
 from sqlalchemy import text
 from app.extensions import db
 
-newPull=False
+newZ=False
+zLeave=False
 startDatePair="2024-09-23 00:00:00"
 endDatePair="2024-09-23 00:00:00"
 
 def date_pull():
-    global newPull
+    global newZ
+    global zLeave
     #date
     currDate=db.session.execute(
     text("""SELECT order_date_time FROM "order" WHERE order_id = (SELECT max(order_id) FROM "order");""")
     ).fetchall()
 
     data=request.data.decode("utf-8")
-    if (data=="PULL"):
-         newPull=True
-    if newPull:
+    if (data=="Z"):
+         newZ=True
+    if (data=="LEAVE"):
+         zLeave=True
+    if newZ and zLeave:
         queryTime=str(currDate[0][0])
     else:
         queryTime=str(currDate[0][0])[0:10] + " 00:00:00"
@@ -134,7 +138,6 @@ def pair_reports():
         startDatePair=data[10:29]
     if (data[2:7]=='eDate'):
         endDatePair=data[10:29]
-    print(startDatePair)
     
     pairProductChart=db.session.execute(
     text(f"""
@@ -186,6 +189,7 @@ def pair_reports():
         """)
     ).fetchall()
     tableArr=[]
+  
     for i in range(len(pairProductsTable)):
         rowArr=[]
         newName=""

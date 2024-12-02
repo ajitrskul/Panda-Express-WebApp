@@ -12,7 +12,7 @@ function ZReports() {
   const fetchZReport = async () => {
     const response = await api.get('/manager/xzreports'); 
     setZReportsData(response.data);
-    await api.post('/manager/xzreports', "PULL", {
+    await api.post('/manager/xzreports', "Z", {
       headers: {
         'Content-Type': 'text/plain'
       }

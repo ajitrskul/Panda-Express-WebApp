@@ -116,7 +116,7 @@ function XReports() {
         </LineChart>
         
           ) : (
-            <div>Loading...</div>
+            <div></div>
           )}
         </ResponsiveContainer>
         </div>
