@@ -37,6 +37,9 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    flex: 1; 
+    margin: 0 10px; 
+    max-width: 150px; 
   }
   
   .confirm-button {
