@@ -9,7 +9,7 @@ function MenuSection({ apiEndpoint, onAddToOrder, navigate }) {
     const fetchMenuItems = async () => {
       try {
         const response = await api.get(apiEndpoint);
-        setMenuItems(response.data || []); // Ensure it's an array
+        setMenuItems(response.data || []);
       } catch (err) {
         console.error("Failed to fetch menu items:", err);
         setError("Failed to load menu items. Please try again later.");
@@ -17,11 +17,12 @@ function MenuSection({ apiEndpoint, onAddToOrder, navigate }) {
     };
 
     fetchMenuItems();
-  }, [apiEndpoint]);
+  }, [apiEndpoint]); 
 
-  const formatItemName = (name) => {
+  const formatItemName = (item) => {
+    const name = item.item_name || item.product_name || "Unknown Item"; 
     let formattedName = name.replace(/Small|Medium|Side/g, "");
-    if (formattedName === "appetizer") {
+    if (formattedName.toLowerCase() === "appetizer") {
       return "Appetizers & More";
     }
     formattedName = formattedName.replace(/([A-Z])/g, " $1").trim();
@@ -29,7 +30,7 @@ function MenuSection({ apiEndpoint, onAddToOrder, navigate }) {
       .split(" ")
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
-  };
+  };  
 
   if (error) {
     return <div className="menu-error">{error}</div>;
@@ -42,13 +43,9 @@ function MenuSection({ apiEndpoint, onAddToOrder, navigate }) {
           <button
             key={index}
             className={`menu-item-btn ${item.category ? "category-btn" : ""}`}
-            onClick={() =>
-              item.category
-                ? navigate(`/kiosk/${item.category.toLowerCase()}`)
-                : onAddToOrder(item)
-            }
+            onClick={() => onAddToOrder(item)}
           >
-            {formatItemName(item.item_name)}
+            {formatItemName(item)}
           </button>
         ))}
       </div>

@@ -9,11 +9,20 @@ function PosMain() {
   const [currentOrder, setCurrentOrder] = useState([]);
   const [orderNumber, setOrderNumber] = useState(124298); 
   const [total, setTotal] = useState(0); 
+  const [menuEndpoint, setMenuEndpoint] = useState("/kiosk/menu"); 
   const navigate = useNavigate();
 
   const handleAddToOrder = (item) => {
-    setCurrentOrder((prevOrder) => [...prevOrder, item]);
-    setTotal((prevTotal) => prevTotal + (item.price || 0)); 
+    if (item.item_name.toLowerCase() === "drinks") {
+      setMenuEndpoint("/kiosk/drinks"); 
+    } 
+    else if (item.item_name.toLowerCase() === "appetizersmall") {
+      setMenuEndpoint("/kiosk/appetizers");
+    }
+    else {
+      setCurrentOrder((prevOrder) => [...prevOrder, item]);
+      setTotal((prevTotal) => prevTotal + (item.price || 0)); 
+    }
   };
 
   const handleCheckout = () => {
@@ -22,6 +31,7 @@ function PosMain() {
     setCurrentOrder([]);
     setTotal(0); 
     setOrderNumber(orderNumber + 1); 
+    setMenuEndpoint("/kiosk/menu"); 
   };
 
   return (
@@ -30,7 +40,7 @@ function PosMain() {
       <div className="main-content">
         {/* Menu Section */}
         <MenuSection
-          apiEndpoint="/kiosk/menu"
+          apiEndpoint={menuEndpoint}
           onAddToOrder={handleAddToOrder}
           navigate={navigate}
         />
@@ -44,6 +54,7 @@ function PosMain() {
           onCancel={() => {
             setCurrentOrder([]);
             setTotal(0);
+            setMenuEndpoint("/kiosk/menu"); 
           }}
         />
       </div>
