@@ -9,13 +9,14 @@ from .mobile import mobile_bp
 from .pos import pos_bp
 from .auth import auth_bp
 from .extensions import db
+import os
 
 def register_extensions(app):
     CORS(app, origins='*')  
     db.init_app(app)      
 
 def register_secret_key(app):
-    app.secret_key = "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"
+    app.secret_key = os.getenv('GOOGLE_SECRET_KEY')
 
 def register_blueprints(app):
     app.register_blueprint(menu_bp, url_prefix='/api/menu')

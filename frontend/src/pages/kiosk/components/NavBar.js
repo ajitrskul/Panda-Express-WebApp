@@ -2,10 +2,14 @@ import axios from "axios";
 import beastLogo from "./beastLogo.png";
 import "../../../styles/navbar.css";
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { AccountContext } from "../../auth/components/AccountContext";
 
 export function NavBar(){
+  const { customer, customerSignOut } = useContext(AccountContext);
+  const [loginBar, setLoginBar] = useState(false);
+
   const navigate = useNavigate();
   const [temp, setTemp] = useState();
   const [iconSrc, setIconSrc] = useState();
@@ -36,9 +40,38 @@ export function NavBar(){
     window.location.reload();
     document.cookie="googtrans=/en/en;"
   }
-  const navAuth = () => {
-    navigate(`/auth`);
- }
+
+  const navSignIn = () => {
+    navigate(`/auth/signin`);
+    window.location.reload();
+  }
+
+  const navSignUp = () => {
+    navigate(`/auth/signup`);
+    window.location.reload();
+  }
+
+  //Login Dropdown
+  useEffect(() => {
+    // Function to handle the click event
+    const closeLoginBar = (event) => {
+      //setLoginBar(true);
+      if (event.target.classList.contains('login-button') || event.target.classList.contains('login-icon') || event.target.classList.contains('nav-signin-name')) {
+        setLoginBar(!loginBar);
+      }
+      else if (loginBar) {
+        setLoginBar(false); // or toggle state with `setClicked(prev => !prev)`
+      }
+    };
+
+    // Add event listener for clicks on the whole document
+    document.addEventListener('click', closeLoginBar);
+
+    // Cleanup function to remove the event listener when the component unmounts
+    return () => {
+      document.removeEventListener('click', closeLoginBar);
+    };
+  }); 
 
     return (
       <div class="row">
@@ -46,15 +79,15 @@ export function NavBar(){
 
           {/*home button*/}
           <div class="col">
-            <button className="home-button" id="home-button" onClick={navHome}>
-              <img className="logo" src={beastLogo} alt="Beastmode logo"></img>
+            <button className="home-button" >
+              <img className="logo" src={beastLogo} alt="Beastmode logo" id="home-button" onClick={navHome}></img>
             </button>
           </div>
 
            {/*display weather*/}
-          <div class="col-auto">
+          <div className="col-auto">
             <button className="weather-button">
-              <div class="notranslate" id="weather-text">
+              <div className="notranslate" id="weather-text">
                 {temp} °F
                 <img className="weather-icon" src={iconSrc} alt="icon displaying the current weather"></img>
               </div>
@@ -62,11 +95,42 @@ export function NavBar(){
           </div>
 
            {/*login button*/}
-          <div class="col-auto">
-            <button className="login-button" onClick={navAuth}>
-              <i class="bi bi-person-circle login-icon"></i>
+          {!customer.isSignedIn && <div className="col-auto navbar-login">
+            <button className="login-button">
+              <i className="bi bi-person-circle login-icon"></i>
             </button>
-          </div>
+            {
+            loginBar &&
+              <div className="navbar-drop text-start">
+                <div className="navbar-drop-option" onClick={navSignIn}>
+                  <i className="bi bi-box-arrow-in-right nav-drop-icon"></i>
+                  Login
+                </div>
+                <div className="navbar-drop-option" onClick={navSignUp}>
+                  <i className="bi bi-pencil-square nav-drop-icon"></i>
+                    Signup
+                </div>
+              </div>
+            }
+          </div>}
+          {customer.isSignedIn && 
+          <div className="col-auto text-center nav-signin-text-container" style={{borderLeft:"solid", borderLeftColor:"white", borderLeftWidth:"2px"}}>
+            <p className="nav-signin-text">{customer.beast_points} <span style={{fontWeight:"600"}}>pts</span></p>
+          </div>}
+
+          {customer.isSignedIn && 
+            <div className="col-auto text-center nav-signin-text-container" style={{borderLeft:"solid", borderLeftColor:"white", borderLeftWidth:"2px"}}>
+              <p className="nav-signin-text nav-signin-name">{customer.first_name} {customer.last_name}</p>
+              {
+              loginBar &&
+              <div className="navbar-drop-signedin text-start">
+                <div className="navbar-drop-logout" onClick={customerSignOut}>
+                  <i className="bi bi-box-arrow-in-left nav-drop-icon"></i>
+                  Log Out
+                </div>
+              </div>
+              }
+            </div>}
 
         </nav>
       </div>
