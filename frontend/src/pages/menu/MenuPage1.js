@@ -60,7 +60,7 @@ function MenuMain1() {
   }
 
   return (
-    <div className="container-fluid" /*style={{ width: "1400px"}}*/>
+    <div className="container-fluid fullscreen-menu" /*style={{ width: "1400px"}}*/>
       <div className="row">
         <div className="col-5">
           <div className="row row-style-1">
