@@ -1,10 +1,9 @@
-/* Cart Styles */
 .cart-offcanvas {
   position: fixed;
   right: 0;
   top: 0;
   height: 100%;
-  width: 350px;
+  width: 420px;
   background-color: #fff;
   box-shadow: -4px 0 8px rgba(0, 0, 0, 0.2);
   transform: translateX(100%);
@@ -12,6 +11,28 @@
   z-index: 1050;
   display: flex;
   flex-direction: column;
+}
+
+.cart-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0);
+  z-index: 1049;
+  opacity: 0;
+  transition: background-color 0.3s ease, opacity 0.3s ease;
+}
+
+.cart-overlay.fade-in {
+  background-color: rgba(0, 0, 0, 0.5); 
+  opacity: 1;
+}
+
+.cart-overlay.fade-out {
+  background-color: rgba(0, 0, 0, 0); 
+  opacity: 0;
 }
 
 .cart-offcanvas.open {
@@ -178,4 +199,158 @@
 
 .cart-item-components li {
   font-size: 0.9rem;
+}
+
+/* maybe change  */
+/* Remove item button */
+.remove-item-button {
+  background: none;
+  border: none;
+  color: #ff6f61;
+  font-size: 1.2rem;
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+.remove-item-button:hover {
+  color: #e55a4e;
+}
+
+/* Quantity controls */
+.cart-item-quantity-controls {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.quantity-button {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  color: #000;
+  font-size: 1rem;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.quantity-button:hover {
+  background-color: #f0f0f0;
+}
+
+.quantity-display {
+  margin: 0 10px;
+  font-size: 1rem;
+}
+
+/* Adjust cart-item layout */
+.cart-item {
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.cart-item-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+}
+
+.cart-item-details {
+  flex: 1;
+  padding-left: 10px;
+}
+
+.cart-item-price {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-left: 10px;
+}
+
+
+/* Order Confirmation Overlay */
+.order-confirmation-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.order-confirmation-dialog {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  width: 80%;
+  max-width: 400px;
+}
+
+.order-confirmation-dialog p {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+
+.close-confirmation-button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #ff6f61;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.close-confirmation-button:hover {
+  background-color: #e55a4e;
+}
+
+
+/* Error Message Overlay */
+.order-error-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.order-error-dialog {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  width: 80%;
+  max-width: 400px;
+}
+
+.order-error-dialog p {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+
+.close-error-button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #ff6f61;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.close-error-button:hover {
+  background-color: #e55a4e;
 }
