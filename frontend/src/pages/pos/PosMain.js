@@ -14,14 +14,25 @@ function PosMain() {
   const [workflowStep, setWorkflowStep] = useState(0);
   const navigate = useNavigate();
 
-  const formatItemName = (item) => {
-    if (!item) return "Unknown Item"; // Handle undefined or null items
-
+  const formatMenuNames = (item) => {
     const name = item.item_name || item.product_name || item.name || "Unknown Item";
+
     let formattedName = name.replace(/Small|Medium|Side/g, ""); 
-    if (formattedName.toLowerCase() === "appetizer") {
-      return "Appetizers & More";
+    if (formattedName.toLowerCase() === "appetizer") return "Appetizers & More";
+    formattedName = formattedName.replace(/([A-Z])/g, " $1").trim(); 
+    return formattedName
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) 
+      .join(" ");
+  };
+
+  const formatOrderNames = (item) => {
+    let name = item.type;
+    if (name != "entree" || name != "side") {
+      name = item.item_name || item.product_name || item.name;
     }
+
+    let formattedName = name.replace(/Small|Medium|Side/g, ""); 
     formattedName = formattedName.replace(/([A-Z])/g, " $1").trim(); 
     return formattedName
       .split(" ")
@@ -45,6 +56,10 @@ function PosMain() {
       setCurrentWorkflow({ name: item.item_name, steps: ["/pos/apps-and-more"], subitems: [] });
       setMenuEndpoint("/pos/apps-and-more");
     } 
+    else if (item.item_name === "aLaCarteSideMedium") {
+      setCurrentWorkflow({ name: item.item_name, steps: ["/pos/a-la-carte"], subitems: [] });
+      setMenuEndpoint("/pos/a-la-carte");
+    } 
     else if (item.max_sides || item.max_entrees) {
       const workflowSteps = generateWorkflowSteps(item);
       setCurrentWorkflow({ name: item.item_name, steps: workflowSteps, subitems: [] });
@@ -58,6 +73,7 @@ function PosMain() {
       if (item.product_id) {
         subitems.push({
           name: item.product_name || `Product ${item.product_id}`,
+          type: item.type,
           price: item.price || 0,
         });
       } else if (item.item_name) {
@@ -116,7 +132,7 @@ function PosMain() {
           apiEndpoint={menuEndpoint}
           onAddToOrder={handleAddToOrder}
           navigate={navigate}
-          formatItemName={formatItemName}
+          formatMenuNames={formatMenuNames}
         />
         <OrderSection
           orderNumber={orderNumber}
@@ -130,7 +146,7 @@ function PosMain() {
             setCurrentWorkflow(null);
             setWorkflowStep(0);
           }}
-          formatItemName={formatItemName}
+          formatOrderNames={formatOrderNames}
         />
       </div>
       <Footer navigate={navigate} />

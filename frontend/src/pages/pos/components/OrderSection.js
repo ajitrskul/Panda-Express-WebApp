@@ -1,6 +1,6 @@
 import React from "react";
 
-function OrderSection({ orderNumber, currentOrder, total, onCheckout, onCancel, formatItemName }) {
+function OrderSection({ orderNumber, currentOrder, total, onCheckout, onCancel, formatOrderNames }) {
   return (
     <div className="order-section">
       <h2 style={{marginBottom: '0px', textAlign: 'center'}}>Order #{orderNumber}</h2>
@@ -10,14 +10,14 @@ function OrderSection({ orderNumber, currentOrder, total, onCheckout, onCancel, 
           currentOrder.map((item, index) => (
             <div key={index} className="order-item">
               <p>
-                <strong>{item.name.toUpperCase()}</strong>{" "}
+                <strong>{formatOrderNames(item)}</strong>{" "}
                 <span>${item.price.toFixed(2)}</span>
               </p>
               {item.subitems && (
                 <ul>
                   {item.subitems.map((subitem, subIndex) => (
                     <li key={subIndex} className="order-subitem">
-                      {formatItemName(subitem)}
+                      {formatOrderNames(subitem)}
                     </li>
                   ))}
                 </ul>
