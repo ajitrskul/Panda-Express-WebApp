@@ -262,7 +262,7 @@ def create_order():
         with db.session.begin_nested():
             # Create the Order
             order = Order(
-                order_date_time=datetime.now(timezone.utc),
+                order_date_time=datetime.now(),
                 total_price=total_price,
                 employee_id=None,
                 is_ready= False
