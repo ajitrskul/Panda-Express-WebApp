@@ -179,7 +179,7 @@ const DrinkSelection = () => {
 
       {showSizeDialog && (
         <SizeSelectionDialog
-          drink={selectedDrink}
+          item={selectedDrink} // Changed from 'drink' to 'item'
           sizeOptions={sizeOptions}
           onSizeSelect={handleSizeSelect}
           onClose={handleSizeDialogClose}
