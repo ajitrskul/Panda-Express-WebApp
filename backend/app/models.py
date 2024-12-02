@@ -56,3 +56,28 @@ class Employee(db.Model):
     last_name = db.Column(db.String(50), nullable=False)
     role = db.Column(db.String(20), nullable=False)
     password = db.Column(db.String(255), nullable=False)
+
+
+class Order(db.Model):
+    __tablename__ = 'order'
+
+    order_id = db.Column(db.Integer, primary_key=True, index=True)
+    order_date_time = db.Column(db.DateTime, nullable=False, index=True)
+    employee_id = db.Column(db.Integer, db.ForeignKey('employee_info.employee_id'), nullable=False)
+    total_price = db.Column(db.Numeric(7,2), nullable=False)
+
+class OrderMenuItem(db.Model):
+    __tablename__ = 'order_menu_item'
+
+    order_menu_item_id = db.Column(db.Integer, primary_key=True, index=True)
+    order_id = db.Column(db.Integer, db.ForeignKey('order.order_id'), primary_key=True)
+    menu_item_id = db.Column(db.Integer, db.ForeignKey('menu_item.menu_item_id'),primary_key=True)
+    subtotal_price =db.Column(db.Numeric(7, 2), nullable=False)
+
+class OrderMenuItemProduct(db.Model):
+    __tablename__ = 'order_menu_item_product'
+
+    order_menu_item_product_id = db.Column(db.Integer, primary_key=True, index=True)
+    order_menu_item_id = db.Column(db.Integer, db.ForeignKey('order_menu_item.order_menu_item_id'), nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey('product_item.product_id'), nullable=False)
+

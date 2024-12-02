@@ -1,7 +1,8 @@
 from . import manager_bp
 from flask import jsonify, request
 from app.extensions import db
-from app.models import ProductItem
+from app.models import ProductItem, OrderMenuItem, OrderMenuItemProduct, Order, MenuItem
+from sqlalchemy import func
 import re
 
 @manager_bp.route('/', methods=['GET'])
@@ -63,4 +64,68 @@ def to_camel_case(input_string):
 
 @manager_bp.route('/salesreports', methods=['POST'])
 def salesReport():
-    input = request.get_json()
+    datesSelected = request.get_json()
+
+    start_date = datesSelected['startDate']
+    end_date = datesSelected['endDate']
+
+    output = {}
+
+    top_products = db.session.query(
+        ProductItem.product_name,
+        func.count(ProductItem.product_id).label('product_count')
+    ).join(
+        OrderMenuItemProduct, ProductItem.product_id == OrderMenuItemProduct.product_id
+    ).join(
+        OrderMenuItem, OrderMenuItemProduct.order_menu_item_id == OrderMenuItem.order_menu_item_id
+    ).join(
+        Order, OrderMenuItem.order_id == Order.order_id
+    ).filter(
+        Order.order_date_time >= start_date,
+        Order.order_date_time <= end_date
+    ).group_by(
+        ProductItem.product_id
+    ).order_by(
+        func.count(ProductItem.product_id).desc()
+    ).limit(5)
+
+    total_sales = db.session.query(
+        func.sum(Order.total_price).label('total_sales')
+    ).filter(
+        Order.order_date_time >= start_date,
+        Order.order_date_time <= end_date
+    ).scalar()
+
+    total_orders = db.session.query(
+        func.count(Order.order_id).label('total_orders')
+    ).filter(
+        Order.order_date_time >= start_date,
+        Order.order_date_time <= end_date
+    ).scalar()
+
+    if not top_products:
+        for i in range(5):
+            output[f"product{i+1}"] = {"name": "N/A", "count": "Null"}
+    else:
+        i = 1
+        for p in top_products:
+            output[f"product{i}"] = {"name": name_helper(p.product_name), "count": p.product_count}
+            i+=1
+
+        if (i != 5):
+            for i in range(i, 5):
+                output[f"product{i+1}"] = {"name": "N/A", "count": "Null"}
+
+    if not total_sales:
+        total_sales = "N/A"
+    else:
+        total_sales = f'${total_sales}'
+    output["totalSales"] = total_sales
+
+    if not total_orders:
+        total_orders = "N/A"
+    output["totalOrders"] = total_orders
+
+    print(output)
+
+    return jsonify(output)
