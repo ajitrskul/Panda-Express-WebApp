@@ -8,7 +8,7 @@ class ProductItem(db.Model):
     product_name = db.Column(db.String(100), nullable=False)
     type = db.Column(db.String(20), nullable=False)
     is_seasonal = db.Column(db.Boolean, nullable=False)
-    is_available = db.Column(db.Boolean, nullable=False)
+    is_available = db.Column(db.Boolean, nullable=False) 
     servings_remaining = db.Column(db.Float, nullable=False)
     allergens = db.Column(db.String(200), nullable=False)
     display_icons = db.Column(db.Integer, nullable=False)
