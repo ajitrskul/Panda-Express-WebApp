@@ -2,9 +2,10 @@
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css"
 // import { format } from 'date-fns';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { SidebarManager } from './components/SidebarManager';
 import '../../styles/manager/salesreports.css';
+import api from '../../services/api'; 
 
 export default function SalesReports() {
   const [datesSelected, setSelectedDate] = useState({
@@ -12,6 +13,49 @@ export default function SalesReports() {
     endDate: new Date(),
     dateError: false
   });
+
+  const [dropDown, setDropDown] = useState({
+    topItem: false,
+    topSale: false,
+    topOrder: false
+  })
+
+  const [salesReportData, setSalesReportData] = useState();
+
+  const fetchSalesReport = async () => {
+    const response = await api.get('/manager/salesreports');
+    setSalesReportData(response.data);
+  }
+
+  useEffect(() => {
+    fetchSalesReport();
+  })
+
+  const salesDropDown = (event) => {
+    const id=event.target.id;
+    switch(id){
+      default:
+        break;
+      case "topItem":
+        setDropDown({
+          ...dropDown,
+          topItem: !dropDown.topItem
+        })
+        break;
+      case "topSale":
+        setDropDown({
+          ...dropDown,
+          topSale: !dropDown.topSale
+        })
+        break;
+      case "topOrder":
+        setDropDown({
+          ...dropDown,
+          topOrder: !dropDown.topOrder
+        })
+        break;
+    }
+  }
 
   const checkStartDate = (date) => {
     if (date >= datesSelected.endDate) {
@@ -64,6 +108,7 @@ export default function SalesReports() {
                   onChange={checkStartDate}
                   dateFormat="MM/dd/yyyy hh:mm aa"
                   showTimeSelect
+                  className="sales-datepicker"
                 />
                 {datesSelected.dateError && <span style={{display:"block", color:"red", fontSize:"18px", marginLeft:"30px"}}>Please input a valid date</span>}
               </p>
@@ -78,6 +123,7 @@ export default function SalesReports() {
                   onChange={checkEndDate}
                   dateFormat="MM/dd/yyyy hh:mm aa"
                   showTimeSelect
+                  className="sales-datepicker"
                 />
                 {datesSelected.dateError && <span style={{display:"block", color:"red", fontSize:"18px", marginLeft:"30px"}}>Please input a valid date</span>}
               </p>
@@ -88,9 +134,11 @@ export default function SalesReports() {
               <h2 className="report-card">
                 Best Selling Item:
                 <hr class="report-divider"></hr>
-                <span className="sales-top-product"> Orange Chicken</span> 
-                <i id="report-dropdown-icon"  className="bi bi-chevron-down"></i>
-                <i id="report-dropup-icon"  className="bi bi-chevron-up"></i>
+                <span className="sales-top-product justify-content-center"> Orange Chicken</span> 
+                <div className="text-center sales-drop" styles={{width:"100%"}} id="topItem" onClick={salesDropDown}>
+                  {!dropDown.topItem && <i  className="bi bi-chevron-down sales-drop-icon" id="topItem" onClick={salesDropDown}></i>}
+                  {dropDown.topItem && <i class="bi bi-chevron-up" id="topItem" onClick={salesDropDown}></i>}
+                </div>
               </h2>
             </div>
             <div className="col" style={{minWidth:"250px"}}>
@@ -98,8 +146,10 @@ export default function SalesReports() {
                 Total Sales:
                 <hr class="report-divider"></hr>
                 <span className="sales-top-product"> $420</span> 
-                <i id="report-dropdown-icon"  className="bi bi-chevron-down"></i>
-                <i id="report-dropup-icon"  className="bi bi-chevron-up"></i>
+                <div className="text-center sales-drop" styles={{width:"100%"}} id="topSale" onClick={salesDropDown}>
+                  {!dropDown.topSale && <i className="bi bi-chevron-down" id="topSale" onClick={salesDropDown}></i>}
+                  {dropDown.topSale && <i class="bi bi-chevron-up" id="topSale" onClick={salesDropDown}></i>}
+                </div>
               </h2>
             </div>
             <div className="col" style={{minWidth:"250px"}}>
@@ -107,8 +157,10 @@ export default function SalesReports() {
                 Total Orders
                 <hr class="report-divider"></hr>
                 <span className="sales-top-product"> 5000</span> 
-                <i id="report-dropdown-icon"  className="bi bi-chevron-down"></i>
-                <i id="report-dropup-icon"  className="bi bi-chevron-up"></i>
+                <div className="text-center sales-drop" styles={{width:"100%"}} id="topOrder" onClick={salesDropDown}>
+                  {!dropDown.topOrder && <i className="bi bi-chevron-down" id="topOrder" onClick={salesDropDown}></i>}
+                  {dropDown.topOrder && <i class="bi bi-chevron-up" id="topOrder" onClick={salesDropDown}></i>}
+                </div>
               </h2>
             </div>
           </div>

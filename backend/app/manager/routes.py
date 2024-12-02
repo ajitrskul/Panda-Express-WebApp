@@ -60,3 +60,7 @@ def to_camel_case(input_string):
     for word in words[1:]:
         camel_case_string += word.capitalize()
     return camel_case_string
+
+@manager_bp.route('/salesreports', methods=['POST'])
+def salesReport():
+    input = request.get_json()
