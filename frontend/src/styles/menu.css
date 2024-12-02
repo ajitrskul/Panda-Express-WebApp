@@ -165,3 +165,11 @@
 .fullscreen-menu .card-img-top {
     width: 100%;
 }
+
+.carousel-button {
+    position: absolute;
+    top: 13px;
+    left: 30px;
+    background-color: #A3080C;
+    border: none;
+}

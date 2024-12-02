@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
+import '../../styles/menu.css';
 
 import MenuMain1 from "./MenuPage1";
 import MenuMain2 from "./MenuPage2";
@@ -31,7 +32,7 @@ const MenuCarousel = () => {
   };
 
   return (
-    <div>
+    <div className="fullscreen-menu">
       {
         <Slider ref={carouselRef} {...settings}>
           <div>
@@ -46,7 +47,7 @@ const MenuCarousel = () => {
         </Slider>
       }
 
-      <button onClick={() => toggleAutoplay() }>
+      <button className="carousel-button" onClick={() => toggleAutoplay() }>
         {play ? "Turn Off Autoplay" : "Turn On Autoplay"}
       </button>
       

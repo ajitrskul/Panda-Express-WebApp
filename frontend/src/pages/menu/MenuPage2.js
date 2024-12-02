@@ -183,7 +183,7 @@ function MenuMain2() {
                     />
             </div>
             <div className="col">
-              {MenuBoardEntree[13] ? (
+              {entrees[13] ? (
                 <div>
               <MenuBoardEntree
                     name={formatProductName(entrees.at(13).product_name)}
@@ -199,7 +199,7 @@ function MenuMain2() {
                   }
             </div>
             <div className="col">
-            {MenuBoardEntree[14] ? (
+            {entrees[14] ? (
                 <div>
               <MenuBoardEntree
                     name={formatProductName(entrees.at(14).product_name)}
@@ -351,7 +351,7 @@ function MenuMain2() {
                     />
             </div>
             <div className="col">
-              {MenuBoardEntree[13] ? (
+              {entrees[13] ? (
                 <div>
               <MenuBoardEntree
                     name={formatProductName(entrees.at(13).product_name)}
@@ -367,7 +367,7 @@ function MenuMain2() {
                   }
             </div>
             <div className="col">
-            {MenuBoardEntree[14] ? (
+            {entrees[14] ? (
                 <div>
               <MenuBoardEntree
                     name={formatProductName(entrees.at(14).product_name)}
@@ -394,7 +394,7 @@ function MenuMain2() {
           </div>
           <div className="row entree-row">
           <div className="col">
-            {MenuBoardEntree[15] ? (
+            {entrees[15] ? (
                 <div>
               <MenuBoardEntree
                     name={formatProductName(entrees.at(15).product_name)}
@@ -410,7 +410,7 @@ function MenuMain2() {
                   }
             </div>
             <div className="col">
-            {MenuBoardEntree[16] ? (
+            {entrees[16] ? (
                 <div>
               <MenuBoardEntree
                     name={formatProductName(entrees.at(16).product_name)}
@@ -426,7 +426,7 @@ function MenuMain2() {
                   }
             </div>
             <div className="col">
-            {MenuBoardEntree[17] ? (
+            {entrees[17] ? (
                 <div>
               <MenuBoardEntree
                     name={formatProductName(entrees.at(17).product_name)}
@@ -442,7 +442,7 @@ function MenuMain2() {
                   }
             </div>
             <div className="col">
-            {MenuBoardEntree[18] ? (
+            {entrees[18] ? (
                 <div>
               <MenuBoardEntree
                     name={formatProductName(entrees.at(18).product_name)}
@@ -458,7 +458,7 @@ function MenuMain2() {
                   }
             </div>
             <div className="col">
-            {MenuBoardEntree[19] ? (
+            {entrees[19] ? (
                 <div>
               <MenuBoardEntree
                     name={formatProductName(entrees.at(19).product_name)}
@@ -474,7 +474,7 @@ function MenuMain2() {
                   }
             </div>
             <div className="col">
-            {MenuBoardEntree[20] ? (
+            {entrees[20] ? (
                 <div>
               <MenuBoardEntree
                     name={formatProductName(entrees.at(20).product_name)}
@@ -490,7 +490,7 @@ function MenuMain2() {
                   }
             </div>
             <div className="col">
-            {MenuBoardEntree[21] ? (
+            {entrees[21] ? (
                 <div>
               <MenuBoardEntree
                     name={formatProductName(entrees.at(21).product_name)}
@@ -506,7 +506,7 @@ function MenuMain2() {
                   }
             </div>
             <div className="col">
-            {MenuBoardEntree[22] ? (
+            {entrees[22] ? (
                 <div>
               <MenuBoardEntree
                     name={formatProductName(entrees.at(22).product_name)}
@@ -522,7 +522,7 @@ function MenuMain2() {
                   }
             </div>
             <div className="col">
-            {MenuBoardEntree[23] ? (
+            {entrees[23] ? (
                 <div>
               <MenuBoardEntree
                     name={formatProductName(entrees.at(23).product_name)}
@@ -538,7 +538,7 @@ function MenuMain2() {
                   }
             </div>
             <div className="col">
-            {MenuBoardEntree[24] ? (
+            {entrees[24] ? (
                 <div>
               <MenuBoardEntree
                     name={formatProductName(entrees.at(24).product_name)}
@@ -554,7 +554,7 @@ function MenuMain2() {
                   }
             </div>
             <div className="col">
-            {MenuBoardEntree[25] ? (
+            {entrees[25] ? (
                 <div>
               <MenuBoardEntree
                     name={formatProductName(entrees.at(25).product_name)}
@@ -570,7 +570,7 @@ function MenuMain2() {
                   }
             </div>
             <div className="col">
-            {MenuBoardEntree[26] ? (
+            {entrees[26] ? (
                 <div>
               <MenuBoardEntree
                     name={formatProductName(entrees.at(26).product_name)}
@@ -586,7 +586,7 @@ function MenuMain2() {
                   }
             </div>
             <div className="col">
-            {MenuBoardEntree[27] ? (
+            {entrees[27] ? (
                 <div>
               <MenuBoardEntree
                     name={formatProductName(entrees.at(27).product_name)}
@@ -602,7 +602,7 @@ function MenuMain2() {
                   }
             </div>
             <div className="col">
-            {MenuBoardEntree[28] ? (
+            {entrees[28] ? (
                 <div>
               <MenuBoardEntree
                     name={formatProductName(entrees.at(28).product_name)}
@@ -618,7 +618,7 @@ function MenuMain2() {
                   }
             </div>
             <div className="col">
-            {MenuBoardEntree[29] ? (
+            {entrees[29] ? (
                 <div>
               <MenuBoardEntree
                     name={formatProductName(entrees.at(29).product_name)}
