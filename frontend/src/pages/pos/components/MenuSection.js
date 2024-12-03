@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import api from "../../../services/api";
 
-function MenuSection({ apiEndpoint, onAddToOrder, formatNames }) {
+function MenuSection({ apiEndpoint, onAddToOrder, onSubitemSelect, formatNames }) {
   const [menuItems, setMenuItems] = useState([]);
   const [error, setError] = useState(null);
 
@@ -9,7 +9,7 @@ function MenuSection({ apiEndpoint, onAddToOrder, formatNames }) {
     const fetchMenuItems = async () => {
       try {
         const response = await api.get(apiEndpoint);
-        setMenuItems(response.data || []); 
+        setMenuItems(response.data || []);
       } catch (err) {
         console.error("Failed to fetch menu items:", err);
         setError("Failed to load menu items. Please try again later.");
@@ -17,7 +17,7 @@ function MenuSection({ apiEndpoint, onAddToOrder, formatNames }) {
     };
 
     fetchMenuItems();
-  }, [apiEndpoint]); 
+  }, [apiEndpoint]);
 
   if (error) {
     return <div className="menu-error">{error}</div>;
@@ -30,8 +30,8 @@ function MenuSection({ apiEndpoint, onAddToOrder, formatNames }) {
           menuItems.map((item, index) => (
             <button
               key={index}
-              className={`menu-item-btn ${item.category ? "category-btn" : ""}`}
-              onClick={() => onAddToOrder(item)}
+              className="menu-item-btn"
+              onClick={() => (item.type ? onSubitemSelect(item) : onAddToOrder(item))}
             >
               {formatNames(item)}
             </button>

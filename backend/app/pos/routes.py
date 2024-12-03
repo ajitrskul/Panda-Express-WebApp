@@ -18,7 +18,7 @@ def get_menu_items():
     ).fetchall()
 
     single_drink = db.session.execute(
-        text("SELECT * FROM menu_item WHERE item_name = 'drinks' LIMIT 1")
+        text("SELECT * FROM menu_item WHERE item_name = 'drink' LIMIT 1")
     ).fetchall()
 
     all_other_items = db.session.execute(
@@ -27,7 +27,7 @@ def get_menu_items():
             WHERE item_name NOT LIKE 'appetizer%' 
             AND item_name NOT LIKE 'dessert%' 
             AND item_name NOT LIKE 'aLaCarte%'
-            AND item_name NOT LIKE 'drinks%'
+            AND item_name NOT LIKE 'drink%'
             ORDER BY menu_item_id ASC
         """)
     ).fetchall()
@@ -215,3 +215,37 @@ def get_drinks():
     ]
 
     return jsonify(drinks_list), 200
+
+
+@pos_bp.route('/size/<string:item_name>/<string:size>', methods=['GET'])
+def get_size_price(item_name, size):
+    size_mapping = {
+        "small": "Small",
+        "medium": "Medium",
+        "large": "Large"
+    }
+
+    size_name = size_mapping.get(size.lower(), None)
+    if not size_name:
+        return jsonify({"error": "Invalid size"}), 400
+
+    result = db.session.execute(
+        text("""
+            SELECT 
+             item_name, 
+             menu_item_base_price, 
+             premium_multiplier
+            FROM menu_item 
+            WHERE item_name = :item_name || :size_name
+        """),
+        {"item_name": item_name, "size_name": size_name}
+    ).fetchone()
+
+    if not result:
+        return jsonify({"error": "Size not found"}), 404
+
+    return jsonify({
+                    "name": result.item_name, 
+                    "price": float(result.menu_item_base_price), 
+                    "multiplier": float(result.premium_multiplier)
+                }), 200
