@@ -1,12 +1,11 @@
-
 .manager-sidebar{
-    padding: 0;
     position: absolute;
-    left:0;
-    height: 100%;
     width: 300px;
     background-color:#a3080c ;
     box-shadow: 5px 0px 10px rgba(0, 0, 0, 0.2);
+    z-index: 500;
+    height: 100%;
+    left:0;
 }
 
 .manager-sidebar-text{
@@ -15,7 +14,6 @@
      font-size: 25px;
      text-decoration: none;
      pointer-events: none;
-     
 }
 
 .manager-sidebar-text2{
@@ -78,7 +76,8 @@
     text-align: right;
     align-items: center;
     text-decoration: none;
-  
+    cursor:pointer;
+    background-color:#a3080c ;
 }
 
 .sidebar-item:hover{
@@ -128,7 +127,7 @@
     padding-left: 15px;
     padding-top: 5px;
     padding-bottom: 5px;
-    
+    cursor:pointer;
 }
 
 .sidebar-drop-item:hover{

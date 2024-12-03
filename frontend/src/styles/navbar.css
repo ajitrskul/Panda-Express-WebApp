@@ -67,6 +67,60 @@
         padding: 0 !important;
         background: transparent;
     }
+    
+    .weather-icon{
+        width:50px;
+    }
+            
+}
+@media (min-width: 400px){
+    .navbar {
+        position: fixed;
+        background-color:#a3080c ;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        overflow: visible !important;
+        
+    }
+    
+    .home-button {
+        background:transparent;
+        height:100%;
+        width:100%;
+        border: none;
+    }
+
+    .logo {
+        float: left;
+        width: 60px;
+        height: 60px;
+        margin-left:.5rem;
+    }
+            
+    .login-button {
+        float: right;
+        margin-right: 1rem;
+        height:100%;
+        width:50px;
+        border: none;
+        background: transparent;
+    }
+
+    .login-icon{
+        font-size: 25px;
+        color: white;
+    }
+    
+    .weather-button {
+        float: right;
+        border: none;
+        color: white;
+        white-space: nowrap;
+        font-size: 15px;
+        text-align: center;
+        align-self: center; 
+        padding:0 !important;
+        background: transparent;
+    }
 
     .weather-icon {
         width: 50px;
@@ -203,4 +257,81 @@
     .weather-icon {
         width: 50px;
     }
+    
+}
+
+.navbar-login {
+    position: relative;
+}
+
+.navbar-drop {
+    display:flex;
+    flex-direction:column;
+    position:absolute;
+    bottom: -80px;
+    left: -35px;
+    color:white;
+    
+    box-shadow: 5px 5px 2px rgba(0, 0, 0, 0.6);
+    background-color:#a3080c;
+    padding:8px 0px;
+    border-radius:10px;
+}
+
+.navbar-drop-signedin {
+    display:flex;
+    flex-direction:column;
+    position:absolute;
+    bottom: -35px;
+    left: 5px;
+    color:white;
+    
+    box-shadow: 5px 5px 2px rgba(0, 0, 0, 0.6);
+    background-color:#a3080c;
+    padding:8px 0px;
+    border-radius:10px;
+}
+
+.navbar-drop-option {
+    width:100%;
+    margin:0px;
+    cursor:pointer;
+    background-color:#a3080c;
+    padding:5px;
+}
+
+.navbar-drop-option:hover {
+    background-color:#d9242a;
+}
+
+.navbar-drop-logout {
+    width:100%;
+    margin:0px;
+    cursor:pointer;
+    background-color:#a3080c;
+    padding:5px 8px;
+}
+
+.navbar-drop-logout:hover {
+    background-color:#d9242a;
+}
+
+.nav-drop-icon {
+    margin-right:8px;
+}
+
+
+.nav-signin-text-container {
+    padding:0px 5px;
+    height:50px;
+    position:relative;
+}
+
+.nav-signin-text {
+    color:white;
+    margin-top:10px;
+}
+
+.nav-signin-name {
+    cursor: pointer;
 }

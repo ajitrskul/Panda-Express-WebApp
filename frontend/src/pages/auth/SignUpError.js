@@ -1,5 +1,5 @@
 import { Route, Routes, Link } from "react-router-dom";
-//import { useState } from 'react';
+import { NavBar } from "../kiosk/components/NavBar";
 import "../../styles/signup/SignUpError.css";
 
 export default function SignUpError() {
@@ -11,6 +11,7 @@ export default function SignUpError() {
           <>
             <div className="signup-error-bg"></div>
             <div className="container-fluid">
+              <NavBar></NavBar>
               <div className="row justify-content-center">
                 <div className="col-sm-4 container-fluid signup-error-container">
                   <div className="row justify-content-center">

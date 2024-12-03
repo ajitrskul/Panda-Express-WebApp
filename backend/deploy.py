@@ -4,6 +4,9 @@ from app.config import Config
 import os
 import pathlib
 from google_auth_oauthlib.flow import Flow
+import json
+from dotenv import load_dotenv
+import tempfile
 
 # Initialize the Flask app
 app = Flask(__name__, static_folder='build', static_url_path='')
@@ -15,18 +18,26 @@ register_blueprints(app)
 register_secret_key(app)
 
 #oauth setup
+load_dotenv()
+GOOGLE_CONFIG = json.loads(os.environ.get('GOOGLE_CONFIG'))
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
-GOOGLE_CLIENT_ID = "691942944903-g8cmnfe0iu3jujav9jpgonda6dkj9b8u.apps.googleusercontent.com"
-client_secrets_file = os.path.join(pathlib.Path(__file__).parent, "client_secret_691942944903-g8cmnfe0iu3jujav9jpgonda6dkj9b8u.apps.googleusercontent.com.json")
+GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
+
+with tempfile.NamedTemporaryFile('w', delete=False) as temp_file:
+    json.dump(GOOGLE_CONFIG, temp_file)
+    temp_file_path = temp_file.name
 
 flow = Flow.from_client_secrets_file(
-        client_secrets_file=client_secrets_file,
+        client_secrets_file=temp_file_path,
         scopes=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email", "openid"],
         redirect_uri="https://project-3-01-beastmode-1fed971de919.herokuapp.com/api/auth/callback"
 )
 
 app.config['OAUTH_FLOW'] = flow
 app.config['base_url'] = "https://project-3-01-beastmode-1fed971de919.herokuapp.com"
+app.config["name"] = None
+app.config["role"] = None
+app.config["email"] = None
 
 # Serve React app
 @app.route('/')
