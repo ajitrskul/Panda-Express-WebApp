@@ -14,7 +14,7 @@ function PairReports() {
   const [axisArr,setAxisArr] = useState(null)
   const [displayPair,setDisplayPair] = useState("Click Cell To See Product Pair")
   const [displayPairTotal,setDisplayPairTotal] = useState("Click Cell To See Product Pair Order Total")
-
+  /*Display product pair when square is clicked*/
   const clickSquare = (row,col,value) =>{
       const orders="Total Orders: " + parseInt(value);
       setDisplayPairTotal(orders);
@@ -25,7 +25,7 @@ function PairReports() {
       
       }
   }
-  {/*Fetch from the database*/}
+  /*Fetch from the database*/
   const fetchPairReport = async () => {
     setDisplayPair("Click Cell To See Product Pair");
     setDisplayPairTotal("Click Cell To See Product Pair Order Total");
@@ -34,11 +34,11 @@ function PairReports() {
     
   };
 
-  {/*Calculate color for chart*/}
+  /*Calculate color for chart*/
   const calcColor = (value,max) => {
     let color=`rgb(${255},${255},${255})`;
     
-    if (parseFloat(max)!=0){
+    if (parseFloat(max)!==0){
       const colorOffset= parseFloat(value)/parseFloat(max);
       color=`rgb(${255-92*colorOffset},${255-247*colorOffset},${255-243*colorOffset})`;
     }
@@ -46,14 +46,14 @@ function PairReports() {
     return color;
   }
 
-  {/*Calculate  date based on time zone*/}
+  /*Calculate  date based on time zone*/
   const calcDate = (date) => {
     const zone=Intl.DateTimeFormat().resolvedOptions.timeZone;
     const newDate=format(fromZonedTime(date,zone),"yyyy-MM-dd HH:mm:ss");
     return newDate;
   }
 
-  {/*Change start date*/}
+  /*Change start date*/
   const changeStart = async (date) => {
     setStartDate(date);
     const newDate=calcDate(date);
@@ -66,7 +66,7 @@ function PairReports() {
     }
   };
 
-  {/*Change end date*/}
+  /*Change end date*/
   const changeEnd = async (date) => {
     setEndDate(date);
     const newDate=calcDate(date);
@@ -79,14 +79,14 @@ function PairReports() {
     }
   };
 
-  {/*Get chart and table for initial dates*/}
+  /*Get chart and table for initial dates*/
   useEffect(() => {
     const initStartDate=calcDate(startDate);
     const initEndDate=calcDate(endDate);
     api.post('/manager/pairreports', {sDate: initStartDate}, {timeout: 60000});
     api.post('/manager/pairreports', {eDate: initEndDate}, {timeout: 60000});
     fetchPairReport();
-  }, []); 
+  },); 
 
   return (
     <div class="reports-background-container"> 
