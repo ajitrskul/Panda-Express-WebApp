@@ -22,6 +22,7 @@ function PosMain() {
   const [isHalfAndHalf, setIsHalfAndHalf] = useState(false);
   const [halfSideActivated, setHalfSideActivated] = useState(false);
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  const disableActions = currentWorkflow !== null || currentOrder.length === 0;
 
   const resetCurrentWorkflow = () => {
     setCurrentWorkflow(null);
@@ -309,6 +310,7 @@ function PosMain() {
           onIncreaseQuantity={handleIncreaseQuantity}
           onDecreaseQuantity={handleDecreaseQuantity}
           onChangeQuantity={handleChangeQuantity}
+          disableActions={disableActions}
         />
       </div>
       <Footer 

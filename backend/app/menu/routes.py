@@ -20,7 +20,7 @@ def get_menu_items():
             WHERE item_name NOT LIKE 'appetizer%' 
             AND item_name NOT LIKE 'dessert%' 
             AND item_name NOT LIKE 'aLaCarte%'
-            AND item_name NOT LIKE 'drinks%'
+            AND item_name NOT LIKE 'drink%'
             ORDER BY menu_item_id ASC
         """)
     ).fetchall()

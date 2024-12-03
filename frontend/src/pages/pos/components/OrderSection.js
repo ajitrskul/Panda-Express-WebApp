@@ -1,6 +1,16 @@
 import React from "react";
 
-function OrderSection({ orderNumber, currentOrder, total, onCheckout, onCancel, onIncreaseQuantity, onDecreaseQuantity, onChangeQuantity }) {
+function OrderSection({ 
+  orderNumber, 
+  currentOrder, 
+  total, 
+  onCheckout, 
+  onCancel, 
+  onIncreaseQuantity, 
+  onDecreaseQuantity, 
+  onChangeQuantity,
+  disableActions 
+}) {
   const taxAmount = parseFloat(total) * 0.0625;
   const totalWithTax = parseFloat(total) + taxAmount;
 
@@ -121,26 +131,27 @@ function OrderSection({ orderNumber, currentOrder, total, onCheckout, onCancel, 
         </div>
       </div>
       <div className="order-buttons">
-        <button
+      <button
           className="checkout-btn"
           style={{
-            backgroundColor: "#28a745",
-            color: "white",
-            border: "none",
-            padding: "10px 20px",
-            borderRadius: "5px",
-            cursor: "pointer",
-            fontSize: "1rem",
-            fontWeight: "bold",
-            width: "120px",
+            backgroundColor: disableActions ? "#6c757d" : "#28a745",
+            cursor: disableActions ? "not-allowed" : "pointer",
+            opacity: disableActions ? 0.6 : 1,
           }}
           onClick={onCheckout}
+          disabled={disableActions}
         >
           Checkout
         </button>
         <button
           className="cancel-btn"
+          style={{
+            backgroundColor: currentOrder.length === 0 ? "#6c757d" : "#dc3545",
+            cursor: currentOrder.length === 0 ? "not-allowed" : "pointer",
+            opacity: currentOrder.length === 0 ? 0.6 : 1,
+          }}
           onClick={onCancel}
+          disabled={currentOrder.length === 0}
         >
           Cancel
         </button>
