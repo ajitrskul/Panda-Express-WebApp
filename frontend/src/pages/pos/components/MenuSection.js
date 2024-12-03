@@ -49,7 +49,8 @@ function MenuSection({ apiEndpoint, onAddToOrder, onSubitemSelect, onHalfSide, o
     if (halfSideActivated) {
       setHalfSideActivated(false);
       onCancelHalfSide();
-    } else {
+    } 
+    else {
       setHalfSideActivated(true);
       onHalfSide();
     }

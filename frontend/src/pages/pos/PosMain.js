@@ -148,30 +148,26 @@ function PosMain() {
   };
 
   const handleCancelHalfSide = () => {
-    if (isHalfAndHalf) {
       const updatedSteps = [...currentWorkflow.steps];
-  
-      if (updatedSteps[workflowStep] === "sides") {
-        updatedSteps.splice(workflowStep, 1);
-  
-        if (workflowStep < updatedSteps.length) {
-          setWorkflowStep(workflowStep); // Since we removed the current step, `workflowStep` points to the next one
-          setMenuEndpoint(`/pos/${updatedSteps[workflowStep]}`);
-        } else {
-          resetCurrentWorkflow();
-        }
-      }
-  
+      const firstSidesIndex = updatedSteps.indexOf("sides");
+      const filteredSteps = updatedSteps.filter((step, index) => step !== "sides" || index === firstSidesIndex);
+      
       setCurrentWorkflow({
         ...currentWorkflow,
-        steps: updatedSteps,
+        steps: filteredSteps,
+        subitems: []
       });
   
-      setIsHalfAndHalf(false); 
-      setHalfSideActivated(false);
-    }
+      if (filteredSteps[firstSidesIndex] === "sides") {
+        setWorkflowStep(firstSidesIndex);
+        setMenuEndpoint(`/pos/${filteredSteps[firstSidesIndex]}`);
+        setIsHalfAndHalf(false);
+        setHalfSideActivated(false);
+      } 
+      else {
+        resetCurrentWorkflow();
+      }
   };
-  
 
   const handleSizeSelect = async (size) => {
     try {
@@ -302,24 +298,30 @@ function PosMain() {
             const updatedSubitems = [...currentWorkflow.subitems];
             updatedSubitems.pop();
             const updatedSteps = [...currentWorkflow.steps];
-
-            if (isHalfAndHalf && updatedSteps[workflowStep] === "sides" && updatedSteps[workflowStep - 1] === "sides") {
+      
+            if (
+              isHalfAndHalf &&
+              updatedSteps[workflowStep] === "sides" &&
+              updatedSteps[workflowStep - 1] === "sides"
+            ) {
               updatedSteps.splice(workflowStep, 1);
-              setIsHalfAndHalf(false); 
+              setIsHalfAndHalf(false);
+              setHalfSideActivated(false);
+              setWorkflowStep(workflowStep - 1);
+              setMenuEndpoint(`/pos/${updatedSteps[workflowStep - 1]}`);
+            } else {
+              setCurrentWorkflow({
+                ...currentWorkflow,
+                subitems: updatedSubitems,
+                steps: updatedSteps,
+              });
+      
+              setWorkflowStep(workflowStep - 1);
+              setMenuEndpoint(`/pos/${updatedSteps[workflowStep - 1]}`);
             }
-
-            setCurrentWorkflow({
-              ...currentWorkflow,
-              subitems: updatedSubitems,
-              steps: updatedSteps
-            });
-
-            setWorkflowStep(workflowStep - 1);
-            setMenuEndpoint(`/pos/${updatedSteps[workflowStep - 1]}`);
-          } else {
-            setCurrentWorkflow(null);
-            setIsHalfAndHalf(false);
-            setMenuEndpoint("/pos/menu");
+          } 
+          else {
+            resetCurrentWorkflow();
           }
         }}
       />
