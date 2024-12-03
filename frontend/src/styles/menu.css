@@ -139,10 +139,10 @@
 
 .carousel-button {
     position: absolute;
-    top: 8px;
-    left: 15px;
+    top: 10px;
+    left: 12px;
     color: #A3080C;
-    font-size: 150%;
+    font-size: 120%;
     background-color: #A3080C;
     border: none;
 }

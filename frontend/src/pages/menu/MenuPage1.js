@@ -71,7 +71,7 @@ function MenuMain1() {
               <div>
                 <MenuBoardHowTo
                   name={formatItemName(item.item_name)}
-                  image={<img src={item.image} alt="Menu Board Item Image" />}
+                  image={<img src={item.image} alt="Menu Board Item" />}
                   calories={item.calories}
                   description={item.menu_item_description || 'No description available'}
                   price={"$" + item.menu_item_base_price}
@@ -90,7 +90,7 @@ function MenuMain1() {
               <div className="col-6">
                 <MenuBoardSide
                   name={formatProductName(side.product_name)}
-                  image={<img src={side.image} alt="Side Item Image" />}
+                  image={<img src={side.image} alt="Side Item" />}
                   calories={side.calories + " cal"}
                 />
               </div>
@@ -102,7 +102,7 @@ function MenuMain1() {
           </div>
           <div className="row">
             <div className="col-5">
-              <img className="a-la-carte-image" src={aLaCarte.at(0).image} alt="A La Carte Item Image" />
+              <img className="a-la-carte-image" src={aLaCarte.at(0).image} alt="A La Carte Item" />
             </div>
             <table className="col table a-la-carte-table">
               <thead>
