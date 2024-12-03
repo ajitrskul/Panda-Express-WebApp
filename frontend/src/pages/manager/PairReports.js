@@ -16,13 +16,12 @@ function PairReports() {
   const [displayPairTotal,setDisplayPairTotal] = useState("Click Cell To See Product Pair Order Total")
   /*Display product pair when square is clicked*/
   const clickSquare = (row,col,value) =>{
-      const orders="Total Orders: " + parseInt(value);
-      setDisplayPairTotal(orders);
-      setAxisArr(PairReportsData.axisArr);
-      if (axisArr){
+    setAxisArr(PairReportsData.axisArr);
+    if (axisArr){
       const display=(axisArr[parseInt(row)][parseInt(col)])
+      const orders="Total Orders: " + parseInt(value);
       setDisplayPair(display)
-      
+      setDisplayPairTotal(orders);
       }
   }
   /*Fetch from the database*/
