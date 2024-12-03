@@ -83,7 +83,7 @@ function PairReports() {
     api.post('/manager/pairreports', {sDate: initStartDate}, {timeout: 60000});
     api.post('/manager/pairreports', {eDate: initEndDate}, {timeout: 60000});
     fetchPairReport();
-  },); 
+  },[startDate,endDate]); 
 
   return (
     <div class="reports-background-container"> 

@@ -137,9 +137,13 @@ export function SidebarManager(){
           reportsDrop.style.display="none";
         }
       };
+
       useEffect(() => {
-      InitColors(); 
+      InitColors();
+      // eslint-disable-next-line 
       },[]);
+      /*^the [] needs to be there for dropdown menu to work*/
+
     return (
         <div class="manager-sidebar" id="manager-sidebar">
           <div class="logo-display" id="manager" onClick={SidebarClick}>
