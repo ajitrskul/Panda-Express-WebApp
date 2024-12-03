@@ -9,6 +9,7 @@ html, body {
     display: flex;
     flex-direction: column;
     height: 100vh;
+    overflow: hidden;
 }
   
 /* Main Content (Menu + Order Section) */
@@ -20,7 +21,7 @@ html, body {
   
 /* Menu Section */
 .menu-section {
-    flex: 3; /* Menu takes 75% of the width */
+    flex: 7; /* Menu takes 70% of the width */
     background-color: #f4f4f4;
     display: flex;
     justify-content: flex-start; 
@@ -37,18 +38,41 @@ html, body {
 }
 
 .menu-item-btn {
-    background-color: #ff6666;
-    color: white;
+    background-color: grey; 
+    color: black;
     border: none;
     padding: 40px;
     text-align: center;
     border-radius: 5px;
     font-size: 1rem;
     cursor: pointer;
+    font-weight: bold;
 }
   
 .menu-item-btn:hover {
-    background-color: #ff4d4d;
+    background-color: rgba(rgb(0, 0, 0), rgb(0, 0, 0), rgb(0, 0, 0), 50);
+}
+
+.premium-item {
+    background-color: gold; 
+    font-weight: bold;
+    border: 1px solid #d4af37;
+}
+
+.side-item {
+    background-color: lightgreen; 
+}
+
+.entree-item {
+    background-color: #d9b38c; 
+}
+
+.dessert-item {
+    background-color: #dda0dd; 
+}
+
+.appetizer-item {
+    background-color: #f88379; 
 }
   
 .category-btn {
@@ -61,16 +85,24 @@ html, body {
   
 /* Order Section */
 .order-section {
-    flex: 1; /* Order takes 25% of the width */
+    flex: 3; /* Order takes 30% of the width */
     background-color: #222;
     color: white;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     padding: 20px;
-    overflow: hidden;
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none; 
 }
-  
+
+.order-section::-webkit-scrollbar {
+    width: 0px; 
+    height: 0px; 
+    display: none; 
+  }
+
 .order-items {
     flex: 1;
     overflow-y: auto; 
@@ -95,7 +127,7 @@ html, body {
   
 .order-subitem {
     margin-left: 1rem;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
 }
   
 .checkout-btn {

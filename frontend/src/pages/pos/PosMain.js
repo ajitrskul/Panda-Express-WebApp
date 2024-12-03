@@ -21,7 +21,7 @@ function PosMain() {
     const name = item.item_name || item.product_name || item.name || "Unknown Item";
 
     let formattedName = name.replace(/Small|Medium|Side|Entree/g, "");
-    if (formattedName.toLowerCase() === "appetizer") return "Appetizers & More";
+    if (formattedName.toLowerCase() === "appetizer") return "Apps & More";
 
     formattedName = formattedName.replace(/([A-Z])/g, " $1").trim(); 
     return formattedName
@@ -34,9 +34,8 @@ function PosMain() {
     const name = item.item_name || item.product_name || item.name || "Unknown Item";
 
     let formattedName = name.replace(/Side|Entree/g, "");
-    if (formattedName.toLowerCase() === "appetizer") return "Appetizers & More";
-
     formattedName = formattedName.replace(/([A-Z])/g, " $1").trim(); 
+    formattedName = formattedName.replace(/\b(Small|Medium|Large)\b/gi, "($1)");
     return formattedName
       .split(" ")
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) 
@@ -53,6 +52,7 @@ function PosMain() {
   const handleAddToOrder = (item) => {
     if (item.item_name === "drink") {
       setCurrentWorkflow({
+        quantity: 1,
         name: item.item_name,
         price: parseFloat(item.menu_item_base_price) || 0,
         multiplier: parseFloat(item.premium_multiplier),
@@ -62,6 +62,7 @@ function PosMain() {
       setMenuEndpoint("/pos/drinks");
     } else if (item.item_name === "appetizerSmall") {
       setCurrentWorkflow({
+        quantity: 1,
         name: item.item_name,
         price: parseFloat(item.menu_item_base_price) || 0,
         multiplier: parseFloat(item.premium_multiplier),
@@ -71,6 +72,7 @@ function PosMain() {
       setMenuEndpoint("/pos/apps-and-more");
     } else if (item.item_name === "aLaCarteSideMedium") {
       setCurrentWorkflow({
+        quantity: 1,
         name: item.item_name,
         price: parseFloat(item.menu_item_base_price) || 0,
         multiplier: parseFloat(item.premium_multiplier),
@@ -79,9 +81,10 @@ function PosMain() {
       });
       setMenuEndpoint("/pos/a-la-carte");
     } 
-    else if (item.max_sides || item.max_entrees) {
+    else {
       const workflowSteps = generateWorkflowSteps(item);
       setCurrentWorkflow({
+        quantity: 1,
         name: item.item_name,
         price: parseFloat(item.menu_item_base_price) || 0,
         multiplier: parseFloat(item.premium_multiplier),
@@ -91,18 +94,6 @@ function PosMain() {
       setWorkflowStep(0);
       setMenuEndpoint(`/pos/${workflowSteps[0]}`);
     } 
-    else {
-      setCurrentOrder((prevOrder) => [
-        ...prevOrder,
-        {
-          name: formatNames(item),
-          price: parseFloat(item.menu_item_base_price) || 0,
-          multiplier: parseFloat(item.premium_multiplier),
-          subitems: [],
-        },
-      ]);
-      setTotal((prevTotal) => prevTotal + (parseFloat(item.menu_item_base_price) || 0));
-    }
   };
 
   const handleSubitemSelect = (subitem) => {
@@ -127,6 +118,7 @@ function PosMain() {
         setMenuEndpoint(`/pos/${currentSteps[workflowStep + 1]}`);
       } else {
         const finalizedItem = {
+          quantity: 1,
           name: currentWorkflow.name,
           subitems,
           price:
@@ -161,9 +153,10 @@ function PosMain() {
   const handleSizeSelect = async (size) => {
     try {
       let endpointBase = currentWorkflow.name.replace(/Small|Medium|Side/g, "");
-      if(endpointBase === "aLaCarte") {
-        endpointBase = endpointBase + size.type.charAt(0).toUpperCase() + size.type.slice(1);
+      if (endpointBase === "aLaCarte") {
+        endpointBase += size.type.charAt(0).toUpperCase() + size.type.slice(1);
       }
+      else if (size.type === "dessert") endpointBase = size.type;
       const response = await api.get(`/pos/size/${endpointBase}/${size.name}`);
 
       setCurrentWorkflow({
@@ -203,7 +196,7 @@ function PosMain() {
   };
 
   return (
-    <div className="pos-container">
+    <div className="pos-container p-2 bg-black">
       <div className="main-content">
         {menuEndpoint === "/pos/size-selection" ? (
           <SizeSelection 
@@ -235,7 +228,19 @@ function PosMain() {
           formatNames={formatOrderNames}
         />
       </div>
-      <Footer navigate={navigate} />
+      <Footer 
+        navigate={navigate} 
+        onBack={() => {
+          if (workflowStep > 0) {
+            const previousStep = workflowStep - 1;
+            setWorkflowStep(previousStep);
+            setMenuEndpoint(`/pos/${currentWorkflow.steps[previousStep]}`);
+          } else {
+            setCurrentWorkflow(null);
+            setMenuEndpoint("/pos/menu");
+          }
+        }} 
+      />
     </div>
   );
 }

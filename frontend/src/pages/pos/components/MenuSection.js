@@ -23,6 +23,15 @@ function MenuSection({ apiEndpoint, onAddToOrder, onSubitemSelect, formatNames }
     return <div className="menu-error">{error}</div>;
   }
 
+  const getItemClass = (item) => {
+    if (item.is_premium) return "premium-item";
+    if (item.type === "side") return "side-item"; 
+    if (item.type === "entree") return "entree-item"; 
+    if (item.type === "dessert") return "dessert-item";
+    if (item.type === "appetizer") return "appetizer-item";
+    return ""; 
+  };
+
   return (
     <div className="menu-section">
       <div className="menu-grid">
@@ -30,7 +39,7 @@ function MenuSection({ apiEndpoint, onAddToOrder, onSubitemSelect, formatNames }
           menuItems.map((item, index) => (
             <button
               key={index}
-              className="menu-item-btn"
+              className={`menu-item-btn ${getItemClass(item)}`}
               onClick={() => (item.type ? onSubitemSelect(item) : onAddToOrder(item))}
             >
               {formatNames(item)}
