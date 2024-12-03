@@ -1,6 +1,6 @@
 import React from "react";
 
-function OrderSection({ orderNumber, currentOrder, total, onCheckout, onCancel, formatOrderNames }) {
+function OrderSection({ orderNumber, currentOrder, total, onCheckout, onCancel, formatNames }) {
   return (
     <div className="order-section">
       <h2 style={{marginBottom: '0px', textAlign: 'center'}}>Order #{orderNumber}</h2>
@@ -10,14 +10,14 @@ function OrderSection({ orderNumber, currentOrder, total, onCheckout, onCancel, 
           currentOrder.map((item, index) => (
             <div key={index} className="order-item">
               <p>
-                <strong>{formatOrderNames(item)}</strong>{" "}
-                <span>${item.price.toFixed(2)}</span>
+                <strong>{formatNames(item)}</strong>{" "}
+                <span>${parseFloat(item.price).toFixed(2)}</span>
               </p>
               {item.subitems && (
                 <ul>
                   {item.subitems.map((subitem, subIndex) => (
                     <li key={subIndex} className="order-subitem">
-                      {formatOrderNames(subitem)}
+                      {formatNames(subitem)}
                     </li>
                   ))}
                 </ul>
@@ -28,7 +28,7 @@ function OrderSection({ orderNumber, currentOrder, total, onCheckout, onCancel, 
           <p>No items added yet.</p>
         )}
       </div>
-      <h3>Total: ${total.toFixed(2)}</h3>
+      <h3>Total: ${parseFloat(total).toFixed(2)}</h3>
       <div className="order-buttons">
         <button className="checkout-btn" onClick={onCheckout}>
           Checkout

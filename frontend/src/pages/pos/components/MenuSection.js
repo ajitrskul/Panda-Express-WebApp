@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import api from "../../../services/api";
 
-function MenuSection({ apiEndpoint, onAddToOrder, formatMenuNames }) {
+function MenuSection({ apiEndpoint, onAddToOrder, formatNames }) {
   const [menuItems, setMenuItems] = useState([]);
   const [error, setError] = useState(null);
 
@@ -33,7 +33,7 @@ function MenuSection({ apiEndpoint, onAddToOrder, formatMenuNames }) {
               className={`menu-item-btn ${item.category ? "category-btn" : ""}`}
               onClick={() => onAddToOrder(item)}
             >
-              {formatMenuNames(item)}
+              {formatNames(item)}
             </button>
           ))
         ) : (

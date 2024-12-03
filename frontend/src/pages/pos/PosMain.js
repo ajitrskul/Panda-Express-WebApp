@@ -14,25 +14,11 @@ function PosMain() {
   const [workflowStep, setWorkflowStep] = useState(0);
   const navigate = useNavigate();
 
-  const formatMenuNames = (item) => {
+  const formatNames = (item) => {
     const name = item.item_name || item.product_name || item.name || "Unknown Item";
 
     let formattedName = name.replace(/Small|Medium|Side/g, ""); 
     if (formattedName.toLowerCase() === "appetizer") return "Appetizers & More";
-    formattedName = formattedName.replace(/([A-Z])/g, " $1").trim(); 
-    return formattedName
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) 
-      .join(" ");
-  };
-
-  const formatOrderNames = (item) => {
-    let name = item.type;
-    if (name != "entree" || name != "side") {
-      name = item.item_name || item.product_name || item.name;
-    }
-
-    let formattedName = name.replace(/Small|Medium|Side/g, ""); 
     formattedName = formattedName.replace(/([A-Z])/g, " $1").trim(); 
     return formattedName
       .split(" ")
@@ -49,20 +35,20 @@ function PosMain() {
 
   const handleAddToOrder = (item) => {
     if (item.item_name === "drinks") {
-      setCurrentWorkflow({ name: item.item_name, steps: ["/pos/drinks"], subitems: [] });
+      setCurrentWorkflow({ name: item.item_name, price: parseFloat(item.menu_item_base_price), steps: ["/pos/drinks"], subitems: [] });
       setMenuEndpoint("/pos/drinks");
     } 
     else if (item.item_name === "appetizerSmall") {
-      setCurrentWorkflow({ name: item.item_name, steps: ["/pos/apps-and-more"], subitems: [] });
+      setCurrentWorkflow({ name: item.item_name, price: parseFloat(item.menu_item_base_price), steps: ["/pos/apps-and-more"], subitems: [] });
       setMenuEndpoint("/pos/apps-and-more");
     } 
     else if (item.item_name === "aLaCarteSideMedium") {
-      setCurrentWorkflow({ name: item.item_name, steps: ["/pos/a-la-carte"], subitems: [] });
+      setCurrentWorkflow({ name: item.item_name, price: parseFloat(item.menu_item_base_price), steps: ["/pos/a-la-carte"], subitems: [] });
       setMenuEndpoint("/pos/a-la-carte");
     } 
     else if (item.max_sides || item.max_entrees) {
       const workflowSteps = generateWorkflowSteps(item);
-      setCurrentWorkflow({ name: item.item_name, steps: workflowSteps, subitems: [] });
+      setCurrentWorkflow({ name: item.item_name, price: parseFloat(item.menu_item_base_price), steps: workflowSteps, subitems: [] });
       setWorkflowStep(0);
       setMenuEndpoint(`/pos/${workflowSteps[0]}`); 
     } 
@@ -74,12 +60,8 @@ function PosMain() {
         subitems.push({
           name: item.product_name || `Product ${item.product_id}`,
           type: item.type,
-          price: item.price || 0,
-        });
-      } else if (item.item_name) {
-        subitems.push({
-          name: item.item_name,
-          price: item.price || 0,
+          premium: item.is_premium,
+          price: parseFloat(item.premium_addition),
         });
       }
 
@@ -92,10 +74,11 @@ function PosMain() {
         const finalizedItem = {
           name: currentWorkflow.name,
           subitems,
-          price: subitems.reduce((sum, subitem) => sum + subitem.price, 0),
+          price: parseFloat(currentWorkflow.price) + 
+            subitems.reduce((sum, subitem) => sum + parseFloat(subitem.price), 0),
         };
         setCurrentOrder((prevOrder) => [...prevOrder, finalizedItem]);
-        setTotal((prevTotal) => prevTotal + finalizedItem.price);
+        setTotal((prevTotal) => prevTotal + parseFloat(finalizedItem.price));
         setCurrentWorkflow(null);
         setWorkflowStep(0);
         setMenuEndpoint("/pos/menu");
@@ -106,11 +89,11 @@ function PosMain() {
         ...prevOrder,
         {
           name: item.item_name || `Product ${item.product_id}`,
-          price: item.price || 0,
+          price: parseFloat(item.menu_item_base_price) || 0,
           subitems: [],
         },
       ]);
-      setTotal((prevTotal) => prevTotal + (item.price || 0));
+      setTotal((prevTotal) => prevTotal + (parseFloat(item.price) || 0));
     }
   };
 
@@ -132,7 +115,7 @@ function PosMain() {
           apiEndpoint={menuEndpoint}
           onAddToOrder={handleAddToOrder}
           navigate={navigate}
-          formatMenuNames={formatMenuNames}
+          formatNames={formatNames}
         />
         <OrderSection
           orderNumber={orderNumber}
@@ -146,7 +129,7 @@ function PosMain() {
             setCurrentWorkflow(null);
             setWorkflowStep(0);
           }}
-          formatOrderNames={formatOrderNames}
+          formatNames={formatNames}
         />
       </div>
       <Footer navigate={navigate} />
