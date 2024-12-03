@@ -65,7 +65,6 @@ function PosMain() {
   };
 
   const handleSubitemSelect = (subitem) => {
-    console.log("here", currentWorkflow);
     const subitems = [...currentWorkflow.subitems, subitem];
 
     if (
@@ -105,20 +104,12 @@ function PosMain() {
 
   const handleSizeSelect = async (size) => {
     try {
-      console.log(currentWorkflow.name);
       let endpointBase = currentWorkflow.name.replace(/Small|Medium|Side/g, "");
       if (endpointBase === "aLaCarte") {
         endpointBase += size.type.charAt(0).toUpperCase() + size.type.slice(1);
       }
       else if (size.type === "dessert") endpointBase = size.type;
       const response = await api.get(`/pos/size/${endpointBase}/${size.name}`);
-
-      setCurrentWorkflow({
-        ...currentWorkflow,
-        name: response.data.name,
-        price: response.data.price,
-        multiplier: response.data.multiplier,
-      });
 
       const finalizedItem = {
         name: response.data.name,
@@ -181,11 +172,18 @@ function PosMain() {
         navigate={navigate} 
         menuEndpoint={menuEndpoint}
         onBack={() => {
-          console.log(workflowStep)
           if (workflowStep > 0) {
             const updatedSubitems = [...currentWorkflow.subitems];
-            const updatedSteps = [...currentWorkflow.steps];
             updatedSubitems.pop();
+            const updatedSteps = [...currentWorkflow.steps];
+            if(
+              currentWorkflow.name !== "bowl" && 
+              currentWorkflow.name !== "plate" &&
+              currentWorkflow.name !== "biggerPlate" &&
+              currentWorkflow.name !== "familyMeal"
+            ){
+              updatedSteps.pop();
+            }
             setCurrentWorkflow({
               ...currentWorkflow,
               subitems: updatedSubitems,
