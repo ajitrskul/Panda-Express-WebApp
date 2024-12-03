@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../services/api";
 import "../../styles/pos.css";
@@ -59,7 +59,6 @@ function PosMain() {
       steps: steps,
       subitems: [],
     });
-  
     setWorkflowStep(0);
     setMenuEndpoint(`/pos/${steps[0]}`);
   };
@@ -112,6 +111,7 @@ function PosMain() {
       const response = await api.get(`/pos/size/${endpointBase}/${size.name}`);
 
       const finalizedItem = {
+        quantity: 1,
         name: response.data.name,
         multiplier: response.data.multiplier,
         price: response.data.price + (parseFloat(currentWorkflow.subitems[0].premium_addition) * parseFloat(response.data.multiplier)),
@@ -135,6 +135,22 @@ function PosMain() {
     setTotal(0);
     setOrderNumber(orderNumber + 1);
     resetCurrentWorkflow();
+  };
+
+  const handleIncreaseQuantity = (index) => {
+    const updatedOrder = [...currentOrder];
+    updatedOrder[index].quantity += 1;
+    setCurrentOrder(updatedOrder);
+    setTotal((prevTotal) => prevTotal + updatedOrder[index].price);
+  };
+
+  const handleDecreaseQuantity = (index) => {
+    const updatedOrder = [...currentOrder];
+    if (updatedOrder[index].quantity > 1) {
+      updatedOrder[index].quantity -= 1;
+      setCurrentOrder(updatedOrder);
+      setTotal((prevTotal) => prevTotal - updatedOrder[index].price);
+    }
   };
 
   return (
@@ -166,6 +182,8 @@ function PosMain() {
             setMenuEndpoint("/pos/menu");
             setCurrentSubitemType(null);
           }}
+          onIncreaseQuantity={handleIncreaseQuantity}
+          onDecreaseQuantity={handleDecreaseQuantity}
         />
       </div>
       <Footer 

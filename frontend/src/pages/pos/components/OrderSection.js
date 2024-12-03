@@ -1,6 +1,6 @@
 import React from "react";
 
-function OrderSection({ orderNumber, currentOrder, total, onCheckout, onCancel }) {
+function OrderSection({ orderNumber, currentOrder, total, onCheckout, onCancel, onIncreaseQuantity, onDecreaseQuantity }) {
   const taxAmount = parseFloat(total) * 0.0625;
   const totalWithTax = parseFloat(total) + taxAmount; 
 
@@ -60,7 +60,7 @@ function OrderSection({ orderNumber, currentOrder, total, onCheckout, onCancel }
               >
                 {formatOrderNames(item)}
                 <span style={{ float: "right", color: "white" }}>
-                  ${parseFloat(item.price).toFixed(2)}
+                  ${parseFloat(item.price * item.quantity).toFixed(2)}
                 </span>
               </p>
               {item.subitems && (
@@ -77,6 +77,44 @@ function OrderSection({ orderNumber, currentOrder, total, onCheckout, onCancel }
                   ))}
                 </ul>
               )}
+              <div
+                className="quantity-controls"
+                style={{
+                  textAlign: "center",
+                }}
+              >
+                <button
+                  style={{
+                    backgroundColor: "#007bff",
+                    color: "white",
+                    border: "none",
+                    padding: "5px 10px",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                    fontSize: "0.9rem",
+                  }}
+                  onClick={() => onDecreaseQuantity(index)}
+                >
+                  -
+                </button>
+                <span style={{ color: "#fff", fontSize: "1rem", margin: "0 10px", }}>
+                  {item.quantity}
+                </span>
+                <button
+                  style={{
+                    backgroundColor: "#007bff",
+                    color: "white",
+                    border: "none",
+                    padding: "5px 10px",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                    fontSize: "0.9rem",
+                  }}
+                  onClick={() => onIncreaseQuantity(index)}
+                >
+                  +
+                </button>
+              </div>
             </div>
           ))
         ) : (
