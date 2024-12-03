@@ -6,6 +6,7 @@ import MenuSection from "./components/MenuSection";
 import OrderSection from "./components/OrderSection";
 import Footer from "./components/Footer";
 import SizeSelection from "./components/SizeSelection";
+import { Modal, Button } from "react-bootstrap";
 
 function PosMain() {
   const [currentOrder, setCurrentOrder] = useState([]);
@@ -16,6 +17,8 @@ function PosMain() {
   const [workflowStep, setWorkflowStep] = useState(0);
   const [currentSubitemType, setCurrentSubitemType] = useState(null);
   const navigate = useNavigate();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null);
 
   const resetCurrentWorkflow = () => {
     setCurrentWorkflow(null);
@@ -145,12 +148,43 @@ function PosMain() {
   };
 
   const handleDecreaseQuantity = (index) => {
-    const updatedOrder = [...currentOrder];
-    if (updatedOrder[index].quantity > 1) {
+    if (currentOrder[index].quantity === 1) {
+      setItemToDelete(index);
+      setShowDeleteModal(true);
+    } else {
+      const updatedOrder = [...currentOrder];
       updatedOrder[index].quantity -= 1;
       setCurrentOrder(updatedOrder);
       setTotal((prevTotal) => prevTotal - updatedOrder[index].price);
     }
+  };
+
+  const handleChangeQuantity = (index, newQuantity) => {
+    const updatedOrder = [...currentOrder];
+    if (newQuantity > 0) {
+      const oldQuantity = updatedOrder[index].quantity;
+      updatedOrder[index].quantity = newQuantity;
+      const priceDifference = updatedOrder[index].price * (newQuantity - oldQuantity);
+      setCurrentOrder(updatedOrder);
+      setTotal((prevTotal) => prevTotal + priceDifference);
+    }
+  };
+
+  const confirmDeleteItem = () => {
+    if (itemToDelete !== null) {
+      const updatedOrder = [...currentOrder];
+      const itemPrice = updatedOrder[itemToDelete].price * updatedOrder[itemToDelete].quantity;
+      updatedOrder.splice(itemToDelete, 1);
+      setCurrentOrder(updatedOrder);
+      setTotal((prevTotal) => prevTotal - itemPrice);
+      setShowDeleteModal(false);
+      setItemToDelete(null);
+    }
+  };
+
+  const cancelDeleteItem = () => {
+    setShowDeleteModal(false);
+    setItemToDelete(null);
   };
 
   return (
@@ -184,6 +218,7 @@ function PosMain() {
           }}
           onIncreaseQuantity={handleIncreaseQuantity}
           onDecreaseQuantity={handleDecreaseQuantity}
+          onChangeQuantity={handleChangeQuantity}
         />
       </div>
       <Footer 
@@ -216,6 +251,21 @@ function PosMain() {
           }
         }} 
       />
+
+      <Modal show={showDeleteModal} onHide={cancelDeleteItem}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Removal</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to remove this item from the order?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={cancelDeleteItem}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={confirmDeleteItem}>
+            Yes, Remove
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

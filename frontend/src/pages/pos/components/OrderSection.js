@@ -1,30 +1,22 @@
 import React from "react";
 
-function OrderSection({ orderNumber, currentOrder, total, onCheckout, onCancel, onIncreaseQuantity, onDecreaseQuantity }) {
+function OrderSection({ orderNumber, currentOrder, total, onCheckout, onCancel, onIncreaseQuantity, onDecreaseQuantity, onChangeQuantity }) {
   const taxAmount = parseFloat(total) * 0.0625;
-  const totalWithTax = parseFloat(total) + taxAmount; 
+  const totalWithTax = parseFloat(total) + taxAmount;
 
   const formatOrderNames = (item) => {
     const name = item.item_name || item.product_name || item.name || "Unknown Item";
-
     let formattedName = name.replace(/Side|Entree/g, "");
-    formattedName = formattedName.replace(/([A-Z])/g, " $1").trim(); 
+    formattedName = formattedName.replace(/([A-Z])/g, " $1").trim();
     formattedName = formattedName.replace(/\b(Small|Medium|Large)\b/gi, "($1)");
     return formattedName
       .split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) 
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
   };
 
   return (
-    <div
-      className="order-section"
-      style={{
-        padding: "20px",
-        backgroundColor: "#2b2b2b",
-        color: "#fff",
-      }}
-    >
+    <div className="order-section">
       <h2
         style={{
           marginBottom: "10px",
@@ -54,7 +46,6 @@ function OrderSection({ orderNumber, currentOrder, total, onCheckout, onCancel, 
                 style={{
                   fontSize: "1rem",
                   fontWeight: "bold",
-                  margin: "5px 0",
                   color: "#f9f9f9",
                 }}
               >
@@ -69,7 +60,7 @@ function OrderSection({ orderNumber, currentOrder, total, onCheckout, onCancel, 
                     paddingLeft: "15px",
                     marginTop: "5px",
                     color: "#bbb",
-                    fontSize: "0.9rem",
+                    fontSize: "0.8rem",
                   }}
                 >
                   {item.subitems.map((subitem, subIndex) => (
@@ -84,32 +75,20 @@ function OrderSection({ orderNumber, currentOrder, total, onCheckout, onCancel, 
                 }}
               >
                 <button
-                  style={{
-                    backgroundColor: "#007bff",
-                    color: "white",
-                    border: "none",
-                    padding: "5px 10px",
-                    borderRadius: "5px",
-                    cursor: "pointer",
-                    fontSize: "0.9rem",
-                  }}
+                  className="quantity-btn"
                   onClick={() => onDecreaseQuantity(index)}
                 >
                   -
                 </button>
-                <span style={{ color: "#fff", fontSize: "1rem", margin: "0 10px", }}>
-                  {item.quantity}
-                </span>
-                <button
-                  style={{
-                    backgroundColor: "#007bff",
-                    color: "white",
-                    border: "none",
-                    padding: "5px 10px",
-                    borderRadius: "5px",
-                    cursor: "pointer",
-                    fontSize: "0.9rem",
-                  }}
+                <input
+                  type="number"
+                  value={item.quantity}
+                  min="1"
+                  onChange={(e) => onChangeQuantity(index, parseInt(e.target.value))}
+                  className="quantity-input"
+                />
+                <button 
+                  className="quantity-btn"
                   onClick={() => onIncreaseQuantity(index)}
                 >
                   +
@@ -123,6 +102,7 @@ function OrderSection({ orderNumber, currentOrder, total, onCheckout, onCancel, 
           </p>
         )}
       </div>
+      <hr style={{ margin: "10px 0", borderColor: "#555" }} />
       <div
         style={{
           marginTop: "15px",
@@ -140,15 +120,7 @@ function OrderSection({ orderNumber, currentOrder, total, onCheckout, onCancel, 
           Total: <span>${totalWithTax.toFixed(2)}</span>
         </div>
       </div>
-      <div
-        className="order-buttons"
-        style={{
-          marginTop: "20px",
-          display: "flex",
-          justifyContent: "center",
-          gap: "10px",
-        }}
-      >
+      <div className="order-buttons">
         <button
           className="checkout-btn"
           style={{
@@ -168,17 +140,6 @@ function OrderSection({ orderNumber, currentOrder, total, onCheckout, onCancel, 
         </button>
         <button
           className="cancel-btn"
-          style={{
-            backgroundColor: "#dc3545",
-            color: "white",
-            border: "none",
-            padding: "10px 20px",
-            borderRadius: "5px",
-            cursor: "pointer",
-            fontSize: "1rem",
-            fontWeight: "bold",
-            width: "120px",
-          }}
           onClick={onCancel}
         >
           Cancel
