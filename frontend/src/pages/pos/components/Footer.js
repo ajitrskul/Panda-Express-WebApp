@@ -1,15 +1,17 @@
 import React from "react";
 
-function Footer({ navigate, onBack }) {
+function Footer({ navigate, onBack, menuEndpoint }) {
   return (
     <div className="footer">
       <span>Ethan (temp)</span>
-      <button 
-        className="back-btn" 
-        onClick={onBack} /* Use onBack to reverse the workflow step */
-      >
-        Back
-      </button>
+      {menuEndpoint !== "/pos/menu" && (
+        <button 
+          className="back-btn" 
+          onClick={onBack}
+        >
+          Back
+        </button>
+      )}
     </div>
   );
 }

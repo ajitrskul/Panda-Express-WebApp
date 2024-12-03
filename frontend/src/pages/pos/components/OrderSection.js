@@ -1,8 +1,20 @@
 import React from "react";
 
-function OrderSection({ orderNumber, currentOrder, total, onCheckout, onCancel, formatNames }) {
+function OrderSection({ orderNumber, currentOrder, total, onCheckout, onCancel }) {
   const taxAmount = parseFloat(total) * 0.0625;
   const totalWithTax = parseFloat(total) + taxAmount; 
+
+  const formatOrderNames = (item) => {
+    const name = item.item_name || item.product_name || item.name || "Unknown Item";
+
+    let formattedName = name.replace(/Side|Entree/g, "");
+    formattedName = formattedName.replace(/([A-Z])/g, " $1").trim(); 
+    formattedName = formattedName.replace(/\b(Small|Medium|Large)\b/gi, "($1)");
+    return formattedName
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) 
+      .join(" ");
+  };
 
   return (
     <div
@@ -31,7 +43,7 @@ function OrderSection({ orderNumber, currentOrder, total, onCheckout, onCancel, 
               key={index}
               className="order-item"
               style={{
-                marginBottom: "15px",
+                marginBottom: "10px",
                 padding: "10px",
                 border: "1px solid #444",
                 borderRadius: "5px",
@@ -46,8 +58,8 @@ function OrderSection({ orderNumber, currentOrder, total, onCheckout, onCancel, 
                   color: "#f9f9f9",
                 }}
               >
-                {formatNames(item)}
-                <span style={{ float: "right", color: "#aaa" }}>
+                {formatOrderNames(item)}
+                <span style={{ float: "right", color: "white" }}>
                   ${parseFloat(item.price).toFixed(2)}
                 </span>
               </p>
@@ -61,7 +73,7 @@ function OrderSection({ orderNumber, currentOrder, total, onCheckout, onCancel, 
                   }}
                 >
                   {item.subitems.map((subitem, subIndex) => (
-                    <li key={subIndex}>{formatNames(subitem)}</li>
+                    <li key={subIndex}>{formatOrderNames(subitem)}</li>
                   ))}
                 </ul>
               )}

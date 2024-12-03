@@ -118,7 +118,7 @@ def get_entrees():
     return jsonify(entrees_list), 200
 
 
-@pos_bp.route('/a-la-carte', methods=['GET'])
+@pos_bp.route('/alacarte', methods=['GET'])
 def get_a_la_carte():
     products = db.session.execute(
         text("SELECT * FROM product_item WHERE type = :type1 OR type = :type2 ORDER BY product_id ASC"), 
@@ -151,7 +151,7 @@ def get_a_la_carte():
     return jsonify(products_list), 200
 
 
-@pos_bp.route('/apps-and-more', methods=['GET'])
+@pos_bp.route('/appetizer', methods=['GET'])
 def get_appetizers():
     products = db.session.execute(
         text("SELECT * FROM product_item WHERE type = :type1 OR type = :type2 ORDER BY product_id ASC"), 
@@ -184,7 +184,7 @@ def get_appetizers():
     return jsonify(products_list), 200
 
 
-@pos_bp.route('/drinks', methods=['GET'])
+@pos_bp.route('/drink', methods=['GET'])
 def get_drinks():
     drinks = db.session.execute(
         text("SELECT * FROM product_item WHERE type = :type1 OR type = :type2 ORDER BY product_id ASC"), 

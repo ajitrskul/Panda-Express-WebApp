@@ -17,29 +17,21 @@ function PosMain() {
   const [currentSubitemType, setCurrentSubitemType] = useState(null);
   const navigate = useNavigate();
 
-  const formatNames = (item) => {
-    const name = item.item_name || item.product_name || item.name || "Unknown Item";
-
-    let formattedName = name.replace(/Small|Medium|Side|Entree/g, "");
-    if (formattedName.toLowerCase() === "appetizer") return "Apps & More";
-
-    formattedName = formattedName.replace(/([A-Z])/g, " $1").trim(); 
-    return formattedName
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) 
-      .join(" ");
+  const resetCurrentWorkflow = () => {
+    setCurrentWorkflow(null);
+    setWorkflowStep(0);
+    setMenuEndpoint("/pos/menu");
+    setCurrentSubitemType(null);
   };
 
-  const formatOrderNames = (item) => {
-    const name = item.item_name || item.product_name || item.name || "Unknown Item";
-
-    let formattedName = name.replace(/Side|Entree/g, "");
+  const formatNames = (item) => {
+    let formattedName = item.replace(/Small|Medium|Side|Entree/g, "");
     formattedName = formattedName.replace(/([A-Z])/g, " $1").trim(); 
-    formattedName = formattedName.replace(/\b(Small|Medium|Large)\b/gi, "($1)");
     return formattedName
       .split(" ")
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) 
-      .join(" ");
+      .join("")
+      .toLowerCase();
   };
 
   const generateWorkflowSteps = (item) => {
@@ -50,73 +42,51 @@ function PosMain() {
   };
 
   const handleAddToOrder = (item) => {
-    if (item.item_name === "drink") {
-      setCurrentWorkflow({
-        quantity: 1,
-        name: item.item_name,
-        price: parseFloat(item.menu_item_base_price) || 0,
-        multiplier: parseFloat(item.premium_multiplier),
-        steps: ["/pos/drinks"],
-        subitems: [],
-      });
-      setMenuEndpoint("/pos/drinks");
-    } else if (item.item_name === "appetizerSmall") {
-      setCurrentWorkflow({
-        quantity: 1,
-        name: item.item_name,
-        price: parseFloat(item.menu_item_base_price) || 0,
-        multiplier: parseFloat(item.premium_multiplier),
-        steps: ["/pos/apps-and-more"],
-        subitems: [],
-      });
-      setMenuEndpoint("/pos/apps-and-more");
-    } else if (item.item_name === "aLaCarteSideMedium") {
-      setCurrentWorkflow({
-        quantity: 1,
-        name: item.item_name,
-        price: parseFloat(item.menu_item_base_price) || 0,
-        multiplier: parseFloat(item.premium_multiplier),
-        steps: ["/pos/a-la-carte"],
-        subitems: [],
-      });
-      setMenuEndpoint("/pos/a-la-carte");
-    } 
-    else {
-      const workflowSteps = generateWorkflowSteps(item);
-      setCurrentWorkflow({
-        quantity: 1,
-        name: item.item_name,
-        price: parseFloat(item.menu_item_base_price) || 0,
-        multiplier: parseFloat(item.premium_multiplier),
-        steps: workflowSteps,
-        subitems: [],
-      });
-      setWorkflowStep(0);
-      setMenuEndpoint(`/pos/${workflowSteps[0]}`);
-    } 
+    const itemType = formatNames(item.item_name);
+    let steps;
+    
+    if (["drink", "appetizer", "alacarte"].includes(itemType)) {
+      steps = [`${itemType}`];
+    } else {
+      steps = generateWorkflowSteps(item);
+    }
+  
+    setCurrentWorkflow({
+      quantity: 1,
+      name: item.item_name,
+      price: parseFloat(item.menu_item_base_price) || 0,
+      multiplier: parseFloat(item.premium_multiplier),
+      steps: steps,
+      subitems: [],
+    });
+  
+    setWorkflowStep(0);
+    setMenuEndpoint(`/pos/${steps[0]}`);
   };
 
   const handleSubitemSelect = (subitem) => {
+    console.log("here", currentWorkflow);
     const subitems = [...currentWorkflow.subitems, subitem];
 
-    if (["fountainDrink", "dessert", "appetizer"].includes(subitem.type.replace(/Small|Medium|Side/g, ""))) {
+    if (
+      ["fountaindrink", "dessert", "appetizer"].includes(formatNames(subitem.type)) ||
+      (currentWorkflow.name === "aLaCarteSideMedium" && ["entree", "side"].includes(subitem.type))
+    ) {
       setCurrentWorkflow({ ...currentWorkflow, subitems });
+      currentWorkflow.steps.push("size-selection");
+      setWorkflowStep(1);
       setCurrentSubitemType(subitem.type);
       setMenuEndpoint("/pos/size-selection");
     } 
-    else if (currentWorkflow.name === "aLaCarteSideMedium" && ["entree", "side"].includes(subitem.type)) {
-      setCurrentWorkflow({ ...currentWorkflow, subitems });
-      setCurrentSubitemType(subitem.type);
-      setMenuEndpoint("/pos/size-selection");
-    } 
-    else if (currentWorkflow) {
+    else {
       const currentSteps = currentWorkflow.steps || [];
   
       if (workflowStep < currentSteps.length - 1) {
         setCurrentWorkflow({ ...currentWorkflow, subitems });
         setWorkflowStep(workflowStep + 1);
         setMenuEndpoint(`/pos/${currentSteps[workflowStep + 1]}`);
-      } else {
+      } 
+      else {
         const finalizedItem = {
           quantity: 1,
           name: currentWorkflow.name,
@@ -128,30 +98,14 @@ function PosMain() {
   
         setCurrentOrder((prevOrder) => [...prevOrder, finalizedItem]);
         setTotal((prevTotal) => prevTotal + finalizedItem.price);
-        setCurrentWorkflow(null);
-        setWorkflowStep(0);
-        setMenuEndpoint("/pos/menu");
+        resetCurrentWorkflow();
       }
-    }
-    else {
-      const finalizedItem = {
-        name: currentWorkflow.name,
-        subitems,
-        price:
-          parseFloat(currentWorkflow.price) +
-          subitems.reduce((sum, si) => sum + (parseFloat(si.price) || 0), 0),
-      };
-
-      setCurrentOrder((prevOrder) => [...prevOrder, finalizedItem]);
-      setTotal((prevTotal) => prevTotal + finalizedItem.price);
-      setCurrentWorkflow(null);
-      setWorkflowStep(0);
-      setMenuEndpoint("/pos/menu");
     }
   };
 
   const handleSizeSelect = async (size) => {
     try {
+      console.log(currentWorkflow.name);
       let endpointBase = currentWorkflow.name.replace(/Small|Medium|Side/g, "");
       if (endpointBase === "aLaCarte") {
         endpointBase += size.type.charAt(0).toUpperCase() + size.type.slice(1);
@@ -175,9 +129,9 @@ function PosMain() {
 
       setCurrentOrder((prevOrder) => [...prevOrder, finalizedItem]);
       setTotal((prevTotal) => prevTotal + finalizedItem.price);
-      setCurrentWorkflow(null);
-      setMenuEndpoint("/pos/menu");
-    } catch (error) {
+      resetCurrentWorkflow();
+    } 
+    catch (error) {
       console.error(`Failed to fetch size pricing:`, error);
       alert(`Error fetching size pricing. Please try again.`);
     }
@@ -189,10 +143,7 @@ function PosMain() {
     setCurrentOrder([]);
     setTotal(0);
     setOrderNumber(orderNumber + 1);
-    setMenuEndpoint("/pos/menu");
-    setCurrentWorkflow(null);
-    setWorkflowStep(0);
-    setCurrentSubitemType(null);
+    resetCurrentWorkflow();
   };
 
   return (
@@ -209,7 +160,6 @@ function PosMain() {
             onAddToOrder={handleAddToOrder}
             onSubitemSelect={handleSubitemSelect}
             navigate={navigate}
-            formatNames={formatNames}
           />
         )}
         <OrderSection
@@ -225,17 +175,26 @@ function PosMain() {
             setMenuEndpoint("/pos/menu");
             setCurrentSubitemType(null);
           }}
-          formatNames={formatOrderNames}
         />
       </div>
       <Footer 
         navigate={navigate} 
+        menuEndpoint={menuEndpoint}
         onBack={() => {
+          console.log(workflowStep)
           if (workflowStep > 0) {
-            const previousStep = workflowStep - 1;
-            setWorkflowStep(previousStep);
-            setMenuEndpoint(`/pos/${currentWorkflow.steps[previousStep]}`);
-          } else {
+            const updatedSubitems = [...currentWorkflow.subitems];
+            const updatedSteps = [...currentWorkflow.steps];
+            updatedSubitems.pop();
+            setCurrentWorkflow({
+              ...currentWorkflow,
+              subitems: updatedSubitems,
+              steps: updatedSteps
+            });
+            setWorkflowStep(workflowStep - 1);
+            setMenuEndpoint(`/pos/${currentWorkflow.steps[workflowStep - 1]}`);
+          } 
+          else {
             setCurrentWorkflow(null);
             setMenuEndpoint("/pos/menu");
           }

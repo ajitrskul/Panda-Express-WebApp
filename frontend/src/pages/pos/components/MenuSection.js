@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import api from "../../../services/api";
 
-function MenuSection({ apiEndpoint, onAddToOrder, onSubitemSelect, formatNames }) {
+function MenuSection({ apiEndpoint, onAddToOrder, onSubitemSelect }) {
   const [menuItems, setMenuItems] = useState([]);
   const [error, setError] = useState(null);
 
@@ -32,6 +32,19 @@ function MenuSection({ apiEndpoint, onAddToOrder, onSubitemSelect, formatNames }
     return ""; 
   };
 
+  const formatMenuNames = (item) => {
+    const name = item.item_name || item.product_name || item.name || "Unknown Item";
+
+    let formattedName = name.replace(/Small|Medium|Side|Entree/g, "");
+    if (formattedName.toLowerCase() === "appetizer") return "Apps & More";
+
+    formattedName = formattedName.replace(/([A-Z])/g, " $1").trim(); 
+    return formattedName
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) 
+      .join(" ");
+  };
+
   return (
     <div className="menu-section">
       <div className="menu-grid">
@@ -42,7 +55,7 @@ function MenuSection({ apiEndpoint, onAddToOrder, onSubitemSelect, formatNames }
               className={`menu-item-btn ${getItemClass(item)}`}
               onClick={() => (item.type ? onSubitemSelect(item) : onAddToOrder(item))}
             >
-              {formatNames(item)}
+              {formatMenuNames(item)}
             </button>
           ))
         ) : (
