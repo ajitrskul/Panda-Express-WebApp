@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../styles/menu.css';
 
-const MenuBoardEntree = ({name, image, calories, icons, isPremium, isSeasonal}) => {
+const MenuBoardEntree = ({name, image, calories, isPremium, isSeasonal}) => {
     return (
         <div className='card my-2 entree-card'>
             <div className="row text-div">
@@ -24,8 +24,6 @@ const MenuBoardEntree = ({name, image, calories, icons, isPremium, isSeasonal}) 
                     {image}
                 </div>
                 <div className='col'>
-                    {/* premium, wok safe icons, they be int indicating which ones and i need to add them */}
-
                     {(isPremium || isSeasonal) && (
                     <div className="banners-container">
                     {isPremium && (

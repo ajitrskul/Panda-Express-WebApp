@@ -138,7 +138,7 @@ function MenuMain3() {
         lgPrice = {"$" + (1*menuItems[5].menu_item_base_price + 1*appdess[0].premium_addition).toFixed(2)}
         isPremium = {appdess[0].is_premium}
         isSeasonal = {appdess[0].is_seasonal}
-        image={<img src ={appdess[0].image}/>}/>
+        image={<img src ={appdess[0].image} alt="Appetizer Item Image"/>}/>
       </div>
       <div className="col">
         <MenuBoardAppetizer 
@@ -147,7 +147,7 @@ function MenuMain3() {
         lgPrice = {"$" + (1*menuItems[5].menu_item_base_price + 1*appdess[1].premium_addition).toFixed(2)}
         isPremium = {appdess[1].is_premium}
         isSeasonal = {appdess[1].is_seasonal}
-        image={<img src ={appdess[1].image}/>}/>
+        image={<img src ={appdess[1].image} alt="Appetizer Item Image"/>}/>
       </div>
     </div>
 
@@ -159,7 +159,7 @@ function MenuMain3() {
         lgPrice = {"$" + (1*menuItems[5].menu_item_base_price + 1*appdess[2].premium_addition).toFixed(2)}
         isPremium = {appdess[2].is_premium}
         isSeasonal = {appdess[2].is_seasonal}
-        image={<img src ={appdess[2].image}/>}/>
+        image={<img src ={appdess[2].image} alt="Appetizer Item Image"/>}/>
       </div>
       <div className="col">
         {appdess[3] ? (
@@ -170,7 +170,7 @@ function MenuMain3() {
             lgPrice = {"$" + (1*menuItems[5].menu_item_base_price + 1*appdess[3].premium_addition).toFixed(2)}
             isPremium = {appdess[3].is_premium}
             isSeasonal = {appdess[3].is_seasonal}
-            image={<img src ={appdess[3].image}/>}/>
+            image={<img src ={appdess[3].image} alt="Appetizer Item Image"/>}/>
           </div>) : (
           <div> </div>
         )}
@@ -187,7 +187,7 @@ function MenuMain3() {
             lgPrice = {"$" + (1*menuItems[5].menu_item_base_price + 1*appdess[4].premium_addition).toFixed(2)}
             isPremium = {appdess[4].is_premium}
             isSeasonal = {appdess[4].is_seasonal}
-            image={<img src ={appdess[4].image}/>}/>
+            image={<img src ={appdess[4].image} alt="Appetizer Item Image"/>}/>
           </div>) : (
           <div> </div>
         )}
@@ -201,7 +201,7 @@ function MenuMain3() {
             lgPrice = {"$" + (1*menuItems[5].menu_item_base_price + 1*appdess[5].premium_addition).toFixed(2)}
             isPremium = {appdess[5].is_premium}
             isSeasonal = {appdess[5].is_seasonal}
-            image={<img src ={appdess[5].image}/>}/>
+            image={<img src ={appdess[5].image} alt="Appetizer Item Image"/>}/>
           </div>) : (
           <div> </div>
         )}
