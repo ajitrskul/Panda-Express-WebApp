@@ -367,3 +367,20 @@ def confirm_checkout():
         db.session.rollback()
         print(f"Confirm order failed: {e}")
         return jsonify({"error": "Failed to confirm the order"}), 500
+    
+
+@pos_bp.route('/next-order-id', methods=['GET'])
+def get_next_order_id():
+    try:
+        next_order_id_query = text("""
+            SELECT MAX(order_id) + 1 AS next_order_id
+            FROM public."order"
+        """)
+        result = db.session.execute(next_order_id_query).fetchone()
+
+        next_order_id = result.next_order_id if result.next_order_id is not None else 1
+        return jsonify({"next_order_id": next_order_id}), 200
+
+    except Exception as e:
+        print(f"Failed to get next order ID: {e}")
+        return jsonify({"error": "Failed to get next order ID"}), 500

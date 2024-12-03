@@ -241,9 +241,11 @@ input[type="number"] {
     border: none;
     padding: 5px 10px;
     border-radius: 5px;
+    color: black;
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 1rem;
     width: 30px;
+    justify-content: center;
 }
 
 .quantity-input {

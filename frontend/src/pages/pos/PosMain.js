@@ -10,7 +10,7 @@ import { Modal, Button } from "react-bootstrap";
 
 function PosMain() {
   const [currentOrder, setCurrentOrder] = useState([]);
-  const [orderNumber, setOrderNumber] = useState(124298);
+  const [orderNumber, setOrderNumber] = useState(null);
   const [total, setTotal] = useState(0);
   const [menuEndpoint, setMenuEndpoint] = useState("/pos/menu");
   const [currentWorkflow, setCurrentWorkflow] = useState(null);
@@ -23,6 +23,21 @@ function PosMain() {
   const [halfSideActivated, setHalfSideActivated] = useState(false);
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const disableActions = currentWorkflow !== null || currentOrder.length === 0;
+
+  useEffect(() => {
+    const fetchNextOrderNumber = async () => {
+      try {
+        const response = await api.get("/pos/next-order-id");
+        if (response.status === 200) {
+          setOrderNumber(response.data.next_order_id);
+        }
+      } catch (error) {
+        console.error("Failed to fetch the next order number:", error);
+      }
+    };
+
+    fetchNextOrderNumber();
+  }, []);
 
   const resetCurrentWorkflow = () => {
     setCurrentWorkflow(null);
