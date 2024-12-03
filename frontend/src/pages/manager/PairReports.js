@@ -27,8 +27,6 @@ function PairReports() {
   }
   /*Fetch from the database*/
   const fetchPairReport = async () => {
-    setDisplayPair("Click Cell To See Product Pair");
-    setDisplayPairTotal("Click Cell To See Product Pair Order Total");
     const response = await api.get('/manager/pairreports',{timeout: 60000}); 
     setPairReportsData(response.data);
     
