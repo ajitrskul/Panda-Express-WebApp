@@ -11,7 +11,7 @@ function XReports() {
   const colors=["#77070a","#a3080c","rgb(98, 98, 98)","gray","rgb(163, 163, 163)"];
   const [XReportsData, setXReportsData] = useState(null);
   const fetchXReport = async () => {
-    const response = await api.get('/manager/xzreports'); 
+    const response = await api.get('/manager/xzreports',{timeout: 60000}); 
     setXReportsData(response.data);
     
     

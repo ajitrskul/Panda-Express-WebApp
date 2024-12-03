@@ -45,7 +45,7 @@ export function SidebarManager(){
 
       const id=event.target.id;
       if (id!="zreports"){
-        api.post('/manager/xzreports', "LEAVE", {
+        api.post('/manager/xzreports', "LEAVE", {timeout: 60000,
           headers: {
             'Content-Type': 'text/plain'
           }
