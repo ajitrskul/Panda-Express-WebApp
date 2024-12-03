@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import api from "../../../services/api";
 
-function MenuSection({ apiEndpoint, onAddToOrder, onSubitemSelect, onHalfSide, onCancelHalfSide, halfSideActivated, setHalfSideActivated }) {
+function MenuSection({ currentWorkflow, apiEndpoint, onAddToOrder, onSubitemSelect, onHalfSide, onCancelHalfSide, halfSideActivated, setHalfSideActivated }) {
   const [menuItems, setMenuItems] = useState([]);
   const [error, setError] = useState(null);
 
@@ -56,6 +56,8 @@ function MenuSection({ apiEndpoint, onAddToOrder, onSubitemSelect, onHalfSide, o
     }
   };
 
+  console.log(apiEndpoint);
+
   return (
     <div className="menu-section">
       <div className="menu-grid">
@@ -73,7 +75,7 @@ function MenuSection({ apiEndpoint, onAddToOrder, onSubitemSelect, onHalfSide, o
           <div className="menu-loading">Loading menu items...</div>
         )}
       </div>
-        {apiEndpoint.includes("sides") && (
+        {apiEndpoint.includes("sides") && currentWorkflow?.name !== "familyMeal" && (
           <button
             className={`half-side-btn ${halfSideActivated ? 'active' : ''}`}
             onClick={handleHalfSideButtonClick}

@@ -270,6 +270,7 @@ function PosMain() {
             onCancelHalfSide={handleCancelHalfSide}
             halfSideActivated={halfSideActivated}
             setHalfSideActivated={setHalfSideActivated}
+            currentWorkflow={currentWorkflow}
           />
         )}
         <OrderSection
