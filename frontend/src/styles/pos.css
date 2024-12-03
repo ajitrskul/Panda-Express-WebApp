@@ -28,6 +28,7 @@ html, body {
     align-items: flex-start;
     padding: 20px;
     overflow: hidden; 
+    position: relative;
 }
   
 .menu-grid {
@@ -82,6 +83,36 @@ html, body {
 .category-btn:hover {
     background-color: #ffaa00;
 }
+
+.half-side-btn {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    padding: 12px 20px;
+    background-color: #007bff; /* Bootstrap primary color */
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .half-side-btn:hover {
+    background-color: #0056b3; /* Darker shade for hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  }
+  
+  .half-side-btn:active {
+    transform: translateY(2px); /* Slight push-in effect when clicked */
+  }
+  
+  /* Styles when Half Side mode is active */
+  .half-side-btn.active {
+    background-color: #28a745; /* Green to indicate active */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+  }
   
 /* Order Section */
 .order-section {

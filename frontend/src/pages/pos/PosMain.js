@@ -19,12 +19,16 @@ function PosMain() {
   const navigate = useNavigate();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
+  const [isHalfAndHalf, setIsHalfAndHalf] = useState(false);
+  const [halfSideActivated, setHalfSideActivated] = useState(false);
 
   const resetCurrentWorkflow = () => {
     setCurrentWorkflow(null);
     setWorkflowStep(0);
     setMenuEndpoint("/pos/menu");
     setCurrentSubitemType(null);
+    setIsHalfAndHalf(false);
+    setHalfSideActivated(false);
   };
 
   const formatNames = (item) => {
@@ -67,42 +71,107 @@ function PosMain() {
   };
 
   const handleSubitemSelect = (subitem) => {
-    const subitems = [...currentWorkflow.subitems, subitem];
-
-    if (
-      ["fountaindrink", "dessert", "appetizer"].includes(formatNames(subitem.type)) ||
-      (currentWorkflow.name === "aLaCarteSideMedium" && ["entree", "side"].includes(subitem.type))
-    ) {
+    if (isHalfAndHalf && subitem.type === "side") {
+      const subitems = [...currentWorkflow.subitems, { ...subitem, quantity: 0.5 }];
       setCurrentWorkflow({ ...currentWorkflow, subitems });
-      currentWorkflow.steps.push("size-selection");
-      setWorkflowStep(1);
-      setCurrentSubitemType(subitem.type);
-      setMenuEndpoint("/pos/size-selection");
-    } 
-    else {
-      const currentSteps = currentWorkflow.steps || [];
-  
-      if (workflowStep < currentSteps.length - 1) {
-        setCurrentWorkflow({ ...currentWorkflow, subitems });
-        setWorkflowStep(workflowStep + 1);
-        setMenuEndpoint(`/pos/${currentSteps[workflowStep + 1]}`);
+
+      if (workflowStep > 0 && currentWorkflow.steps[workflowStep] === "sides") {
+        setIsHalfAndHalf(false); 
+        if (workflowStep < currentWorkflow.steps.length - 1) {
+          setWorkflowStep(workflowStep + 1);
+          setMenuEndpoint(`/pos/${currentWorkflow.steps[workflowStep + 1]}`);
+        } 
+        else {
+          finalizeItem(subitems);
+          setHalfSideActivated(false);
+        }
       } 
       else {
-        const finalizedItem = {
-          quantity: 1,
-          name: currentWorkflow.name,
-          subitems,
-          price:
-            parseFloat(currentWorkflow.price) +
-            subitems.reduce((sum, si) => sum + (parseFloat(si.premium_addition) || 0), 0),
-        };
-  
-        setCurrentOrder((prevOrder) => [...prevOrder, finalizedItem]);
-        setTotal((prevTotal) => prevTotal + finalizedItem.price);
-        resetCurrentWorkflow();
+        setWorkflowStep(workflowStep + 1);
+        setMenuEndpoint(`/pos/${currentWorkflow.steps[workflowStep + 1]}`);
+      }
+    } 
+    else {
+      const subitems = [...currentWorkflow.subitems, { ...subitem, quantity: 1 }];
+
+      if (
+        ["fountaindrink", "dessert", "appetizer"].includes(formatNames(subitem.type)) ||
+        (currentWorkflow.name === "aLaCarteSideMedium" && ["entree", "side"].includes(subitem.type))
+      ) {
+        setCurrentWorkflow({ ...currentWorkflow, subitems });
+        currentWorkflow.steps.push("size-selection");
+        setWorkflowStep(1);
+        setCurrentSubitemType(subitem.type);
+        setMenuEndpoint("/pos/size-selection");
+      } else {
+        const currentSteps = currentWorkflow.steps || [];
+
+        if (workflowStep < currentSteps.length - 1) {
+          setCurrentWorkflow({ ...currentWorkflow, subitems });
+          setWorkflowStep(workflowStep + 1);
+          setMenuEndpoint(`/pos/${currentSteps[workflowStep + 1]}`);
+        } else {
+          finalizeItem(subitems);
+          setHalfSideActivated(false);
+        }
       }
     }
+  }
+
+  const finalizeItem = (subitems) => {
+    const finalizedItem = {
+      quantity: 1,
+      name: currentWorkflow.name,
+      subitems,
+      price:
+        parseFloat(currentWorkflow.price) +
+        subitems.reduce((sum, si) => sum + (parseFloat(si.premium_addition) || 0) * (si.quantity || 1), 0),
+    };
+
+    setCurrentOrder((prevOrder) => [...prevOrder, finalizedItem]);
+    setTotal((prevTotal) => prevTotal + finalizedItem.price);
+    resetCurrentWorkflow();
   };
+
+  const handleHalfAndHalf = () => {
+    if (currentWorkflow && currentWorkflow.steps[workflowStep] === "sides") {
+      const updatedSteps = [...currentWorkflow.steps];
+      updatedSteps.splice(workflowStep + 1, 0, "sides");
+
+      setCurrentWorkflow({
+        ...currentWorkflow,
+        steps: updatedSteps,
+      });
+
+      setIsHalfAndHalf(true); 
+    }
+  };
+
+  const handleCancelHalfSide = () => {
+    if (isHalfAndHalf) {
+      const updatedSteps = [...currentWorkflow.steps];
+  
+      if (updatedSteps[workflowStep] === "sides") {
+        updatedSteps.splice(workflowStep, 1);
+  
+        if (workflowStep < updatedSteps.length) {
+          setWorkflowStep(workflowStep); // Since we removed the current step, `workflowStep` points to the next one
+          setMenuEndpoint(`/pos/${updatedSteps[workflowStep]}`);
+        } else {
+          resetCurrentWorkflow();
+        }
+      }
+  
+      setCurrentWorkflow({
+        ...currentWorkflow,
+        steps: updatedSteps,
+      });
+  
+      setIsHalfAndHalf(false); 
+      setHalfSideActivated(false);
+    }
+  };
+  
 
   const handleSizeSelect = async (size) => {
     try {
@@ -129,15 +198,6 @@ function PosMain() {
       console.error(`Failed to fetch size pricing:`, error);
       alert(`Error fetching size pricing. Please try again.`);
     }
-  };
-
-  const handleCheckout = () => {
-    console.log("Finalized Order:", currentOrder);
-    alert(`Order #${orderNumber} finalized!`);
-    setCurrentOrder([]);
-    setTotal(0);
-    setOrderNumber(orderNumber + 1);
-    resetCurrentWorkflow();
   };
 
   const handleIncreaseQuantity = (index) => {
@@ -187,6 +247,15 @@ function PosMain() {
     setItemToDelete(null);
   };
 
+  const handleCheckout = () => {
+    console.log("Finalized Order:", currentOrder);
+    alert(`Order #${orderNumber} finalized!`);
+    setCurrentOrder([]);
+    setTotal(0);
+    setOrderNumber(orderNumber + 1);
+    resetCurrentWorkflow();
+  };
+
   return (
     <div className="pos-container p-2 bg-black">
       <div className="main-content">
@@ -201,6 +270,10 @@ function PosMain() {
             onAddToOrder={handleAddToOrder}
             onSubitemSelect={handleSubitemSelect}
             navigate={navigate}
+            onHalfSide={handleHalfAndHalf}
+            onCancelHalfSide={handleCancelHalfSide}
+            halfSideActivated={halfSideActivated}
+            setHalfSideActivated={setHalfSideActivated}
           />
         )}
         <OrderSection
@@ -229,28 +302,28 @@ function PosMain() {
             const updatedSubitems = [...currentWorkflow.subitems];
             updatedSubitems.pop();
             const updatedSteps = [...currentWorkflow.steps];
-            if(
-              currentWorkflow.name !== "bowl" && 
-              currentWorkflow.name !== "plate" &&
-              currentWorkflow.name !== "biggerPlate" &&
-              currentWorkflow.name !== "familyMeal"
-            ){
-              updatedSteps.pop();
+
+            if (isHalfAndHalf && updatedSteps[workflowStep] === "sides" && updatedSteps[workflowStep - 1] === "sides") {
+              updatedSteps.splice(workflowStep, 1);
+              setIsHalfAndHalf(false); 
             }
+
             setCurrentWorkflow({
               ...currentWorkflow,
               subitems: updatedSubitems,
               steps: updatedSteps
             });
+
             setWorkflowStep(workflowStep - 1);
-            setMenuEndpoint(`/pos/${currentWorkflow.steps[workflowStep - 1]}`);
-          } 
-          else {
+            setMenuEndpoint(`/pos/${updatedSteps[workflowStep - 1]}`);
+          } else {
             setCurrentWorkflow(null);
+            setIsHalfAndHalf(false);
             setMenuEndpoint("/pos/menu");
           }
-        }} 
+        }}
       />
+
 
       <Modal show={showDeleteModal} onHide={cancelDeleteItem}>
         <Modal.Header closeButton>

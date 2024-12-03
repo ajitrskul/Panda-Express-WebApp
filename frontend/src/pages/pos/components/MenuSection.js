@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import api from "../../../services/api";
 
-function MenuSection({ apiEndpoint, onAddToOrder, onSubitemSelect }) {
+function MenuSection({ apiEndpoint, onAddToOrder, onSubitemSelect, onHalfSide, onCancelHalfSide, halfSideActivated, setHalfSideActivated }) {
   const [menuItems, setMenuItems] = useState([]);
   const [error, setError] = useState(null);
 
@@ -45,6 +45,16 @@ function MenuSection({ apiEndpoint, onAddToOrder, onSubitemSelect }) {
       .join(" ");
   };
 
+  const handleHalfSideButtonClick = () => {
+    if (halfSideActivated) {
+      setHalfSideActivated(false);
+      onCancelHalfSide();
+    } else {
+      setHalfSideActivated(true);
+      onHalfSide();
+    }
+  };
+
   return (
     <div className="menu-section">
       <div className="menu-grid">
@@ -62,6 +72,14 @@ function MenuSection({ apiEndpoint, onAddToOrder, onSubitemSelect }) {
           <div className="menu-loading">Loading menu items...</div>
         )}
       </div>
+        {apiEndpoint.includes("sides") && (
+          <button
+            className={`half-side-btn ${halfSideActivated ? 'active' : ''}`}
+            onClick={handleHalfSideButtonClick}
+          >
+            {halfSideActivated ? "Deactivate Half Side Mode" : "Activate Half Side Mode"}
+          </button>
+        )}
     </div>
   );
 }
