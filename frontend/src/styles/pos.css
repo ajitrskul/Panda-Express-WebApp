@@ -208,6 +208,18 @@ html, body {
     align-items: center;
 }
 
+.back-btn {
+    background-color: #800000;
+    overflow: hidden;
+    text-align: right;
+    padding-right: 5%;
+    border: none;
+    width: 300px;
+    height: 95%; 
+    font-size: 3rem; 
+    cursor: pointer;
+}
+
 /* Size Section */
 .invisible-btn {
     visibility: hidden; 

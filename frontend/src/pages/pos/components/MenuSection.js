@@ -75,11 +75,16 @@ function MenuSection({ currentWorkflow, apiEndpoint, onAddToOrder, onSubitemSele
       </div>
         {apiEndpoint.includes("sides") && currentWorkflow?.name !== "familyMeal" && (
           <button
-            className={`half-side-btn ${halfSideActivated ? 'active' : ''}`}
-            onClick={handleHalfSideButtonClick}
-          >
-            {halfSideActivated ? "Deactivate Half Side Mode" : "Activate Half Side Mode"}
-          </button>
+          className={`half-side-btn ${halfSideActivated ? 'active' : ''}`}
+          onClick={handleHalfSideButtonClick}
+          style={{
+            textDecoration: halfSideActivated ? 'none' : 'line-through', 
+            color: halfSideActivated ? 'inherit' : 'black',
+            cursor: 'pointer',
+          }}
+        >
+          {halfSideActivated ? "Half Sides" : "Half Sides?"}
+        </button>
         )}
     </div>
   );
