@@ -19,11 +19,11 @@
     height: clamp(0rem, 15vw, 15rem) !important;
 }
 
-.fullscreen-menu .appetizer-card{
+.fullscreen-menu .appetizer-card {
     position: relative;
 }
 
-.fullscreen-menu .ad-card{
+.fullscreen-menu .ad-card {
     object-fit: cover;
     overflow: hidden;
     width: 110%;
@@ -86,7 +86,7 @@
     font-size: 0.75rem;
     font-weight: bold;
     border-radius: 4px;
-    margin-left: 5px; 
+    margin-left: 5px;
 }
 
 .fullscreen-menu .seasonal-banner {
@@ -102,18 +102,18 @@
     background-color: goldenrod;
 }
 
-.fullscreen-menu .drinks-card{
+.fullscreen-menu .drinks-card {
     text-align: center;
 }
 
-.fullscreen-menu .card-drink{
+.fullscreen-menu .card-drink {
     padding-left: 4%;
 }
 
 .fullscreen-menu .drinks-table {
     margin: 0 auto;
     width: 50%;
-    
+
 }
 
 .fullscreen-menu .drink-image {

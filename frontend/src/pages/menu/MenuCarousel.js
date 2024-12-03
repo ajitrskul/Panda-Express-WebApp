@@ -11,17 +11,17 @@ import MenuMain3 from "./MenuPage3";
 // Carousel Functionality for Menu Board
 const MenuCarousel = () => {
 
-    // Play/Pause State
-    const [play, setPlay] = useState(true);
-    // Ref to access slick fcns
-    const carouselRef = useRef(null);
+  // Play/Pause State
+  const [play, setPlay] = useState(true);
+  // Ref to access slick fcns
+  const carouselRef = useRef(null);
 
-    var settings = {
-        dots: true,
-        infinite: true,
-        autoplay: true,
-        autoplaySpeed: 8000,
-    };
+  var settings = {
+    dots: true,
+    infinite: true,
+    autoplay: true,
+    autoplaySpeed: 8000,
+  };
 
   const toggleAutoplay = () => {
     // console.log(play)
@@ -47,10 +47,10 @@ const MenuCarousel = () => {
         </Slider>
       }
 
-      <button className="carousel-button" onClick={() => toggleAutoplay() }>
+      <button className="carousel-button" onClick={() => toggleAutoplay()}>
         {play ? "Turn Off Autoplay" : "Turn On Autoplay"}
       </button>
-      
+
     </div>
 
   );

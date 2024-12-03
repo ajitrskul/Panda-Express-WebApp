@@ -1,23 +1,23 @@
 import React from 'react';
 import '../../../styles/menu.css';
 
-const MenuBoardEntree = ({name, image, calories, isPremium, isSeasonal}) => {
+const MenuBoardEntree = ({ name, image, calories, isPremium, isSeasonal }) => {
     return (
         <div className='card my-2 entree-card'>
             <div className="row text-div">
                 <div className='card-body'>
                     <h2 className='card-title card-entree'>
                         {name}
-                        
+
                     </h2>
                     <p className='card-text card-entree'>
                         {calories}
                     </p>
 
-                    
-                    
+
+
                 </div>
-                
+
             </div>
             <div className="row photo-div">
                 <div className='col-10 entree-image'>
@@ -25,17 +25,17 @@ const MenuBoardEntree = ({name, image, calories, isPremium, isSeasonal}) => {
                 </div>
                 <div className='col'>
                     {(isPremium || isSeasonal) && (
-                    <div className="banners-container">
-                    {isPremium && (
-                        <div className="banner premium-banner">P</div>
+                        <div className="banners-container">
+                            {isPremium && (
+                                <div className="banner premium-banner">P</div>
+                            )}
+                            {isSeasonal && (
+                                <div className="banner seasonal-banner">S</div>
+                            )}
+                        </div>
                     )}
-                    {isSeasonal && (   
-                        <div className="banner seasonal-banner">S</div>
-                    )}
-                    </div>
-                )}
                 </div>
-                
+
             </div>
         </div>
     );
