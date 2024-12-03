@@ -110,6 +110,7 @@ function PosMain() {
 
     if (["fountainDrink", "dessert", "appetizer"].includes(subitem.type.replace(/Small|Medium|Side/g, ""))) {
       setCurrentWorkflow({ ...currentWorkflow, subitems });
+      setCurrentSubitemType(subitem.type);
       setMenuEndpoint("/pos/size-selection");
     } 
     else if (currentWorkflow.name === "aLaCarteSideMedium" && ["entree", "side"].includes(subitem.type)) {
@@ -158,14 +159,12 @@ function PosMain() {
   };
 
   const handleSizeSelect = async (size) => {
-    console.log(size);
     try {
       let endpointBase = currentWorkflow.name.replace(/Small|Medium|Side/g, "");
       if(endpointBase === "aLaCarte") {
         endpointBase = endpointBase + size.type.charAt(0).toUpperCase() + size.type.slice(1);
       }
       const response = await api.get(`/pos/size/${endpointBase}/${size.name}`);
-      console.log(response.data);
 
       setCurrentWorkflow({
         ...currentWorkflow,
@@ -200,6 +199,7 @@ function PosMain() {
     setMenuEndpoint("/pos/menu");
     setCurrentWorkflow(null);
     setWorkflowStep(0);
+    setCurrentSubitemType(null);
   };
 
   return (
@@ -230,6 +230,7 @@ function PosMain() {
             setCurrentWorkflow(null);
             setWorkflowStep(0);
             setMenuEndpoint("/pos/menu");
+            setCurrentSubitemType(null);
           }}
           formatNames={formatOrderNames}
         />
