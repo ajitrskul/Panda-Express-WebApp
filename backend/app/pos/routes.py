@@ -2,6 +2,7 @@ from . import pos_bp
 from flask import request, jsonify
 from sqlalchemy import text
 from app.extensions import db
+from datetime import datetime
 
 @pos_bp.route('/', methods=['GET'])
 def cashier_home():
@@ -249,3 +250,120 @@ def get_size_price(item_name, size):
                     "price": float(result.menu_item_base_price), 
                     "multiplier": float(result.premium_multiplier)
                 }), 200
+
+
+@pos_bp.route('/checkout', methods=['POST'])
+def checkout():
+    try:
+        data = request.get_json()
+        print("Received Order Data:", data)
+
+        items = data.get("items", [])
+        total_price = data.get("total", 0)
+        print(f"\nTotal Price: ${total_price}")
+
+        for idx, item in enumerate(items):
+            print(f"\nItem {idx + 1}:")
+            print(f" - Name: {item['name']}")
+            print(f" - Quantity: {item['quantity']}")
+            print(f" - Price: ${item['price']}")
+
+            subitems = item.get('subitems', [])
+            for sub_idx, subitem in enumerate(subitems):
+                print(f"   Subitem {sub_idx + 1}:")
+                print(f"    - Name: {subitem['product_name']}")
+                print(f"    - Type: {subitem['type']}")
+                print(f"    - Quantity: {subitem['quantity']}")
+
+        return jsonify({"message": "Order received and printed successfully"}), 200
+
+    except Exception as e:
+        print(f"Error while processing checkout: {e}")
+        return jsonify({"error": "Failed to process the order"}), 500
+
+
+@pos_bp.route('/checkout/confirm', methods=['POST'])
+def confirm_checkout():
+    try:
+        order_data = request.get_json()
+        employee_id = 121202  # CHANGE LATER
+        
+        # Order Table
+        order_items = order_data.get("items", [])
+        total_price = order_data.get("total", 0.0)
+        order_date_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+        insert_order_query = text("""
+            INSERT INTO public."order" (order_date_time, employee_id, total_price, is_ready)
+            VALUES (:order_date_time, :employee_id, :total_price, :is_ready)
+            RETURNING order_id
+        """)
+        order_result = db.session.execute(
+            insert_order_query,
+            {
+                "order_date_time": order_date_time,
+                "employee_id": employee_id,
+                "total_price": total_price,
+                "is_ready": False  
+            }
+        )
+        db.session.commit()
+        order_id = order_result.fetchone().order_id
+
+        # Order Menu Item Table
+        for item_idx, item in enumerate(order_items):
+            item_name = item.get("name")
+            item_price = item.get("price")
+            quantity = item.get("quantity", 1)
+            
+            # Get the menu item ID
+            menu_item_query = text("SELECT menu_item_id FROM menu_item WHERE item_name = :item_name")
+            menu_item_result = db.session.execute(menu_item_query, {"item_name": item_name}).fetchone()
+
+            if not menu_item_result:
+                return jsonify({"error": f"Menu item '{item_name}' not found"}), 404
+            
+            menu_item_id = menu_item_result.menu_item_id
+
+            # Insert into order_menu_item for each quantity
+            for _ in range(quantity):
+                insert_order_menu_item_query = text("""
+                    INSERT INTO public.order_menu_item (order_id, menu_item_id, subtotal_price)
+                    VALUES (:order_id, :menu_item_id, :subtotal_price)
+                    RETURNING order_menu_item_id
+                """)
+                order_menu_item_result = db.session.execute(
+                    insert_order_menu_item_query,
+                    {
+                        "order_id": order_id,
+                        "menu_item_id": menu_item_id,
+                        "subtotal_price": item_price
+                    }
+                )
+                db.session.commit()
+                order_menu_item_id = order_menu_item_result.fetchone().order_menu_item_id
+
+                # Order Menu Item Product (Insert subitems for each order_menu_item)
+                subitems = item.get("subitems", [])
+                for subitem in subitems:
+                    product_id = subitem.get("product_id")
+                    
+                    insert_order_menu_item_product_query = text("""
+                        INSERT INTO public.order_menu_item_product (order_menu_item_id, product_id)
+                        VALUES (:order_menu_item_id, :product_id)
+                    """)
+                    db.session.execute(
+                        insert_order_menu_item_product_query,
+                        {
+                            "order_menu_item_id": order_menu_item_id,
+                            "product_id": product_id
+                        }
+                    )
+
+        db.session.commit()
+        return jsonify({"message": "Successfully confirmed", "order_id": order_id}), 201
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"Confirm order failed: {e}")
+        return jsonify({"error": "Failed to confirm the order"}), 500

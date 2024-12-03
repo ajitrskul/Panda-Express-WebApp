@@ -21,6 +21,7 @@ function PosMain() {
   const [itemToDelete, setItemToDelete] = useState(null);
   const [isHalfAndHalf, setIsHalfAndHalf] = useState(false);
   const [halfSideActivated, setHalfSideActivated] = useState(false);
+  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
 
   const resetCurrentWorkflow = () => {
     setCurrentWorkflow(null);
@@ -244,12 +245,31 @@ function PosMain() {
   };
 
   const handleCheckout = () => {
-    console.log("Finalized Order:", currentOrder);
-    alert(`Order #${orderNumber} finalized!`);
-    setCurrentOrder([]);
-    setTotal(0);
-    setOrderNumber(orderNumber + 1);
-    resetCurrentWorkflow();
+    setShowCheckoutModal(true);
+  };
+
+  const confirmCheckout = async () => {
+    try {
+      const response = await api.post("/pos/checkout/confirm", {
+        items: currentOrder,
+        total: (total*1.0625).toFixed(2),
+      });
+
+      if (response.status === 201) {
+        setCurrentOrder([]);
+        setTotal(0);
+        setOrderNumber(orderNumber + 1);
+        resetCurrentWorkflow();
+        setShowCheckoutModal(false);
+      } 
+      else {
+        throw new Error("Failed to finalize the order");
+      }
+    } catch (error) {
+      console.error("Failed to finalize the order:", error);
+      alert("Error during checkout. Please try again.");
+      setShowCheckoutModal(false);
+    }
   };
 
   return (
@@ -327,7 +347,6 @@ function PosMain() {
         }}
       />
 
-
       <Modal show={showDeleteModal} onHide={cancelDeleteItem}>
         <Modal.Header closeButton>
           <Modal.Title>Confirm Removal</Modal.Title>
@@ -339,6 +358,25 @@ function PosMain() {
           </Button>
           <Button variant="danger" onClick={confirmDeleteItem}>
             Yes, Remove
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={showCheckoutModal} onHide={() => setShowCheckoutModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Checkout</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to finalize Order #{orderNumber}?
+          <br />
+          <strong>Total Amount: ${(total*1.0625).toFixed(2)}</strong>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowCheckoutModal(false)}>
+            Cancel
+          </Button>
+          <Button variant="success" onClick={confirmCheckout}>
+            Confirm Checkout
           </Button>
         </Modal.Footer>
       </Modal>

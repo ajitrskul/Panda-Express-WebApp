@@ -56,8 +56,6 @@ function MenuSection({ currentWorkflow, apiEndpoint, onAddToOrder, onSubitemSele
     }
   };
 
-  console.log(apiEndpoint);
-
   return (
     <div className="menu-section">
       <div className="menu-grid">
