@@ -127,8 +127,8 @@ export default function SalesReports() {
             <h1 className="col-12 sales-title">Sales Report</h1>
             <hr class="col-12 sales-divider"></hr>
           </div>
-          <div className="row sales-card justify-content-start" style={{minWidth:"800px", marginLeft:"0px"}}>
-            <div className="col-3 text-start">
+          <div className="row sales-card justify-content-start align-items-center" style={{minWidth:"800px", marginLeft:"0px"}}>
+            <div className="col-4 text-start">
               <p>
                 <span style={{marginRight:"5px", fontSize: "18px"}}>Start Date: </span>
                 <DatePicker
@@ -142,8 +142,9 @@ export default function SalesReports() {
               </p>
               {datesSelected.dateError && <span style={{display:"block", color:"red", fontSize:"18px", marginTop:"10px"}}>Please input a valid date</span>}
             </div>
-            <div className="col-3 text-start">
-                <span style={{marginRight:"5px",fontSize: "18px", marginLeft:"30px"}}>End Date: </span>
+            <div className="col-4 text-start">
+              <p>
+                <span style={{marginRight:"5px", fontSize: "18px"}}>End Date: </span>
                 <DatePicker
                   id="end-date"
                   selected={datesSelected.endDate}
@@ -152,8 +153,9 @@ export default function SalesReports() {
                   showTimeSelect
                   className="sales-datepicker"
                 />
+              </p>
             </div>
-            <div className="col-3 text-start">
+            <div className="col-4 text-start">
                 <button className="sales-button" onClick={refreshReports}>Refresh Report</button>
             </div>
           </div>
@@ -238,7 +240,7 @@ export default function SalesReports() {
                       data={salesReportData.histogram}
                       dataKey="count"
                       nameKey="category"
-                      outerRadius={160}
+                      outerRadius={120}
                       fill="#8884d8"
                       style={{fontSize:"10px"}}
                     >
