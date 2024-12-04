@@ -31,7 +31,7 @@ function Products() {
       setProducts(response.data);
     } else {
       const filtered = products.filter((item) =>
-        item.name.toLowerCase().includes(term)
+        item.product_name.toLowerCase().includes(term)
       );
       setProducts(filtered);
     }
@@ -93,6 +93,12 @@ function Products() {
               className="form-control w-50"
               placeholder="Search Products"
             />
+            <button
+              onClick={() => handleCardClick({ })}
+              className="btn btn-danger"
+            >
+              Add New Product
+            </button>
           </div>
           <div className="row">
             {products.map((item) => (
@@ -101,29 +107,23 @@ function Products() {
                 className={`col-12 col-sm-6 col-md-4 col-lg-3 mb-4`}
                 onClick={() => handleCardClick(item)}
               >
-                <div className="card h-100 w-100 d-flex justify-content-center align-items-center bg-white inventory-card">
+                <div className="card h-100 w-100 d-flex justify-content-center align-items-center bg-white hover-zoom inventory-card">
                   <div className="card-body">
                     <h5 className="card-text">{item.product_name}</h5>
                     <button
-                        onClick={() => deleteProduct(item.product_id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteProduct(item.product_id);
+                        }}
                         className="btn btn-danger delete-button"
                       >
                         Delete
                       </button>
                   </div>
+                  <div className="hover-view">Click To View Details</div>
                 </div>
               </div>
             ))}
-            <div
-              className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4"
-              onClick={() => handleCardClick({ })}
-            >
-              <div className="card h-100 w-100 text-center d-flex justify-content-center align-items-center bg-a3080c inventory-card">
-                <div className="card-body">
-                  <h5 className="card-text text-center">Add New Product</h5>
-                </div>
-              </div>
-            </div>
           </div>
           {newProduct && (
         <div className="modal-overlay" onClick={closeModal}>

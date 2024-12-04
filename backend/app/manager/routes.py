@@ -65,6 +65,33 @@ def restock():
         print(f"Error: {e}")
         return jsonify({"error": "An error occurred while restocking inventory"}), 500
 
+@manager_bp.route('/inventory/remove', methods=["POST"])
+def remove():
+    try:
+        data = request.get_json()
+        item_name = to_camel_case(data.get('itemName'))
+        amount = data.get('amount')
+
+        if not item_name or not amount or not isinstance(amount, int) or amount <= 0:
+            return jsonify({"error": "Invalid item name or amount"}), 400
+
+        with db.session.begin():
+            item = db.session.query(ProductItem).filter_by(product_name=item_name).first()
+
+            if not item:
+                return jsonify({"error": "Item not found"}), 404
+
+            item.quantity_in_cases -= amount
+
+            db.session.commit()
+
+        return {}
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error: {e}")
+        return jsonify({"error": "An error occurred while removing inventory"}), 500
+
 @manager_bp.route('/inventory/restock/low', methods=["POST"])
 def restock_low():
     try:
@@ -72,7 +99,7 @@ def restock_low():
             product_inventory = db.session.query(ProductItem).filter(ProductItem.quantity_in_cases < 5).all()
 
             for item in product_inventory:
-                item.quantity_in_cases = 5
+                item.quantity_in_cases = 10
 
             db.session.commit()
 

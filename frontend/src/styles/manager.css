@@ -337,8 +337,23 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-top: 10px;
+}
+
+.inventory-card .inventory-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     gap: 10px;
     margin-top: 10px;
+}
+
+.inventory-card:hover .hover-view {
+    opacity: 1;
+}
+
+.inventory-card .hover-view {
+    opacity: 0;
 }
 
 .chart-container{

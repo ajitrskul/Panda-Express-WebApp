@@ -70,7 +70,7 @@ function RestockReports() {
           <div className="text-center mb-4">
             <button
               onClick={handleRestockAll}
-              className="btn btn-success"
+              className="btn btn-danger"
             >
               Restock All
             </button>
@@ -99,7 +99,7 @@ function RestockReports() {
                       />
                       <button
                         onClick={() => handleRestock(item.name)}
-                        className="btn btn-primary restock-button"
+                        className="btn btn-success restock-button"
                       >
                         Restock
                       </button>

@@ -77,7 +77,7 @@ function ProductUsage() {
               />
             </div>
             <div className="d-flex justify-content-center">
-            <button type="submit" className="btn btn-success w-30">
+            <button type="submit" className="btn btn-danger w-30">
                 Generate Report
             </button>
             </div>
