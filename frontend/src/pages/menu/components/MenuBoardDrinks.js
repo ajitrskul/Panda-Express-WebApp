@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../styles/menu.css';
 
-const MenuBoardDrinks = ({name, price}) => {
+const MenuBoardDrinks = ({ name, price }) => {
     return (
         <div className='card my-2 extra-drinks-card'>
             <div className="row text-div">
@@ -15,7 +15,7 @@ const MenuBoardDrinks = ({name, price}) => {
                         {price}
                     </p>
                 </div>
-                
+
             </div>
         </div>
     );

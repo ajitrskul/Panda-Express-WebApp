@@ -27,9 +27,9 @@
         width: 100%;
         height:130px;
         padding-top: 30px;
-        font-size: 50px;
+        font-size: 40px;
         color: rgb(98, 98, 98);
-       
+        
         
     }
 
@@ -47,6 +47,10 @@
     .report-container{
     margin-bottom: 30px;
     margin-right: 30px;
+    }
+    .report-container-pair{
+        margin-bottom: 30px;
+        margin-right: 30px;
     }
 
     .report-card{
@@ -74,7 +78,34 @@
         border-radius: 15px;
         box-shadow: 1px 1px 5px gray
     }
-
+    .report-card-large{
+        font-size: 35px;
+        margin-right: 20px;
+        margin-top: 30px;
+        color: rgb(117, 117, 117);
+        overflow: hidden;
+        padding: 25px;
+        width: 100%;
+        height: 700px;
+        background-color: white;
+        border-radius: 15px;
+        margin-top: 30px;
+        box-shadow: 1px 1px 5px gray;
+        white-space: nowrap;
+        }
+    .report-card-pair{
+        margin-right: 20px;
+        color: rgb(98, 98, 98);
+        font-size: 25px;
+        padding: 25px;
+        width: 100%;
+        height: 100px;
+        background-color: white;
+        border-radius: 15px;
+        /*text-align: center;*/
+        margin-bottom: 30px;
+        box-shadow: 1px 1px 5px gray
+    }
     .report-card-drop{
         margin-right: 20px;
         color: rgb(117, 117, 117);
@@ -105,6 +136,7 @@
         float: right;
         font-size: 25px;
         color: #a3080c;
+       
     }
 
     .report-card-icon-big{
@@ -130,9 +162,169 @@
         display: none;
     }
     #orders-by-hour{
-        font-size: 500px;
-        display:none;
+        display: none;
+        padding: 20px;
     }
+    .table-title{
+       width: 100%;
+       margin: 15px;
+     }
+     .table-title-container{
+        background-color:lightgray;
+        width: 100%;
+        height: 100%;
+        
+        margin-bottom: 2px;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+        font-size: 15px;
+        color:  rgb(98, 98, 98);
+        display: flex;
+     }
+    .orders-by-hour-elem{
+       background-color:rgb(235, 235, 235);
+       width: 100%;
+       height: 100%;
+       padding: 5px;
+       margin: 2px;
+       font-size: 15px;
+       color:  rgb(98, 98, 98);
+    }
+    .orders-by-hour-row{
+        width: 100%;
+        display: flex;
+       
+     }
+     .barchart-container{
+        width:100%;
+        height: 75%;
+        font-size: 20px;
+       margin-left: auto;
+       margin-right: auto;
+     }
+     .piechart-container{
+        width:100%;
+        height: 75%;
+        font-size: 20px;
+       margin-left: auto;
+       margin-right: auto;
+     }
+     #date-pair{
+        color:rgb(98,98,98);
+        padding: 10px;
+        background-color: lightgray;
+        border: none;
+        border-radius: 10px;
+        margin-left: 15px;
+        width: 190px;
+        font-size: 17px;
+     }
+     .pair-row{
+        display: flex;
+     }
+     .pair-elem{
+        font-size: 10px;
+        padding: 1px;
+        width: 8px;
+        height: 8px;
+        margin: 0.5px;
+        text-align: center;
+        border: gray 0.5px solid;
+     }
+     .pair-elem:hover{
+        font-size: 10px;
+        padding: 1px;
+        width: 8px;
+        height: 8px;
+        margin: 0.5px;
+        text-align: center;
+        border: gray 0.5px solid;
+        transform: scale(1.5);
+        border: gray 1px solid;
+     }
+     .pair-back{
+        width: fit-content;
+        background-color:white;
+        margin-top: 2px;
+        height: fit-content;
+        
+        
+     }
+     .pair-chart-title{
+        width: fit-content;
+        margin-left: auto;
+        margin-right: auto;
+        color: gray;
+        margin-top: 20px;
+        border: 2px gray solid;
+        padding: 8px;
+        font-size: 15px;
+        border-radius: 10px;
+    }
+    .pair-yaxis{
+        width: 15px;
+        pointer-events: none;
+        font-size: 15px;
+        transform: rotate(-90deg);
+        position: relative;
+        left: 144px;
+        bottom: -15px;
+        }
+    .pair-xaxis{
+        pointer-events: none;
+        width: 100%;
+        margin-top: 2px;
+        font-size: 15px;
+        text-align: center;
+        
+        }
+     .pair-chart-container{
+        margin-left: auto;
+        margin-right: auto;
+        width: fit-content;
+        padding-right: 15px;
+        display: flex;
+        margin-top: 15px;
+        
+     }
+     .pair-table-elem{
+        background-color:rgb(235, 235, 235);
+        width: 100%;
+        height: 100%;
+        padding: 10px;
+        margin: 2px;
+        font-size: 15px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        color:  rgb(98, 98, 98);
+        white-space: nowrap;
+        z-index: 1000;
+        
+     }
+     .pair-table-row{
+         width: 100%;
+         display: flex;
+        
+      }
+      .pair-table-title-container{
+        background-color:lightgray;
+        width: 100%;
+        margin-bottom: 2px;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        font-size: 15px;
+        display: flex;
+        color:  rgb(98, 98, 98);
+        
+     }
+     .pair-table-title{
+       width: 100%;
+       margin: 10px;
+       text-overflow: ellipsis;
+       overflow: hidden;
+       white-space: nowrap;
+      }
+      
 }
 @media (min-width: 1200px) {
 
@@ -163,10 +355,11 @@
     }
 
     .reports-date{
+        text-align: right;
         font-weight:200px;
         margin-right: 50px;
         float:right;
-        width: fit-content;
+        width: 100%;
         height:130px;
         padding-top: 30px;
         font-size: 50px;
@@ -175,20 +368,36 @@
     }
 
     .report-container{
-    display: flex;
-    margin-bottom: 30px;
-    margin-right: 30px;
+        display: flex;
+        margin-bottom: 30px;
+        margin-right: 30px;
+    }
+    .report-container-pair{
+        margin-bottom: 30px;
+        margin-right: 30px;
     }
 
     .report-card{
         margin-right: 20px;
-        color: rgb(117, 117, 117);
+        color: rgb(98, 98, 98);
         font-size: 25px;
         padding: 25px;
         width: 100%;
         height: 160px;
         background-color: white;
         border-radius: 15px;
+        box-shadow: 1px 1px 5px gray
+    }
+    .report-card-pair{
+        margin-right: 20px;
+        color: rgb(98, 98, 98);
+        font-size: 25px;
+        padding: 25px;
+        width: 100%;
+        height: 100px;
+        background-color: white;
+        border-radius: 15px;
+        /*text-align: center;*/
         box-shadow: 1px 1px 5px gray
     }
 
@@ -201,9 +410,21 @@
         height: 400px;
         background-color: white;
         border-radius: 15px;
-        box-shadow: 1px 1px 5px gray
+        box-shadow: 1px 1px 5px gray;
     }
-
+    .report-card-large{
+        font-size: 35px;
+        margin-right: 20px;
+        margin-top: 30px;
+        color: rgb(117, 117, 117);
+        overflow: hidden;
+        padding: 25px;
+        width: 100%;
+        height: 700px;
+        background-color: white;
+        border-radius: 15px;
+        box-shadow: 1px 1px 5px gray;
+    }
     .report-card-drop{
         margin-right: 20px;
         color: rgb(117, 117, 117);
@@ -261,11 +482,172 @@
     }
 
     #orders-by-hour{
-        font-size: 500px;
         display: none;
+        padding: 20px;
     }
+    .table-title{
+       width: 100%;
+       margin: 15px;
+     }
+     .table-title-container{
+        background-color:lightgray;
+        width: 100%;
+        height: 100%;
+        margin-bottom: 2px;
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+        font-size: 25px;
+        color:  rgb(98, 98, 98);
+        display: flex;
+     }
+    .orders-by-hour-elem{
+       background-color:rgb(235, 235, 235);
+       width: 100%;
+       height: 100%;
+       padding: 15px;
+       margin: 2px;
+       font-size: 25px;
+       color:  rgb(98, 98, 98);
+    }
+    .orders-by-hour-row{
+        width: 100%;
+        display: flex;
+       
+     }
+     .barchart-container{
+        width:100%;
+        height: 75%;
+        font-size: 20px;
+       margin-left: auto;
+       margin-right: auto;
+       padding-right: 20px;
+     }
+     .piechart-container{
+        width:100%;
+        height: 75%;
+        font-size: 20px;
+       margin-left: auto;
+       margin-right: auto;
+     }
+     #date-pair{
+        color:rgb(98,98,98);
+        padding: 10px;
+        background-color: lightgray;
+        border: none;
+        border-radius: 10px;
+        margin-left: 15px;
+        width: 190px;
+        font-size: 17px;
+     }
+     .pair-row{
+        display: flex;
+     }
+     .pair-elem{
+        font-size: 10px;
+        padding: 1px;
+        width: 10px;
+        height: 10px;
+        margin: 1px;
+        text-align: center;
+        
+        border: gray 0.5px solid;
+       
+     }
+     .pair-elem:hover{
+        font-size: 10px;
+        padding: 1px;
+        width: 10px;
+        height: 10px;
+        margin: 1px;
+        text-align: center;
+        transform: scale(1.5);
+        border: gray 1px solid;
+     }
+     .pair-back{
+        width: fit-content;
+        background-color:white;
+        margin-top: 2px;
+        height: fit-content;
+        
+        
+     }
 
+    .pair-chart-title{
+        width: fit-content;
+        margin-left: auto;
+        margin-right: auto;
+        color: gray;
+        margin-top: 15px;
+        border: 2px gray solid;
+        padding: 10px;
+        font-size: 20px;
+        border-radius: 10px;
+    }
+    .pair-yaxis{
+        width: fit-content;
+        pointer-events: none;
+        font-size: 20px;
+        transform: rotate(-90deg);
+        position: relative;
+        left: 210px;
+        bottom: 8px;
+        }
+    .pair-xaxis{
+        pointer-events: none;
+        width: 100%;
+        margin-top: 2px;
+        font-size: 20px;
+        text-align: center;
+        
+        }
+     .pair-chart-container{
+        margin-left: auto;
+        margin-right: auto;
+        width: fit-content;
+        padding-right: 72px;
+        display: flex;
+        margin-top: 15px;
+        
+     }
+     .pair-table-elem{
+        background-color:rgb(235, 235, 235);
+        width: 100%;
+        height: 100%;
+        padding: 10px;
+        margin: 2px;
+        font-size: 15px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        color:  rgb(98, 98, 98);
+        white-space: nowrap;
+        z-index: 1000;
+        
+     }
+     .pair-table-row{
+         width: 100%;
+         display: flex;
+        
+      }
+      .pair-table-title-container{
+        background-color:lightgray;
+        width: 100%;
+        margin-bottom: 2px;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        font-size: 15px;
+        display: flex;
+        color:  rgb(98, 98, 98);
+        
+     }
+     .pair-table-title{
+       width: 100%;
+       margin: 10px;
+       text-overflow: ellipsis;
+       overflow: hidden;
+       white-space: nowrap;
+      }
 }
+
 
 .page-divider-big{
     padding-bottom: 20px;
