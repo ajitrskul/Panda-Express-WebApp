@@ -48,9 +48,11 @@ function XReports() {
   return (
     
       
-      <div class="reports-background-container"> 
+      <div className="container-fluid page">
       <SidebarManager />
-      <div class="reports-background"> 
+      <div className="page-background-container">
+      <div className="container page-background">
+        
       <div class="title-container">
       <div class="reports-title">
         X Report
@@ -190,6 +192,7 @@ function XReports() {
         </div>
         </div>
         
+      </div>
       </div>
       </div>
      

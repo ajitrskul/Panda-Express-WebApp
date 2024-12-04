@@ -8,7 +8,7 @@ import React, { useEffect } from "react";
 
 export function SidebarManager(){
     const navigate = useNavigate();
-    const location=useLocation();
+    const location = useLocation();
 
     const InitColors = async () =>{
       if ((location.pathname)==="/manager/xreports"){
@@ -58,9 +58,14 @@ export function SidebarManager(){
           headers: {
             'Content-Type': 'text/plain'
           }
+      
         });
       }
-
+      
+      if (id!=="pairreports"){
+        api.post('/manager/pairreports', {sDate: new Date()}, {timeout: 60000});
+        api.post('/manager/pairreports', {eDate: new Date()}, {timeout: 60000});
+      }
 
         switch(id){
           default:
