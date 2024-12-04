@@ -520,7 +520,8 @@ def get_products():
                         ProductItem.protein,
                         ProductItem.image,
                         ProductItem.is_premium,
-                        ProductItem.cost_per_case).order_by(ProductItem.product_id).all()
+                        ProductItem.cost_per_case,
+                        ProductItem.in_season).order_by(ProductItem.product_id).all()
 
         product_data = [
             {   "product_id": product.product_id,
@@ -540,7 +541,8 @@ def get_products():
                 "protein": product.protein,
                 "image": product.image,
                 "is_premium": product.is_premium,
-                "cpc": product.cost_per_case} for product in products
+                "cpc": product.cost_per_case,
+                "in_season": product.in_season} for product in products
         ]
         return jsonify(product_data)
     except Exception as e:
@@ -593,7 +595,8 @@ def update_products():
                     is_premium = data.get("is_premium"),
                     quantity_in_cases = 0,
                     servings_per_case = 50,
-                    cost_per_case = data.get("cpc")
+                    cost_per_case = data.get("cpc"),
+                    in_season = True
                 )
                 db.session.add(new_product)
 
@@ -611,7 +614,23 @@ def delete_products():
     try:
         with db.session.begin():
             product = db.session.query(ProductItem).filter_by(product_id=id).first()
-            db.session.delete(product)
+            product.in_season = False
+            db.session.commit()
+        return {}
+    except Exception as e:
+        db.session.rollback()
+        print(f"An error occurred: {e}")
+        return {}
+
+@manager_bp.route('/products/activate', methods=["POST"])
+def activate_products():
+    data = request.get_json()
+    id = data.get("id")
+    try:
+        with db.session.begin():
+            product = db.session.query(ProductItem).filter_by(product_id=id).first()
+            product.in_season = True
+            db.session.commit()
         return {}
     except Exception as e:
         db.session.rollback()

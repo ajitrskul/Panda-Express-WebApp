@@ -24,6 +24,7 @@ class ProductItem(db.Model):
     quantity_in_cases = db.Column(db.Integer, nullable=False)
     servings_per_case = db.Column(db.Integer, nullable=False)
     cost_per_case = db.Column(db.Integer, nullable=False)
+    in_season = db.Column(db.Boolean, nullable=True)
 
 class MenuItem(db.Model):
     __tablename__ = 'menu_item'

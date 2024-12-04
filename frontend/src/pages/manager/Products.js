@@ -46,6 +46,15 @@ function Products() {
     }
   };
 
+  const activateProduct = async (id) => {
+    try {
+      await api.post("/manager/products/activate", { id });
+      window.location.reload();
+    } catch (error) {
+      console.error("Error deleting product:", error);
+    }
+  };
+
   const handleInputChange = (e, field) => {
     const { value, type, checked } = e.target;
     setNewProduct((prev) => ({
@@ -110,7 +119,7 @@ function Products() {
                 <div className="card h-100 w-100 d-flex justify-content-center align-items-center bg-white hover-zoom inventory-card">
                   <div className="card-body">
                     <h5 className="card-text">{item.product_name}</h5>
-                    <button
+                    {item.in_season && (<button
                         onClick={(e) => {
                           e.stopPropagation();
                           deleteProduct(item.product_id);
@@ -118,7 +127,16 @@ function Products() {
                         className="btn btn-danger delete-button"
                       >
                         Delete
-                      </button>
+                      </button>)}
+                    {!item.in_season && (<button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          activateProduct(item.product_id);
+                        }}
+                        className="btn btn-success delete-button"
+                      >
+                        Activate
+                      </button>)}
                   </div>
                   <div className="hover-view">Click To View Details</div>
                 </div>
@@ -145,13 +163,21 @@ function Products() {
                 </div>
                 <div className="col-md-6 mb-3">
                   <label>Type</label>
-                  <input
+                  <select
                     type="text"
                     className="form-control text-center"
                     value={newProduct.type}
                     onChange={(e) => handleInputChange(e, "type")}
                     required
-                  />
+                  >
+                    <option value>Select Option</option>
+                    <option value="side">side</option>
+                    <option value="entree">entree</option>
+                    <option value="appetizer">appetizer</option>
+                    <option value="dessert">dessert</option>
+                    <option value="fountainDrink">fountainDrink</option>
+                    <option value="drink">drink</option>
+                  </select>
                 </div>
                 <div className="col-md-6 mb-3">
                   <label>Servings Remaining</label>

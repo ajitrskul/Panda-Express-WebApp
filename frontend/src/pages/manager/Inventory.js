@@ -66,7 +66,7 @@ function Inventory() {
     try {
       for (const item of inventory) {
         const amount = restockAmounts[item.name];
-        await api.post("/manager/inventory/restock", { itemName: item.name, amount });
+        await api.post("/manager/inventory/restock/low", { itemName: item.name, amount });
       }
       window.location.reload();
     } catch (error) {
