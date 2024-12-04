@@ -21,7 +21,7 @@ def get_menu_items():
     ).fetchall()
 
     single_drink = db.session.execute(
-        text("SELECT * FROM menu_item WHERE item_name = 'drinks' LIMIT 1")
+        text("SELECT * FROM menu_item WHERE item_name = 'drink' LIMIT 1")
     ).fetchall()
 
     all_other_items = db.session.execute(
@@ -30,7 +30,7 @@ def get_menu_items():
             WHERE item_name NOT LIKE 'appetizer%' 
             AND item_name NOT LIKE 'dessert%' 
             AND item_name NOT LIKE 'aLaCarte%'
-            AND item_name NOT LIKE 'drinks%'
+            AND item_name NOT LIKE 'drink%'
             ORDER BY menu_item_id ASC
         """)
     ).fetchall()
@@ -152,8 +152,8 @@ def get_drinks():
     ]
 
     drinks = db.session.execute(
-        text("SELECT * FROM product_item WHERE type = :type ORDER BY product_id ASC"), 
-        {'type': 'drink'}
+        text("SELECT * FROM product_item WHERE type = :type1 OR type = :type2 ORDER BY product_id ASC"), 
+        {'type1': 'drink', 'type2': 'fountainDrink'}
     ).fetchall()
 
     drinks_list = [

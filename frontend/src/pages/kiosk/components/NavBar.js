@@ -1,5 +1,5 @@
 import axios from "axios";
-import beastLogo from "./beastLogo.png";
+import beastLogo from "../../../assets/beast-logo.png";
 import "../../../styles/navbar.css";
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { useEffect, useState, useContext } from "react";
