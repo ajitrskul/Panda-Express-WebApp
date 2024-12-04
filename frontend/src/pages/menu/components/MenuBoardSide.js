@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../styles/menu.css';
 
-const MenuBoardSide = ({name, image, calories, icons}) => {
+const MenuBoardSide = ({ name, image, calories, icons }) => {
     return (
         <div className='card my-2'>
             <div className="row">
@@ -13,10 +13,10 @@ const MenuBoardSide = ({name, image, calories, icons}) => {
                     </div>
                 </div>
                 <div className="col">
-                <div className='card-body'>
-                    <p className='card-text'>
-                        {calories}
-                    </p>
+                    <div className='card-body'>
+                        <p className='card-text'>
+                            {calories}
+                        </p>
                     </div>
                 </div>
             </div>

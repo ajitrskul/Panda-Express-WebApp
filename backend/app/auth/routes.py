@@ -10,8 +10,6 @@ from google_auth_oauthlib.flow import Flow
 from pip._vendor import cachecontrol
 import google.auth.transport.requests
 from flask import current_app
-import base64
-import json
 import requests
 import os
 
@@ -22,7 +20,7 @@ GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
 def auth_home():
     session.setdefault("name", None)
     session.setdefault("email", None)
-    session.setdefault("state", None)
+    session.setdefault("state", "mystate")
     return {"message": "Welcome to Login Page"}
 
 
@@ -106,6 +104,13 @@ def authenticate_db():
         employee = db.session.query(Employee).filter_by(email=email).first()
 
     if employee:
+        if employee.role == 'fired':
+            re_route_link = current_app.config['base_url'] + "/auth/signin/error"
+            return redirect(re_route_link)
+
+        current_app.config["name"] = employee.first_name
+        current_app.config["role"] = employee.role
+        current_app.config["email"] = employee.email
         if employee.role == 'manager':
             return jsonify({"success": True, "password": employee.password, "route": "/manager"})
         elif employee.role == 'fired':
@@ -119,7 +124,7 @@ def authenticate_db():
 @auth_bp.route("/signin/google", methods=["GET"])
 def authenticate_google():
     flow = current_app.config['OAUTH_FLOW']
-    authorization_url, _ = flow.authorization_url(state=None)
+    authorization_url, _ = flow.authorization_url(state="mystate")
     return redirect(authorization_url)
 
 
@@ -147,14 +152,20 @@ def callback():
             employee = db.session.query(Employee).filter_by(email=email).first()
 
         if employee:
+            if employee.role == 'fired':
+                re_route_link = current_app.config['base_url'] + "/auth/signin/error"
+                return redirect(re_route_link)
+            
             if employee.role == 'manager':
                 re_route_link = current_app.config['base_url'] + "/manager"
             elif employee.role == 'fired':
                 re_route_link = current_app.config['base_url'] + "/auth/error"
             else:
                 re_route_link = current_app.config['base_url'] + "/pos"
-            session["name"] = id_info.get("name")
-            session["email"] = id_info.get("email")
+
+            current_app.config["name"] = id_info.get("name")
+            current_app.config["role"] = employee.role
+            current_app.config["email"] = id_info.get("email")
             return redirect(re_route_link)
         else:
             re_route_link = current_app.config['base_url'] + "/auth/error"
@@ -164,7 +175,15 @@ def callback():
         re_route_link = current_app.config['base_url'] + "/auth/signup/error"
         print(f"An error occurred: {e}")
         return redirect(re_route_link)
- 
+
+@auth_bp.route("/manager/permission")
+def manager_perm():
+    if("role" in current_app.config and current_app.config["role"] == 'cashier'):
+        to_return = {"authenticate": True}
+        return jsonify(to_return)
+    else:
+        to_return = {"authenticate": False}
+        return jsonify(to_return)
  
 @auth_bp.route("/login/customer", methods=["POST"])
 def login():

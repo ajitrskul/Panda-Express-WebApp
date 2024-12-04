@@ -34,6 +34,9 @@ flow = Flow.from_client_secrets_file(
 )
 app.config['OAUTH_FLOW'] = flow
 app.config['base_url'] = "http://localhost:3000"
+app.config["name"] = None
+app.config["role"] = None
+app.config["email"] = None
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=5001, debug=True)
