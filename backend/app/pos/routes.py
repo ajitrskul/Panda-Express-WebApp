@@ -4,12 +4,33 @@ from sqlalchemy import text
 from app.extensions import db
 from datetime import datetime
 
+
 @pos_bp.route('/', methods=['GET'])
 def cashier_home():
+    """
+    Welcome message for the Cashier POS.
+    ---
+    tags:
+      - POS
+    responses:
+      200:
+        description: Welcome message for the Cashier POS.
+    """
     return {"message": "Welcome to the Cashier POS"}
+
 
 @pos_bp.route('/menu', methods=['GET'])
 def get_menu_items():
+    """
+    Retrieve all menu items including specific appetizer, a la carte, and drink items.
+    ---
+    tags:
+      - POS
+      - Menu
+    responses:
+      200:
+        description: List of menu items retrieved successfully.
+    """
     single_appetizer = db.session.execute(
         text("SELECT * FROM menu_item WHERE item_name = 'appetizerSmall' LIMIT 1")
     ).fetchall()
@@ -55,6 +76,16 @@ def get_menu_items():
 
 @pos_bp.route('/sides', methods=['GET'])
 def get_sides():
+    """
+    Retrieve all side items.
+    ---
+    tags:
+      - POS
+      - Sides
+    responses:
+      200:
+        description: List of side items retrieved successfully.
+    """
     sides = db.session.execute(
         text("SELECT * FROM product_item WHERE type = :type ORDER BY product_id ASC"), 
         {'type': 'side'}
@@ -88,6 +119,16 @@ def get_sides():
 
 @pos_bp.route('/entrees', methods=['GET'])
 def get_entrees():
+    """
+    Retrieve all entree items.
+    ---
+    tags:
+      - POS
+      - Entrees
+    responses:
+      200:
+        description: List of entree items retrieved successfully.
+    """
     entrees = db.session.execute(
         text("SELECT * FROM product_item WHERE type = :type ORDER BY product_id ASC"), 
         {'type': 'entree'}
@@ -121,6 +162,16 @@ def get_entrees():
 
 @pos_bp.route('/alacarte', methods=['GET'])
 def get_a_la_carte():
+    """
+    Retrieve all a la carte items, including entrees and sides.
+    ---
+    tags:
+      - POS
+      - A La Carte
+    responses:
+      200:
+        description: List of a la carte items retrieved successfully.
+    """
     products = db.session.execute(
         text("SELECT * FROM product_item WHERE type = :type1 OR type = :type2 ORDER BY product_id ASC"), 
         {'type1': 'entree', 'type2': 'side'}
@@ -154,6 +205,17 @@ def get_a_la_carte():
 
 @pos_bp.route('/appetizer', methods=['GET'])
 def get_appetizers():
+    """
+    Retrieve all appetizer and dessert items.
+    ---
+    tags:
+      - POS
+      - Appetizers
+      - Desserts
+    responses:
+      200:
+        description: List of appetizers and desserts retrieved successfully.
+    """
     products = db.session.execute(
         text("SELECT * FROM product_item WHERE type = :type1 OR type = :type2 ORDER BY product_id ASC"), 
         {'type1': 'appetizer', 'type2': 'dessert'}
@@ -187,6 +249,16 @@ def get_appetizers():
 
 @pos_bp.route('/drink', methods=['GET'])
 def get_drinks():
+    """
+    Retrieve all drink items.
+    ---
+    tags:
+      - POS
+      - Drinks
+    responses:
+      200:
+        description: List of drinks retrieved successfully.
+    """
     drinks = db.session.execute(
         text("SELECT * FROM product_item WHERE type = :type1 OR type = :type2 ORDER BY product_id ASC"), 
         {'type1': 'drink', 'type2': 'fountainDrink'}
@@ -220,6 +292,33 @@ def get_drinks():
 
 @pos_bp.route('/size/<string:item_name>/<string:size>', methods=['GET'])
 def get_size_price(item_name, size):
+    """
+    Retrieve the price for a specific menu item size.
+    ---
+    tags:
+      - POS
+      - Pricing
+    parameters:
+      - in: path
+        name: item_name
+        required: true
+        schema:
+          type: string
+        description: Name of the menu item.
+      - in: path
+        name: size
+        required: true
+        schema:
+          type: string
+        description: Size of the menu item (e.g., small, medium, large).
+    responses:
+      200:
+        description: Item size price retrieved successfully.
+      400:
+        description: Invalid size specified.
+      404:
+        description: Size not found.
+    """
     size_mapping = {
         "small": "Small",
         "medium": "Medium",
@@ -254,6 +353,32 @@ def get_size_price(item_name, size):
 
 @pos_bp.route('/checkout', methods=['POST'])
 def checkout():
+    """
+    Visualize a checkout order.
+    ---
+    tags:
+      - POS
+      - Checkout
+    parameters:
+      - in: body
+        name: order
+        required: true
+        schema:
+          type: object
+          properties:
+            items:
+              type: array
+              items:
+                type: object
+            total:
+              type: number
+              format: float
+    responses:
+      200:
+        description: Order data received successfully.
+      500:
+        description: Failed to process the order.
+    """
     try:
         data = request.get_json()
         print("Received Order Data:", data)
@@ -284,6 +409,34 @@ def checkout():
 
 @pos_bp.route('/checkout/confirm', methods=['POST'])
 def confirm_checkout():
+    """
+    Confirm a checkout order and save to the database.
+    ---
+    tags:
+      - POS
+      - Checkout
+    parameters:
+      - in: body
+        name: order
+        required: true
+        schema:
+          type: object
+          properties:
+            items:
+              type: array
+              items:
+                type: object
+            total:
+              type: number
+              format: float
+    responses:
+      201:
+        description: Order confirmed and saved successfully.
+      404:
+        description: Menu item not found.
+      500:
+        description: Failed to confirm the order.
+    """
     try:
         order_data = request.get_json()
         employee_id = 121202  # CHANGE LATER
@@ -386,6 +539,18 @@ def confirm_checkout():
 
 @pos_bp.route('/next-order-id', methods=['GET'])
 def get_next_order_id():
+    """
+    Retrieve the next available order ID.
+    ---
+    tags:
+      - POS
+      - Orders
+    responses:
+      200:
+        description: Next order ID retrieved successfully.
+      500:
+        description: Failed to retrieve the next order ID.
+    """
     try:
         next_order_id_query = text("""
             SELECT MAX(order_id) + 1 AS next_order_id

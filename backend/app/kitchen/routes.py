@@ -7,10 +7,31 @@ from sqlalchemy.orm import joinedload
 
 @kitchen_bp.route('/', methods=['GET'])
 def kitchen_display():
+    """
+    Home endpoint for the Kitchen View.
+    ---
+    tags:
+      - Kitchen
+    responses:
+      200:
+        description: Welcome message for the Kitchen View.
+    """
     return {"message": "Welcome to the Kitchen View"}
 
 @kitchen_bp.route('/orders', methods=['GET'])
 def get_pending_orders():
+    """
+    Retrieve all pending orders.
+    ---
+    tags:
+      - Kitchen
+      - Orders
+    responses:
+      200:
+        description: A list of pending orders with details.
+      500:
+        description: Internal server error while fetching orders.
+    """
     try:
         pending_orders = Order.query.filter_by(is_ready=False).options(
             joinedload(Order.order_menu_items)
@@ -56,6 +77,28 @@ def get_pending_orders():
 
 @kitchen_bp.route('/orders/<int:order_id>/ready', methods=['POST'])
 def mark_order_ready(order_id):
+    """
+    Mark an order as ready.
+    ---
+    tags:
+      - Kitchen
+      - Orders
+    parameters:
+      - in: path
+        name: order_id
+        description: The ID of the order to mark as ready.
+        required: true
+        schema:
+          type: integer
+          example: 123
+    responses:
+      200:
+        description: Order successfully marked as ready.
+      404:
+        description: Order not found.
+      500:
+        description: Internal server error while updating the order.
+    """
     try:
         order = Order.query.get(order_id)
         if not order:
