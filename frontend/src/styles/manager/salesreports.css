@@ -3,9 +3,9 @@
   top:0;
   left:0;
   height:fit-content;
-  min-height: 775px;
-  width:100vw;
-  min-width:800px;
+  min-height: 100vh;
+  width:fit-content;
+  min-width:100vw;
   background-color:rgb(235, 235, 235);
 }
 
@@ -60,4 +60,52 @@
 .sales-top-product {
   font-size:25px;
   font-weight:bold;
+}
+
+.sales-drop{
+  cursor:pointer;
+}
+
+.sales-drop i {
+  cursor:pointer;
+}
+
+.sales-drop:hover i {
+  color:black;
+}
+
+.sales-drop:hover {
+  background-color: rgb(221, 221, 221); 
+}
+
+.sales-datepicker {
+  border-radius:15px;
+  background-color:rgb(221, 221, 221);
+  border: solid;
+  border-width: 1px;
+  border-color: rgb(192, 192, 192);
+  color:rgb(98, 98, 98);
+  font-size:18px;
+  padding-left:10px;
+}
+
+.sales-button {
+  border:none;
+  border-radius:15px;
+  padding:0px 10px;
+  margin-left: 30px;
+  color:white;
+
+  background-color: #A3080C;
+
+  border:solid;
+  border-color: #A3080C;
+  border-width:1px;
+
+  font-size:18px;
+}
+
+.sales-button:hover {
+  opacity:0.8;
+  background-color: #cd0c13;
 }

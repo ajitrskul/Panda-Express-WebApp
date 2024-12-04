@@ -61,7 +61,7 @@ class Employee(db.Model):
 class Order(db.Model):
     __tablename__ = 'order'
 
-    order_id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.Integer, primary_key=True, index=True)
     order_date_time = db.Column(db.DateTime, nullable=False, default=datetime.now(timezone.utc))
     employee_id = db.Column(db.Integer, db.ForeignKey('employee_info.employee_id'), nullable=True)
     total_price = db.Column(db.Numeric(7, 2), nullable=False)
@@ -72,8 +72,8 @@ class Order(db.Model):
 class OrderMenuItem(db.Model):
     __tablename__ = 'order_menu_item'
 
-    order_menu_item_id = db.Column(db.Integer, primary_key=True)
-    order_id = db.Column(db.Integer, db.ForeignKey('order.order_id'), nullable=False)
+    order_menu_item_id = db.Column(db.Integer, primary_key=True, index=True)
+    order_id = db.Column(db.Integer, db.ForeignKey('order.order_id'), nullable=False, index=True)
     menu_item_id = db.Column(db.Integer, db.ForeignKey('menu_item.menu_item_id'), nullable=False)
     subtotal_price = db.Column(db.Numeric(7, 2), nullable=False)
 
