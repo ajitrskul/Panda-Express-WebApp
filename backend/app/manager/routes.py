@@ -1,9 +1,10 @@
 from . import manager_bp
 from flask import jsonify, request
 from app.extensions import db
-from app.models import ProductItem, OrderMenuItem, OrderMenuItemProduct, Order, MenuItem
+from app.models import ProductItem, OrderMenuItem, OrderMenuItemProduct, Order, MenuItem, Employee
 from sqlalchemy import func
 import re
+from random import randrange
 
 @manager_bp.route('/', methods=['GET'])
 def manager_dashboard():
@@ -160,3 +161,64 @@ def salesReport():
         output["histogram"] = menuItemList
     
     return jsonify(output)
+
+@manager_bp.route('/employee/get', methods=['GET'])
+def getEmployees():
+    employees = db.session.query(Employee.employee_id, Employee.first_name, Employee.last_name, Employee.email, Employee.role).all()
+
+    employee_list = []
+
+    if not employees:
+        employee_list = [{"id":"error", "name":"error", "email":"error", "role":"error"}]
+    else:
+        for employee in employees:
+            employee_list += [{"id":employee.employee_id, "name":f'{employee.first_name} {employee.last_name}', "email":employee.email, "role":employee.role}]
+    
+    return jsonify(employee_list)
+
+@manager_bp.route('/employee/fire', methods=['POST'])
+def fireEmployee():
+    id = request.get_data()
+    id = id.decode('utf-8')
+
+    print(id)
+
+    employee = Employee.query.filter_by(employee_id=id).first()
+
+    if employee:
+        employee.role = "fired"
+
+        db.session.commit()
+    
+    return {200: "Successfully fired employee"}
+
+@manager_bp.route('/employee/email', methods=['POST'])
+def checkEmail():
+    employeeEmail = request.get_data()
+    employeeEmail = employeeEmail.decode('utf-8')
+
+    #returns instance of customer model
+    employee = Employee.query.filter_by(email=employeeEmail).first()
+
+    if (employee == None):
+        return jsonify(True)
+    else:
+        return jsonify(False)
+
+@manager_bp.route('/employee/add', methods=['POST'])
+def addEmployee():
+    data = request.get_json()
+
+    employee_ids = db.session.query(Employee.employee_id).all()
+
+    employee_id_list = [employee.employee_id for employee in employee_ids]
+
+    random_id = randrange(0, 1000000)
+    while random_id in employee_id_list:
+        random_id = randrange(0, 1000000)
+
+    new_employee = Employee(employee_id=random_id, email=data['email'], password=data['password'], first_name=data['first_name'], last_name=data['last_name'], role=data['role'])
+    db.session.add(new_employee)
+    db.session.commit()
+
+    return jsonify({"message": "employee data received"}), 200
