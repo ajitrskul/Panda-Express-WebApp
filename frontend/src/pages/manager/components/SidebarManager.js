@@ -25,6 +25,11 @@ export function SidebarManager(){
         document.getElementById("restockreports").style.backgroundColor="#77070a";
         document.getElementById("reports").style.backgroundColor="#8c070c";
       }
+      if ((location.pathname)==="/manager/productusage"){
+        dropdownFunction();
+        document.getElementById("productusage").style.backgroundColor="#77070a";
+        document.getElementById("reports").style.backgroundColor="#8c070c";
+      }
       if ((location.pathname)==="/manager/salesreports"){
         dropdownFunction();
         document.getElementById("salesreports").style.backgroundColor="#77070a";
@@ -82,6 +87,9 @@ export function SidebarManager(){
             break;
           case "inventory":
             navigate("/manager/inventory");
+            break;
+          case "productusage":
+            navigate("/manager/productusage");
             break;
           }
       };
@@ -177,6 +185,10 @@ export function SidebarManager(){
               <div class="manager-sidebar-text3">Restock Reports</div>
             </div>
 
+            <div class="sidebar-drop-item"  id="productusage" onClick={SidebarClick}>
+              <div class="manager-sidebar-text3">Product Usage</div>
+            </div>
+            
             <div class="sidebar-drop-item"  id="salesreports" onClick={SidebarClick}>
               <div class="manager-sidebar-text3">Sales Reports</div>
             </div>

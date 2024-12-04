@@ -23,7 +23,7 @@
   }
   
   .checkout-button.rolling {
-    transform: translateX(-350px) rotate(-360deg);
+    transform: translateX(-420px) rotate(-360deg);
   }
   
   .cart-icon {

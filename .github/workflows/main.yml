@@ -27,7 +27,7 @@ jobs:
       - name: Build frontend
         working-directory: ./frontend
         run: |
-          npm install
+          npm install --legacy-peer-deps
           CI=false npm run build
 
       - name: Move frontend build to backend

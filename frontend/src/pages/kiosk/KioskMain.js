@@ -61,7 +61,11 @@ function KioskMain() {
         state: { 
           numSides: item.max_sides, 
           numEntrees: item.max_entrees,
-          itemName: formatItemName(item.item_name) 
+          itemName: formatItemName(item.item_name),
+          realItemName: item.item_name,
+          itemImage: item.image,
+          basePrice: item.menu_item_base_price,
+          premiumMultiplier: item.premium_multiplier
         }
       });
     }

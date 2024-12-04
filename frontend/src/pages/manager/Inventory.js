@@ -7,6 +7,7 @@ function Inventory() {
   const [inventory, setInventory] = useState([]);
   const [restockAmounts, setRestockAmounts] = useState({});
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const fetchInventory = async () => {
@@ -37,6 +38,32 @@ function Inventory() {
     }
   };
 
+  const handleSearch = async (e) => {
+    const term = e.target.value.toLowerCase();
+    setSearchTerm(term);
+    if(term === ""){
+      const response = await api.get("/manager/inventory");
+      setInventory(response.data);
+    } else{
+      const filtered = inventory.filter((item) =>
+        item.name.toLowerCase().includes(term)
+      );
+      setInventory(filtered);
+    }
+  };
+
+  const handleRestockAll = async () => {
+    try {
+      for (const item of inventory) {
+        const amount = restockAmounts[item.name];
+        await api.post("/manager/inventory/restock", { itemName: item.name, amount });
+      }
+      window.location.reload();
+    } catch (error) {
+      console.error("Error restocking all items:", error);
+    }
+  };
+
   const handleInputChange = (e, itemName) => {
     const value = parseInt(e.target.value, 10) || 0;
     setRestockAmounts((prev) => ({
@@ -50,12 +77,27 @@ function Inventory() {
   }
 
   return (
-    <div className="container-fluid inventory-page">
+    <div className="container-fluid page">
       <SidebarManager />
-      <div className="inventory-background-container">
-        <div className="container inventory-background">
-          <h2 className="inventory-title text-center">Inventory Management</h2>
-          <hr class="inventory-divider-big"></hr>
+      <div className="page-background-container">
+        <div className="container page-background">
+          <h2 className="page-title text-center">Inventory Management</h2>
+          <hr class="page-divider-big"></hr>
+          <div className="d-flex justify-content-between align-items-center mb-4">
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={handleSearch}
+              className="form-control w-50"
+              placeholder="Search Inventory"
+            />
+            <button
+              onClick={handleRestockAll}
+              className="btn btn-success"
+            >
+              Restock All Low Items
+            </button>
+          </div>
           <div className="row">
             {inventory.map((item) => (
               <div

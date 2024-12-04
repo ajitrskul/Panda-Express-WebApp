@@ -1,20 +1,21 @@
-.add-to-cart-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-  }
-  
-  .add-to-cart-button {
-    background-color: #ff6f61; /* Use your theme's primary color */
-    color: #fff;
-    font-size: 1.5rem;
-    padding: 10px 30px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .add-to-cart-button:hover {
-    background-color: #e55a4e; /* Slightly darker shade on hover */
-  }
+.add-to-cart-container-top {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+  margin-bottom: 20px; /* Add some spacing from selection grid */
+}
+
+.add-to-cart-button {
+  background-color: #a3080c; 
+  color: #fff;
+  font-size: 1.5rem;
+  padding: 10px 30px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.add-to-cart-button:hover {
+  background-color: #e55a4e; 
+}

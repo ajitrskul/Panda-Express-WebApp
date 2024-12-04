@@ -35,6 +35,9 @@ flow = Flow.from_client_secrets_file(
 
 app.config['OAUTH_FLOW'] = flow
 app.config['base_url'] = "https://project-3-01-beastmode-1fed971de919.herokuapp.com"
+app.config["name"] = None
+app.config["role"] = None
+app.config["email"] = None
 
 # Serve React app
 @app.route('/')
