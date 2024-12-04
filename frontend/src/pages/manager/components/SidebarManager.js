@@ -3,7 +3,8 @@ import '../../../styles/sidebar-manager.css';
 import { useNavigate } from "react-router-dom";
 import beastLogo from "../../../assets/beast-logo.png";
 import { useLocation } from 'react-router-dom';
-import { useEffect } from "react";
+import api from '../../../services/api'; 
+import React, { useEffect } from "react";
 
 export function SidebarManager(){
     const navigate = useNavigate();
@@ -18,6 +19,11 @@ export function SidebarManager(){
       if ((location.pathname)==="/manager/zreports"){
         dropdownFunction();
         document.getElementById("zreports").style.backgroundColor="#77070a";
+        document.getElementById("reports").style.backgroundColor="#8c070c";
+      }
+      if ((location.pathname)==="/manager/pairreports"){
+        dropdownFunction();
+        document.getElementById("pairreports").style.backgroundColor="#77070a";
         document.getElementById("reports").style.backgroundColor="#8c070c";
       }
       if ((location.pathname)==="/manager/restockreports"){
@@ -47,6 +53,15 @@ export function SidebarManager(){
     }
     const SidebarClick = (event) =>{
       const id=event.target.id;
+      if (id!=="zreports"){
+        api.post('/manager/xzreports', "LEAVE", {timeout: 60000,
+          headers: {
+            'Content-Type': 'text/plain'
+          }
+        });
+      }
+
+
         switch(id){
           default:
             navigate("/manager");
@@ -75,6 +90,9 @@ export function SidebarManager(){
             break;
           case "restockreports":
             navigate("/manager/restockreports");
+            break;
+          case "pairreports":
+            navigate("/manager/pairreports");
             break;
           case "salesreports":
             navigate("/manager/salesreports");
@@ -119,9 +137,13 @@ export function SidebarManager(){
           reportsDrop.style.display="none";
         }
       };
+
       useEffect(() => {
-        InitColors(); 
-      });
+      InitColors();
+      // eslint-disable-next-line 
+      },[]);
+      /*^the [] needs to be there for dropdown menu to work*/
+
     return (
         <div class="manager-sidebar" id="manager-sidebar">
           <div class="logo-display" id="manager" onClick={SidebarClick}>
@@ -185,6 +207,10 @@ export function SidebarManager(){
               <div class="manager-sidebar-text3">Restock Reports</div>
             </div>
 
+            <div class="sidebar-drop-item"  id="pairreports" onClick={SidebarClick}>
+              <div class="manager-sidebar-text3">Paired Products Report</div>
+            </div>
+        
             <div class="sidebar-drop-item"  id="productusage" onClick={SidebarClick}>
               <div class="manager-sidebar-text3">Product Usage</div>
             </div>
