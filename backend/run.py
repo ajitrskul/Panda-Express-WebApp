@@ -87,10 +87,15 @@ def swagger_json():
     }
     return jsonify(swagger_doc)
 
-SWAGGER_URL = '/swagger/'
-API_URL = '/swagger.json' 
-
-swaggerui_blueprint = get_swaggerui_blueprint(SWAGGER_URL, API_URL)
+SWAGGER_URL = '/swagger'
+API_URL = '/swagger.json'
+swaggerui_blueprint = get_swaggerui_blueprint(
+    SWAGGER_URL,
+    API_URL,
+    config={
+        'app_name': "Flask App API"
+    }
+)
 app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
 
 if __name__ == "__main__":
