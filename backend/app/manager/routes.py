@@ -172,7 +172,7 @@ def getEmployees():
         employee_list = [{"id":"error", "name":"error", "email":"error", "role":"error"}]
     else:
         for employee in employees:
-            employee_list += [{"id":employee.employee_id, "name":f'{employee.first_name} {employee.last_name}', "email":employee.email, "role":employee.role}]
+            employee_list += [{"id":employee.employee_id, "name":f'{employee.first_name} {employee.last_name}', "email":employee.email, "role":employee.role, "first_name": employee.first_name, "last_name": employee.last_name}]
     
     return jsonify(employee_list)
 
@@ -205,6 +205,21 @@ def checkEmail():
     else:
         return jsonify(False)
 
+@manager_bp.route('/employee/addemail', methods=['POST'])
+def addEmailCheck():
+    employeeEmail = request.get_data()
+    employeeEmail = employeeEmail.decode('utf-8')
+
+    #returns instance of customer model
+    employees = Employee.query.filter_by(email=employeeEmail).all()
+    count = len(employees)
+    # for employee in employees:
+    #     count += 1
+    if (count == 0 or count == 1):
+        return jsonify(True)
+    else:
+        return jsonify(False)
+
 @manager_bp.route('/employee/add', methods=['POST'])
 def addEmployee():
     data = request.get_json()
@@ -213,7 +228,7 @@ def addEmployee():
 
     employee_id_list = [employee.employee_id for employee in employee_ids]
 
-    random_id = randrange(0, 1000000)
+    random_id = randrange(100000, 1000000)
     while random_id in employee_id_list:
         random_id = randrange(0, 1000000)
 
@@ -222,3 +237,28 @@ def addEmployee():
     db.session.commit()
 
     return jsonify({"message": "employee data received"}), 200
+
+@manager_bp.route('/employee/edit', methods=['POST'])
+def editEmployee():
+    data = request.get_json()
+
+    employee = db.session.query(Employee).filter_by(employee_id=data["id"]).first()
+
+    # If the employee is not found, return a 404 error
+    if not employee:
+        return jsonify({"error": "Employee not found"}), 404
+
+    setattr(employee, "email", data["email"])
+    setattr(employee, "first_name", data["first_name"])
+    setattr(employee, "last_name", data["last_name"])
+    setattr(employee, "role", data["role"])
+
+    db.session.commit()
+
+    return jsonify({"message": "Employee updated successfully", "employee": {
+            "employee_id": employee.employee_id,
+            "email": employee.email,
+            "first_name": employee.first_name,
+            "last_name": employee.last_name,
+            "role": employee.role
+        }}), 200

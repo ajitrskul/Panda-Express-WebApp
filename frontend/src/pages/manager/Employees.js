@@ -165,79 +165,15 @@ function Employees() {
             }
             else {
               await api.post("/manager/employee/add", {...newEmployee, password: hashPassword});
-              newEmployee = {
-                email: "",
-                first_name: "",
-                last_name: "",
-                password: "",
-                role: ""
-              };
-              newEmployeeError = {
-                email: "",
-                first_name: "",
-                last_name: "",
-                password: "",
-                role: "",
-                valid_email: {
-                  email_class: "employee-add-input",
-                  isHighlighted: false
-                },
-                valid_first_name: {
-                  first_name_class: "employee-add-input",
-                  isHighlighted: false
-                },
-                valid_last_name: {
-                  last_name_class: "employee-add-input",
-                  isHighlighted: false
-                },
-                valid_password: {
-                  password_class: "employee-add-input",
-                  isHighlighted: false
-                },
-                valid_role: {
-                  role_class: "employee-add-input",
-                  isHighlighted: false
-                }
-              };
+              fetchEmployees();
+              closePopUp();
               return; //adding to database successful
             }
           }
           else {
             await api.post("/manager/employee/add", newEmployee);
-            newEmployee = {
-              email: "",
-              first_name: "",
-              last_name: "",
-              password: "",
-              role: ""
-            };
-            newEmployeeError = {
-              email: "",
-              first_name: "",
-              last_name: "",
-              password: "",
-              role: "",
-              valid_email: {
-                email_class: "employee-add-input",
-                isHighlighted: false
-              },
-              valid_first_name: {
-                first_name_class: "employee-add-input",
-                isHighlighted: false
-              },
-              valid_last_name: {
-                last_name_class: "employee-add-input",
-                isHighlighted: false
-              },
-              valid_password: {
-                password_class: "employee-add-input",
-                isHighlighted: false
-              },
-              valid_role: {
-                role_class: "employee-add-input",
-                isHighlighted: false
-              }
-            };
+            fetchEmployees();
+            closePopUp();
             return; //adding to database successful
           }
         }
@@ -384,15 +320,16 @@ function Employees() {
       editEmployee: false,
       addEmployee: false
     });
-    
-    newEmployee = {
+
+    setNewEmployee({
       email: "",
       first_name: "",
       last_name: "",
       password: "",
       role: ""
-    };
-    newEmployeeError = {
+    });
+
+    setNewEmployeeError({
       email: "",
       first_name: "",
       last_name: "",
@@ -418,22 +355,59 @@ function Employees() {
         role_class: "employee-add-input",
         isHighlighted: false
       }
-    };
+    });
   }
 
-  const openPopUp = (event) => {
-    const id = event.target.id;
-    if (id === "add-employee") {
-      setPopUp({...popup, addEmployee: true});
+  const openAddEmployee = () => {
+    setPopUp({
+      addEmployee: true,
+      editEmployee: false
+    });
+  }
+
+  const openEditEmployee = (id) => {
+    //get employee you're querying for
+    const currentEmployee = employeeData.current.find(employee => id === employee.id);
+    if (currentEmployee) {
+      setNewEmployee(currentEmployee);
     }
-    else {
-      setPopUp({
-        editEmployee: true
-      });
+    
+
+    setPopUp({
+      addEmployee: false,
+      editEmployee: true
+    });
+  }
+
+  const editEmployee = async () => {
+    try {
+      const response = await api.post("/manager/employee/addemail", newEmployee.email);
+      if (!response.data) { //email used by other employee in database
+        setNewEmployeeError({
+          ...newEmployeeError,
+          email: "Email already in use",
+          valid_email: {
+            email_class: "employee-add-input invalid-input",
+            isHighlighted: true
+          }
+        });
+        //email exists
+      }
+      else { //email not used by other employee in database (valid email)
+        await api.post("/manager/employee/edit", newEmployee);
+        fetchEmployees();
+        closePopUp();
+        return; //adding to database successful
+      } //end else
+    } //end try
+    catch {
+      //some error message
     }
   }
 
-  const validateEmployeeChanges = async () => {
+  const validateEmployeeChanges = async (event) => {
+    event.preventDefault();
+
     let isInvalid = false;
     let currentError = {
       email: "",
@@ -550,7 +524,7 @@ function Employees() {
 
     if (!isInvalid) {
       //send request to server
-      //await addEmployee();
+      await editEmployee();
     }
     setSubmitClass({
       button_class: "submit-employee-button",
@@ -596,13 +570,9 @@ function Employees() {
                     <option value="">--Select a role--</option>
                     <option value="manager">manager</option>
                     <option value="cashier">cashier</option>
+                    <option value="fired">fired</option>
                   </select>
                   {newEmployeeError.valid_role.isHighlighted && <p className="add-employee-error">{newEmployeeError.role}</p>}
-                  <label style={{marginLeft:"10px"}}>Password (optional):</label>
-                  <input name="password" value={newEmployee.password} className={newEmployeeError.valid_password.password_class} placeholder="password" onChange={({ target }) => {
-                    handleAddEmployeeInput(target.name, target.value);
-                  }}></input>
-                  {newEmployeeError.valid_password.isHighlighted && <p className="add-employee-error">{newEmployeeError.last_name}</p>}
                 </div>
                 <div className="row justify-content-center">
                   <button type="submit" className={submitClass.button_class}>
@@ -736,7 +706,7 @@ function Employees() {
                   <button className="fire-button" onClick={() => {fireEmployee(employee.id)}}>
                     <i class="bi bi-x-lg"></i>
                   </button>
-                  <button className="edit-employee-button" onClick={openPopUp}>
+                  <button className="edit-employee-button" onClick={() => {openEditEmployee(employee.id)}}>
                     <i class="bi bi-pencil-square"></i>
                   </button>
                 </div>
@@ -744,7 +714,7 @@ function Employees() {
             ))}
 
             <div className="row" style={{minWidth:"900px", marginRight:"10px"}}>
-              <button id="add-employee" className="col text-center add-employee-button" onClick={openPopUp}>
+              <button id="add-employee" className="col text-center add-employee-button" onClick={openAddEmployee}>
                 Add Employee
                 <i className="bi bi-plus-lg" style={{marginLeft:"10px"}}></i>
               </button>
