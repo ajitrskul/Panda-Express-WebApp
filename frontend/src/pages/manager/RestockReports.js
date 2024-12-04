@@ -65,7 +65,7 @@ function RestockReports() {
       <SidebarManager />
       <div className="page-background-container">
         <div className="container page-background">
-          <h2 className="page-title text-center">Restock Report</h2>
+          <h2 className="page-title">Restock Report</h2>
           <hr class="page-divider-big"></hr>
           <div className="text-center mb-4">
             <button

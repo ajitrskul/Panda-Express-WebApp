@@ -250,15 +250,11 @@ def authenticate_db():
         employee = db.session.query(Employee).filter_by(email=email).first()
 
     if employee:
-        if employee.role == 'fired':
-            re_route_link = current_app.config['base_url'] + "/auth/signin/error"
-            return redirect(re_route_link)
-
         current_app.config["name"] = employee.first_name
         current_app.config["role"] = employee.role
         current_app.config["email"] = employee.email
         if employee.role == 'manager':
-            return jsonify({"success": True, "password": employee.password, "route": "/manager"})
+            return jsonify({"success": True, "password": employee.password, "route": "/manager/salesreports"})
         elif employee.role == 'fired':
             return jsonify({"success": True, "password": employee.password, "route": "/auth/error"})
         else:
@@ -318,12 +314,8 @@ def callback():
             employee = db.session.query(Employee).filter_by(email=email).first()
 
         if employee:
-            if employee.role == 'fired':
-                re_route_link = current_app.config['base_url'] + "/auth/signin/error"
-                return redirect(re_route_link)
-            
             if employee.role == 'manager':
-                re_route_link = current_app.config['base_url'] + "/manager"
+                re_route_link = current_app.config['base_url'] + "/manager/salesreports"
             elif employee.role == 'fired':
                 re_route_link = current_app.config['base_url'] + "/auth/error"
             else:

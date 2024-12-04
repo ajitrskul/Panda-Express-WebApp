@@ -46,7 +46,7 @@ function ProductUsage() {
       <SidebarManager />
       <div className="page-background-container">
       <div className="container page-background">
-        <h2 className="page-title text-center">Product Usage Report</h2>
+        <h2 className="page-title">Product Usage Report</h2>
         <hr class="page-divider-big"></hr>
         <form className="mb-4" onSubmit={handleSubmit}>
           <div className="row">
