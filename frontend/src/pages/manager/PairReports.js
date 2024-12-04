@@ -86,9 +86,10 @@ function PairReports() {
   },[startDate,endDate]); 
 
   return (
-    <div class="reports-background-container"> 
-      <SidebarManager></SidebarManager>
-      <div class="reports-background"> 
+    <div className="container-fluid page">
+    <SidebarManager />
+    <div className="page-background-container">
+    <div className="container page-background">
         {/*Title*/}
         <div class="title-container">
           <div class="reports-title">Paired Products Report</div>
@@ -215,6 +216,7 @@ function PairReports() {
         </div>
 
       </div>
+    </div>
     </div>
 );
 }

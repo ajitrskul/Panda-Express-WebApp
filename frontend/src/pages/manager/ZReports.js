@@ -48,9 +48,11 @@ function ZReports() {
   return (
     
       
-      <div class="reports-background-container"> 
-      <SidebarManager></SidebarManager>
-      <div class="reports-background"> 
+      <div className="container-fluid page">
+      <SidebarManager />
+      <div className="page-background-container">
+      <div className="container page-background">
+      
       <div class="title-container">
       <div class="reports-title">
         Z Report
@@ -179,6 +181,7 @@ function ZReports() {
         </div>
         </div>
 
+      </div>
       </div>
       </div>
      
