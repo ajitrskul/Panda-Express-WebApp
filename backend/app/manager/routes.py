@@ -113,19 +113,50 @@ def salesReport():
             i+=1
 
         if (i != 5):
-            for i in range(i, 5):
-                output[f"product{i+1}"] = {"name": "N/A", "count": "Null"}
+            for i in range(i, 6):
+                output[f"product{i}"] = {"name": "N/A", "count": "Null"}
 
     if not total_sales:
         total_sales = "N/A"
     else:
-        total_sales = f'${total_sales}'
+        total_sales = f'${total_sales:,.2f}'
     output["totalSales"] = total_sales
 
     if not total_orders:
         total_orders = "N/A"
     output["totalOrders"] = total_orders
 
-    print(output)
 
+    menu_items = db.session.query(
+        MenuItem.item_name,
+        func.count(MenuItem.menu_item_id).label('item_count')
+    ).join(
+        OrderMenuItem, MenuItem.menu_item_id == OrderMenuItem.menu_item_id
+    ).join(
+        Order, OrderMenuItem.order_id == Order.order_id
+    ).filter(
+        Order.order_date_time >= start_date,
+        Order.order_date_time <= end_date
+    ).group_by(
+        MenuItem.menu_item_id
+    ).all()
+
+    mi_prices_dict = {}
+    mi_prices = db.session.query(MenuItem.item_name, MenuItem.premium_multiplier, MenuItem.menu_item_base_price).all()
+    
+    for mi in mi_prices:
+        mi_prices_dict[mi.item_name] = mi.menu_item_base_price + 1.50*mi.premium_multiplier 
+
+    if not menu_items:
+        output["histogram"] =  [{ "category": "N/A", "count": 0, "sales": "$0.00"}, 
+                                { "category": "N/A", "count": 0, "sales": "$0.00"},
+                                { "category": "N/A", "count": 0, "sales": "$0.00"},
+                                { "category": "N/A", "count": 0, "sales": "$0.00"},
+                                { "category": "N/A", "count": 0, "sales": "$0.00"}] 
+    else:
+        menuItemList = []
+        for m in menu_items:
+            menuItemList += [{"category": name_helper(m.item_name), "count": m.item_count, "sales": f'${mi_prices_dict[m.item_name]*m.item_count:,.2f}'}]
+        output["histogram"] = menuItemList
+    
     return jsonify(output)
