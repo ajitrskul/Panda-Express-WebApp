@@ -60,7 +60,7 @@ function MenuMain1() {
   }
 
   return (
-    <div className="container-fluid fullscreen-menu" /*style={{ width: "1400px"}}*/>
+    <div className="container-fluid fullscreen-menu">
       <div className="row">
         <div className="col-5">
           <div className="row row-style-1">
@@ -68,16 +68,16 @@ function MenuMain1() {
           </div>
           <div className="row">
             {menuItems.map((item) => (
-                <div>
-                  <MenuBoardHowTo
+              <div>
+                <MenuBoardHowTo
                   name={formatItemName(item.item_name)}
-                  image={<img src ={item.image} />} 
-                  calories={item.calories} 
-                  description={item.menu_item_description || 'No description available'} 
-                  price={"$"+item.menu_item_base_price}
-                  />
-                </div>
-              ))}
+                  image={<img src={item.image} alt="Menu Board Item" />}
+                  calories={item.calories}
+                  description={item.menu_item_description || 'No description available'}
+                  price={"$" + item.menu_item_base_price}
+                />
+              </div>
+            ))}
           </div>
         </div>
         <div className="col-7">
@@ -86,12 +86,12 @@ function MenuMain1() {
           </div>
           <div className="row">
 
-          {(sides.slice(0,4)).map((side) => (
+            {(sides.slice(0, 4)).map((side) => (
               <div className="col-6">
                 <MenuBoardSide
-                name={formatProductName(side.product_name)}
-                image={<img src ={side.image} />} 
-                calories={side.calories + " cal"} 
+                  name={formatProductName(side.product_name)}
+                  image={<img src={side.image} alt="Side Item" />}
+                  calories={side.calories + " cal"}
                 />
               </div>
             ))}
@@ -102,7 +102,7 @@ function MenuMain1() {
           </div>
           <div className="row">
             <div className="col-5">
-              <img className="a-la-carte-image" src ={aLaCarte.at(0).image}/>
+              <img className="a-la-carte-image" src={aLaCarte.at(0).image} alt="A La Carte Item" />
             </div>
             <table className="col table a-la-carte-table">
               <thead>
@@ -117,19 +117,19 @@ function MenuMain1() {
                 <tr>
                   <th scope="row"> <h3> Sm </h3> </th>
                   <td> <h4> {"$" + aLaCarte.at(2).menu_item_base_price} </h4> </td>
-                  <td> <h4> {"$" + (parseFloat(aLaCarte.at(2).menu_item_base_price) + parseFloat(1.5*aLaCarte.at(2).premium_multiplier)).toFixed(2)} </h4> </td>
+                  <td> <h4> {"$" + (parseFloat(aLaCarte.at(2).menu_item_base_price) + parseFloat(1.5 * aLaCarte.at(2).premium_multiplier)).toFixed(2)} </h4> </td>
                   <td> <h4> {"$" + aLaCarte.at(0).menu_item_base_price} </h4> </td>
                 </tr>
                 <tr>
                   <th scope="row"> <h3> Med </h3> </th>
                   <td> <h4> {"$" + aLaCarte.at(3).menu_item_base_price} </h4> </td>
-                  <td> <h4> {"$" + (parseFloat(aLaCarte.at(3).menu_item_base_price) + parseFloat(1.5*aLaCarte.at(3).premium_multiplier)).toFixed(2)} </h4> </td>
+                  <td> <h4> {"$" + (parseFloat(aLaCarte.at(3).menu_item_base_price) + parseFloat(1.5 * aLaCarte.at(3).premium_multiplier)).toFixed(2)} </h4> </td>
                   <td>  </td>
                 </tr>
                 <tr>
                   <th scope="row"> <h3> Lg </h3> </th>
                   <td> <h4> {"$" + aLaCarte.at(4).menu_item_base_price} </h4> </td>
-                  <td> <h4> {"$" + (parseFloat(aLaCarte.at(4).menu_item_base_price) + parseFloat(1.5*aLaCarte.at(4).premium_multiplier)).toFixed(2)} </h4> </td>
+                  <td> <h4> {"$" + (parseFloat(aLaCarte.at(4).menu_item_base_price) + parseFloat(1.5 * aLaCarte.at(4).premium_multiplier)).toFixed(2)} </h4> </td>
                   <td> <h4> {"$" + aLaCarte.at(1).menu_item_base_price} </h4> </td>
                 </tr>
               </tbody>

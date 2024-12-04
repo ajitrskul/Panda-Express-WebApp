@@ -49,9 +49,9 @@ function KioskMain() {
       .toLowerCase()
       .replace(/\s+/g, '-');
     console.log(formattedName);
-
-    if (formattedName === "drinks") {
-      navigate(`/kiosk/order/drink`);
+  
+    if (formattedName === "drink") {
+      navigate(`/kiosk/order/drinks`);
     } 
     else if (formattedName === "appetizers-&-more") {
       navigate(`/kiosk/order/appetizers-&-more`);

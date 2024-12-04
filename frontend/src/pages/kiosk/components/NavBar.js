@@ -1,12 +1,13 @@
 import axios from "axios";
-import beastLogo from "./beastLogo.png";
+import beastLogo from "../../../assets/beast-logo.png";
 import "../../../styles/navbar.css";
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { useEffect, useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation} from "react-router-dom";
 import { AccountContext } from "../../auth/components/AccountContext";
 
 export function NavBar(){
+  const location = useLocation();
   const { customer, customerSignOut } = useContext(AccountContext);
   const [loginBar, setLoginBar] = useState(false);
 
@@ -73,24 +74,41 @@ export function NavBar(){
     };
   }); 
 
+  const navBack = () => {
+    navigate(`/kiosk/order`);
+  };
+
+  // Determine whether to show the home button or back button
+  const showBackButton = location.pathname.startsWith('/kiosk/order/') && location.pathname !== '/kiosk/order';
+  
     return (
       <div class="row">
         <nav className="navbar fixed-top">
 
-          {/*home button*/}
+           {/* Left-side button (logo or back button) */}
           <div class="col">
-            <button className="home-button" >
-              <img className="logo" src={beastLogo} alt="Beastmode logo" id="home-button" onClick={navHome}></img>
-            </button>
+              {showBackButton ? (
+                <button className="back-button" id="back-button" onClick={navBack}>
+                  <i className="bi bi-arrow-left-circle-fill back-icon"></i>
+                </button>
+              ) : (
+                <button className="home-button" id="home-button" onClick={navHome}>
+                  <img className="logo" src={beastLogo} alt="Beastmode logo"></img>
+                </button>
+              )}
           </div>
 
            {/*display weather*/}
           <div className="col-auto">
             <button className="weather-button">
-              <div className="notranslate" id="weather-text">
-                {temp} °F
-                <img className="weather-icon" src={iconSrc} alt="icon displaying the current weather"></img>
-              </div>
+              {temp && iconSrc ? (
+                  <div className="notranslate" id="weather-text">
+                  {temp} °F
+                  <img className="weather-icon" src={iconSrc} alt="icon displaying the current weather"></img>
+                  </div>
+                ) : (
+                  <div></div>
+                )}
             </button>
           </div>
 

@@ -1,10 +1,348 @@
 from . import manager_bp
+from flask import request, jsonify
+from sqlalchemy import text
+from app.extensions import db
 from flask import jsonify, request
 from app.extensions import db
+from app.models import ProductItem, OrderMenuItem, OrderMenuItemProduct, Order, MenuItem, Employee
+from sqlalchemy import func
 from app.models import ProductItem
 from datetime import datetime
 from sqlalchemy import text
 import re
+from random import randrange
+
+# Global Variables used for resetting X and Z Reports
+newZ=False
+zLeave=False
+startDatePair="2024-09-23 00:00:00"
+endDatePair="2024-09-23 00:00:00"
+
+def date_pull():
+    # Check variables that reset X and Z reports
+    global newZ
+    global zLeave
+    # Find max date in database, to get X Reports Data
+    currDate=db.session.execute(
+    #text("""SELECT order_date_time FROM "order" WHERE order_id = (SELECT max(order_id) FROM "order");""")
+    text(""" SELECT max(order_date_time) FROM "order";""")
+    ).fetchall()
+
+    # Reset X and Z Reports, if Z Reports are clicked and another page is clicked
+    # This happens by pulling all order data > than the latest order time stamp 
+    # (which will return nothing)
+    data=request.data.decode("utf-8")
+    if (data=="Z"):
+         newZ=True
+    if (data=="LEAVE"):
+         zLeave=True
+    if newZ and zLeave:
+        queryTime=str(currDate[0][0])
+    elif zLeave:
+        zLeave=False
+        queryTime=str(currDate[0][0])[0:10] + " 00:00:00"
+    else:
+        queryTime=str(currDate[0][0])[0:10] + " 00:00:00"
+    hourDate=str(currDate[0][0])
+    return [queryTime,hourDate]
+
+@manager_bp.route('/xzreports', methods=['GET','POST'])
+def xreports_data():
+    queryTime=(date_pull())[0]
+    hourDate=(date_pull())[1]
+    currDay=queryTime[5:10]  + "-" + queryTime[0:4]
+    currHour=int(hourDate[11:13])-9
+    
+    # Query Total sales
+    dailySales= db.session.execute(
+    text(f"""SELECT SUM(total_price) FROM "order" WHERE order_date_time > '{queryTime}';""")
+    ).fetchall()
+    
+    # Query total orders
+    sales="$" + str(dailySales[0][0])
+
+    ordersQuery= db.session.execute(
+    text(f"""SELECT COUNT(order_id) FROM "order" WHERE order_date_time > '{queryTime}';""")
+    ).fetchall()
+    orderNum=str(ordersQuery[0][0])
+    if (int(orderNum)==0):
+        currDay=""
+        currHour=""
+        sales=""
+        orderNum=""
+    # Query orders by hour for table
+    ordersQuery= db.session.execute(
+    text(f"""
+         SELECT DATE_PART('hour',order_date_time), count(order_id), sum(total_price)
+        FROM "order" WHERE order_date_time > '{queryTime}'
+        GROUP BY DATE_PART('hour',order_date_time) 
+        ORDER BY DATE_PART('hour', order_date_time)
+         ;""")
+    ).fetchall()
+    ordersByHour=[]
+    dataArr=[]
+    rowArr=[]
+    chartArr=[]
+    chartDict={}
+    totSales=0
+
+    # Format Orders by Hour Table
+    if (len(ordersQuery)!=0):
+        for row in ordersQuery:
+            rowArr=[]
+            chartDict={}
+            for i in range (0,3):
+                if (i==0):
+                    if (int(row[i])<12):
+                        rowArr+=[str(int(row[i])) + ":00 AM"]
+                        chartDict["hour"]=rowArr[0]
+                    elif (int(row[i])==12):
+                        rowArr+=[str(int(row[i])) + ":00 PM"]
+                        chartDict["hour"]=rowArr[0]
+                    else:
+                        rowArr+=[str(int(row[i])-12) + ":00 PM"]
+                        chartDict["hour"]=rowArr[0]
+                elif (i==1):
+                    rowArr+=[str(int(row[i])) + " "]
+                    
+                else:
+                    rowArr+=[ "$" + str(row[i])]
+                    totSales=float(row[i])
+                    chartDict["sales"]=totSales
+            chartArr+=[chartDict]
+            ordersByHour+=[rowArr]
+    else:
+        ordersByHour=[["..."]*3 for _ in range(1)]
+    # Query top 5 products
+    productsQuery= db.session.execute(
+    text(f""" SELECT product_name, COUNT(product_name) FROM "order" o 
+         LEFT JOIN order_menu_item om ON o.order_id=om.order_id 
+         LEFT JOIN order_menu_item_product p ON om.order_menu_item_id=p.order_menu_item_id 
+         JOIN product_item pi ON p.product_id=pi.product_id 
+         WHERE order_date_time > '{queryTime}' 
+         GROUP BY (product_name) ORDER BY count(product_name) DESC LIMIT 5;
+         """)
+    ).fetchall()
+    
+    # Format pie chart for products
+    pieArr=[]
+    pieDict={}
+    newName=""
+    for row in productsQuery:
+        newName=""
+        for char in row[0]:
+            if (str(char).isupper()):
+                newName+=" "
+                newName+=char
+            else:
+                newName+=char
+        newNameFinal=newName[0].upper() + newName[1:]
+        pieDict["name"]=newNameFinal
+        pieDict["value"]=int(row[1])
+        pieArr+=[pieDict]
+        pieDict={}
+    
+    # Return all data
+    returnDict={"date":currDay, 
+                "hour":currHour,
+                "sales":sales,
+                "orderNum":orderNum,
+                "ordersByHour":ordersByHour,
+                "chartArr":chartArr,
+                "pieArr": pieArr
+                }
+    return returnDict
+
+@manager_bp.route('/pairreports', methods=['GET','POST'])
+def pair_reports():
+    try:
+        # Pull Dates if selected and base queries off new dates
+        with db.session.begin():
+            data=request.data.decode("utf-8")
+            global startDatePair
+            global endDatePair
+            if (data[2:7]=='sDate'):
+                startDatePair=data[10:29]
+            if (data[2:7]=='eDate'):
+                endDatePair=data[10:29]
+            
+            # Query for product frequency chart
+            pairProductChart=db.session.execute(
+            text(f"""
+                SELECT count(DISTINCT o.order_id), pi1.product_name, pi2.product_name, pi1.product_id,pi2.product_id
+                FROM "order" o 
+                JOIN order_menu_item om1 ON o.order_id=om1.order_id 
+                JOIN order_menu_item om2 ON o.order_id=om2.order_id 
+                JOIN order_menu_item_product p1 ON om1.order_menu_item_id=p1.order_menu_item_id 
+                JOIN order_menu_item_product p2 ON om2.order_menu_item_id=p2.order_menu_item_id 
+                JOIN product_item pi1 ON p1.product_id=pi1.product_id 
+                JOIN product_item pi2 ON p2.product_id=pi2.product_id 
+                WHERE o.order_date_time >  '{startDatePair}'
+                AND o.order_date_time <  '{endDatePair}'
+                GROUP BY pi1.product_id, pi2.product_id
+                ORDER BY pi1.product_id DESC;
+                """)
+            ).fetchall()
+            
+             # Query for product pair table
+            pairProductsTable=db.session.execute(
+            text(f"""
+                SELECT count(DISTINCT o.order_id), pi1.product_name, pi2.product_name
+                FROM "order" o 
+                JOIN order_menu_item om1 ON o.order_id=om1.order_id 
+                JOIN order_menu_item om2 ON o.order_id=om2.order_id 
+                JOIN order_menu_item_product p1 ON om1.order_menu_item_id=p1.order_menu_item_id 
+                JOIN order_menu_item_product p2 ON om2.order_menu_item_id=p2.order_menu_item_id 
+                JOIN product_item pi1 ON p1.product_id=pi1.product_id 
+                JOIN product_item pi2 ON p2.product_id=pi2.product_id 
+                WHERE pi1.product_id < pi2.product_id
+                AND o.order_date_time >  '{startDatePair}'
+                AND o.order_date_time <  '{endDatePair}'
+                GROUP BY pi1.product_id, pi2.product_id
+                ORDER BY count(DISTINCT o.order_id) DESC LIMIT 10;
+                """)
+            ).fetchall()
+            
+             # Query the number total orders in the time window
+            totalOrders=db.session.execute(
+            text(f"""
+                SELECT count(DISTINCT order_id)
+                FROM "order"
+                WHERE order_date_time >  '{startDatePair}'
+                AND order_date_time <  '{endDatePair}';
+                """)
+            ).fetchall()
+
+             # Query for total number of products
+            prodNamesQuery=db.session.execute(
+            text(f"""
+                SELECT product_name from product_item
+                ORDER By product_id;
+                """)
+            ).fetchall()
+            
+            # Format Table
+            tableArr=[]
+            if (len(pairProductsTable)==0):
+                tableArr=[["..."]*4 for _ in range(10)]
+            else:
+                for i in range(len(pairProductsTable)):
+                    rowArr=[]
+                    newName=""
+                    for char in str(str(pairProductsTable[i][1])):
+                        if (str(char).isupper()):
+                            newName+=" "
+                            newName+=char
+                        else:
+                            newName+=char
+                    newNameFinal=newName[0].upper() + newName[1:]
+                    rowArr+=[newNameFinal]
+                    newName=""
+                    for char in str(str(pairProductsTable[i][2])):
+                        if (str(char).isupper()):
+                            newName+=" "
+                            newName+=char
+                        else:
+                            newName+=char
+                    newNameFinal=newName[0].upper() + newName[1:]
+                    rowArr+=[newNameFinal]
+                    rowArr+=[str(pairProductsTable[i][0])]
+                    rowArr+=[str(round(float(pairProductsTable[i][0])/float(totalOrders[0][0])*100)) + "%"]
+                    tableArr+=[rowArr]
+
+            productsArr=[]
+            productsArrReverse=[]
+            prodNums=len(prodNamesQuery)
+
+            # Format X Axis and Y Axis for Chart
+            for i in range(prodNums):
+                newName=""
+                for char in str(prodNamesQuery[i][0]):
+                    if (str(char).isupper()):
+                        newName+=" "
+                        newName+=char
+                    else:
+                        newName+=char
+                newNameFinal=newName[0].upper() + newName[1:]
+                productsArr+=[newNameFinal]
+                newName=""
+                for char in str(prodNamesQuery[prodNums-1-i][0]):
+                    if (str(char).isupper()):
+                        newName+=" "
+                        newName+=char
+                    else:
+                        newName+=char
+                newNameFinal=newName[0].upper() + newName[1:]
+                productsArrReverse+=[newNameFinal]
+            
+            # Format Chart
+            crossPlotArr=[[0]*prodNums for _ in range(prodNums)]
+            axisArr=[]
+            maxPair=0
+            for i in range (0,len(pairProductChart)):
+                if(int(pairProductChart[i][3])==int(pairProductChart[i][4])):
+                    crossPlotArr[prodNums-int(pairProductChart[i][3])][int(pairProductChart[i][4])-1]='0'
+                else:
+                    crossPlotArr[prodNums-int(pairProductChart[i][3])][int(pairProductChart[i][4])-1]=pairProductChart[i][0]
+                    if (int(pairProductChart[i][0])>maxPair):
+                        maxPair=int(pairProductChart[i][0])
+            
+            for product1 in productsArrReverse:
+                rowArr=[]
+                for product2 in productsArr:
+                    rowArr+=[product2 + " + " +product1]
+                axisArr+=[rowArr]
+
+
+            
+            # Return all data
+            return {"pairChart":crossPlotArr,
+                    "maxPair": str(maxPair),
+                    "productsArr":productsArr,
+                    "productsArrReverse":productsArrReverse,
+                    "tableArr":tableArr,
+                    "axisArr": axisArr
+                    }
+        return{}
+    except Exception as e:
+        db.session.rollback()
+        return{}
+    
+
+# Global Variables used for resetting X and Z Reports
+newZ=False
+zLeave=False
+startDatePair="2024-09-23 00:00:00"
+endDatePair="2024-09-23 00:00:00"
+
+def date_pull():
+    # Check variables that reset X and Z reports
+    global newZ
+    global zLeave
+    # Find max date in database, to get X Reports Data
+    currDate=db.session.execute(
+    #text("""SELECT order_date_time FROM "order" WHERE order_id = (SELECT max(order_id) FROM "order");""")
+    text(""" SELECT max(order_date_time) FROM "order";""")
+    ).fetchall()
+
+    # Reset X and Z Reports, if Z Reports are clicked and another page is clicked
+    # This happens by pulling all order data > than the latest order time stamp 
+    # (which will return nothing)
+    data=request.data.decode("utf-8")
+    if (data=="Z"):
+         newZ=True
+    if (data=="LEAVE"):
+         zLeave=True
+    if newZ and zLeave:
+        queryTime=str(currDate[0][0])
+    elif zLeave:
+        zLeave=False
+        queryTime=str(currDate[0][0])[0:10] + " 00:00:00"
+    else:
+        queryTime=str(currDate[0][0])[0:10] + " 00:00:00"
+    hourDate=str(currDate[0][0])
+    return [queryTime,hourDate]
+    
 
 @manager_bp.route('/', methods=['GET'])
 def manager_dashboard():
@@ -298,3 +636,203 @@ def to_camel_case(input_string):
     for word in words[1:]:
         camel_case_string += word.capitalize()
     return camel_case_string
+
+@manager_bp.route('/salesreports', methods=['POST'])
+def salesReport():
+    datesSelected = request.get_json()
+
+    start_date = datesSelected['startDate']
+    end_date = datesSelected['endDate']
+
+    output = {}
+
+    top_products = db.session.query(
+        ProductItem.product_name,
+        func.count(ProductItem.product_id).label('product_count')
+    ).join(
+        OrderMenuItemProduct, ProductItem.product_id == OrderMenuItemProduct.product_id
+    ).join(
+        OrderMenuItem, OrderMenuItemProduct.order_menu_item_id == OrderMenuItem.order_menu_item_id
+    ).join(
+        Order, OrderMenuItem.order_id == Order.order_id
+    ).filter(
+        Order.order_date_time >= start_date,
+        Order.order_date_time <= end_date
+    ).group_by(
+        ProductItem.product_id
+    ).order_by(
+        func.count(ProductItem.product_id).desc()
+    ).limit(5)
+
+    total_sales = db.session.query(
+        func.sum(Order.total_price).label('total_sales')
+    ).filter(
+        Order.order_date_time >= start_date,
+        Order.order_date_time <= end_date
+    ).scalar()
+
+    total_orders = db.session.query(
+        func.count(Order.order_id).label('total_orders')
+    ).filter(
+        Order.order_date_time >= start_date,
+        Order.order_date_time <= end_date
+    ).scalar()
+
+    if not top_products:
+        for i in range(5):
+            output[f"product{i+1}"] = {"name": "N/A", "count": "Null"}
+    else:
+        i = 1
+        for p in top_products:
+            output[f"product{i}"] = {"name": name_helper(p.product_name), "count": p.product_count}
+            i+=1
+
+        if (i != 5):
+            for i in range(i, 6):
+                output[f"product{i}"] = {"name": "N/A", "count": "Null"}
+
+    if not total_sales:
+        total_sales = "N/A"
+    else:
+        total_sales = f'${total_sales:,.2f}'
+    output["totalSales"] = total_sales
+
+    if not total_orders:
+        total_orders = "N/A"
+    output["totalOrders"] = total_orders
+
+
+    menu_items = db.session.query(
+        MenuItem.item_name,
+        func.count(MenuItem.menu_item_id).label('item_count')
+    ).join(
+        OrderMenuItem, MenuItem.menu_item_id == OrderMenuItem.menu_item_id
+    ).join(
+        Order, OrderMenuItem.order_id == Order.order_id
+    ).filter(
+        Order.order_date_time >= start_date,
+        Order.order_date_time <= end_date
+    ).group_by(
+        MenuItem.menu_item_id
+    ).all()
+
+    mi_prices_dict = {}
+    mi_prices = db.session.query(MenuItem.item_name, MenuItem.premium_multiplier, MenuItem.menu_item_base_price).all()
+    
+    for mi in mi_prices:
+        mi_prices_dict[mi.item_name] = mi.menu_item_base_price + 1.50*mi.premium_multiplier 
+
+    if not menu_items:
+        output["histogram"] =  [{ "category": "N/A", "count": 0, "sales": "$0.00"}, 
+                                { "category": "N/A", "count": 0, "sales": "$0.00"},
+                                { "category": "N/A", "count": 0, "sales": "$0.00"},
+                                { "category": "N/A", "count": 0, "sales": "$0.00"},
+                                { "category": "N/A", "count": 0, "sales": "$0.00"}] 
+    else:
+        menuItemList = []
+        for m in menu_items:
+            menuItemList += [{"category": name_helper(m.item_name), "count": m.item_count, "sales": f'${mi_prices_dict[m.item_name]*m.item_count:,.2f}'}]
+        output["histogram"] = menuItemList
+    
+    return jsonify(output)
+
+@manager_bp.route('/employee/get', methods=['GET'])
+def getEmployees():
+    employees = db.session.query(Employee.employee_id, Employee.first_name, Employee.last_name, Employee.email, Employee.role).all()
+
+    employee_list = []
+
+    if not employees:
+        employee_list = [{"id":"error", "name":"error", "email":"error", "role":"error"}]
+    else:
+        for employee in employees:
+            employee_list += [{"id":employee.employee_id, "name":f'{employee.first_name} {employee.last_name}', "email":employee.email, "role":employee.role, "first_name": employee.first_name, "last_name": employee.last_name}]
+    
+    return jsonify(employee_list)
+
+@manager_bp.route('/employee/fire', methods=['POST'])
+def fireEmployee():
+    id = request.get_data()
+    id = id.decode('utf-8')
+
+    print(id)
+
+    employee = Employee.query.filter_by(employee_id=id).first()
+
+    if employee:
+        employee.role = "fired"
+
+        db.session.commit()
+    
+    return {200: "Successfully fired employee"}
+
+@manager_bp.route('/employee/email', methods=['POST'])
+def checkEmail():
+    employeeEmail = request.get_data()
+    employeeEmail = employeeEmail.decode('utf-8')
+
+    #returns instance of customer model
+    employee = Employee.query.filter_by(email=employeeEmail).first()
+
+    if (employee == None):
+        return jsonify(True)
+    else:
+        return jsonify(False)
+
+@manager_bp.route('/employee/addemail', methods=['POST'])
+def addEmailCheck():
+    employeeEmail = request.get_data()
+    employeeEmail = employeeEmail.decode('utf-8')
+
+    #returns instance of customer model
+    employees = Employee.query.filter_by(email=employeeEmail).all()
+    count = len(employees)
+    # for employee in employees:
+    #     count += 1
+    if (count == 0 or count == 1):
+        return jsonify(True)
+    else:
+        return jsonify(False)
+
+@manager_bp.route('/employee/add', methods=['POST'])
+def addEmployee():
+    data = request.get_json()
+
+    employee_ids = db.session.query(Employee.employee_id).all()
+
+    employee_id_list = [employee.employee_id for employee in employee_ids]
+
+    random_id = randrange(100000, 1000000)
+    while random_id in employee_id_list:
+        random_id = randrange(0, 1000000)
+
+    new_employee = Employee(employee_id=random_id, email=data['email'], password=data['password'], first_name=data['first_name'], last_name=data['last_name'], role=data['role'])
+    db.session.add(new_employee)
+    db.session.commit()
+
+    return jsonify({"message": "employee data received"}), 200
+
+@manager_bp.route('/employee/edit', methods=['POST'])
+def editEmployee():
+    data = request.get_json()
+
+    employee = db.session.query(Employee).filter_by(employee_id=data["id"]).first()
+
+    # If the employee is not found, return a 404 error
+    if not employee:
+        return jsonify({"error": "Employee not found"}), 404
+
+    setattr(employee, "email", data["email"])
+    setattr(employee, "first_name", data["first_name"])
+    setattr(employee, "last_name", data["last_name"])
+    setattr(employee, "role", data["role"])
+
+    db.session.commit()
+
+    return jsonify({"message": "Employee updated successfully", "employee": {
+            "employee_id": employee.employee_id,
+            "email": employee.email,
+            "first_name": employee.first_name,
+            "last_name": employee.last_name,
+            "role": employee.role
+        }}), 200
