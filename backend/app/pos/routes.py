@@ -310,7 +310,7 @@ def confirm_checkout():
         db.session.commit()
         order_id = order_result.fetchone().order_id
 
-        # Order Menu Item Table
+        # order
         for item_idx, item in enumerate(order_items):
             item_name = item.get("name")
             item_price = item.get("price")
@@ -325,7 +325,7 @@ def confirm_checkout():
             
             menu_item_id = menu_item_result.menu_item_id
 
-            # Insert into order_menu_item for each quantity
+            # order_menu_item
             for _ in range(quantity):
                 insert_order_menu_item_query = text("""
                     INSERT INTO public.order_menu_item (order_id, menu_item_id, subtotal_price)
@@ -343,10 +343,11 @@ def confirm_checkout():
                 db.session.commit()
                 order_menu_item_id = order_menu_item_result.fetchone().order_menu_item_id
 
-                # Order Menu Item Product (Insert subitems for each order_menu_item)
+                # order_menu_item_product
                 subitems = item.get("subitems", [])
                 for subitem in subitems:
                     product_id = subitem.get("product_id")
+                    quantity = subitem.get("quantity", 1)
                     
                     insert_order_menu_item_product_query = text("""
                         INSERT INTO public.order_menu_item_product (order_menu_item_id, product_id)
@@ -356,6 +357,20 @@ def confirm_checkout():
                         insert_order_menu_item_product_query,
                         {
                             "order_menu_item_id": order_menu_item_id,
+                            "product_id": product_id
+                        }
+                    )
+
+                    # Update servings remaining in the product_item table
+                    update_servings_query = text("""
+                        UPDATE public.product_item
+                        SET servings_remaining = servings_remaining - :quantity
+                        WHERE product_id = :product_id
+                    """)
+                    db.session.execute(
+                        update_servings_query,
+                        {
+                            "quantity": quantity,
                             "product_id": product_id
                         }
                     )

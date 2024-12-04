@@ -29,6 +29,7 @@ function MenuSection({ currentWorkflow, apiEndpoint, onAddToOrder, onSubitemSele
     if (item.type === "entree") return "entree-item"; 
     if (item.type === "dessert") return "dessert-item";
     if (item.type === "appetizer") return "appetizer-item";
+    if (item.type === "drink") return "drink-item";
     return ""; 
   };
 
@@ -83,7 +84,7 @@ function MenuSection({ currentWorkflow, apiEndpoint, onAddToOrder, onSubitemSele
             cursor: 'pointer',
           }}
         >
-          {halfSideActivated ? "Half Sides" : "Half Sides?"}
+          {halfSideActivated ? "Half & Half" : "Half & Half"}
         </button>
         )}
     </div>

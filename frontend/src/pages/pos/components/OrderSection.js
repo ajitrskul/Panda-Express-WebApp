@@ -74,7 +74,11 @@ function OrderSection({
                   }}
                 >
                   {item.subitems.map((subitem, subIndex) => (
-                    <li key={subIndex}>{formatOrderNames(subitem)}</li>
+                    <li key={subIndex}>
+                      {formatOrderNames(subitem)} 
+                      {subitem.quantity === 0.5 && " (1/2)"}
+                      {subitem.is_premium && " *"}
+                    </li>
                   ))}
                 </ul>
               )}
@@ -115,7 +119,6 @@ function OrderSection({
       <hr style={{ margin: "10px 0", borderColor: "#555" }} />
       <div
         style={{
-          marginTop: "15px",
           textAlign: "center",
           fontSize: "1.2rem",
         }}
@@ -130,6 +133,7 @@ function OrderSection({
           Total: <span>${totalWithTax.toFixed(2)}</span>
         </div>
       </div>
+      <hr style={{ margin: "10px 0", borderColor: "#555" }} />
       <div className="order-buttons">
       <button
           className="checkout-btn"
