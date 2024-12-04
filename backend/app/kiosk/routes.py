@@ -8,10 +8,30 @@ from datetime import datetime, timezone
 
 @kiosk_bp.route('/', methods=['GET'])
 def customer_kiosk_home():
+    """
+    Home endpoint for the Customer Kiosk.
+    ---
+    tags:
+      - Kiosk
+    responses:
+      200:
+        description: Welcome message for the Customer Kiosk.
+    """
     return {"message": "Welcome to the Customer Kiosk"}
+
 
 @kiosk_bp.route('/menu', methods=['GET'])
 def get_menu_items():
+    """
+    Retrieve menu items.
+    ---
+    tags:
+      - Kiosk
+      - Menu
+    responses:
+      200:
+        description: A list of menu items.
+    """
     single_appetizer = db.session.execute(
         text("SELECT * FROM menu_item WHERE item_name = 'appetizerSmall' LIMIT 1")
     ).fetchall()
@@ -57,6 +77,16 @@ def get_menu_items():
 
 @kiosk_bp.route('/sides', methods=['GET'])
 def get_sides():
+    """
+    Retrieve sides.
+    ---
+    tags:
+      - Kiosk
+      - Menu
+    responses:
+      200:
+        description: A list of side items.
+    """
     sides = db.session.execute(
         text("SELECT * FROM product_item WHERE type = :type ORDER BY product_id ASC"), 
         {'type': 'side'}
@@ -90,6 +120,16 @@ def get_sides():
 
 @kiosk_bp.route('/entrees', methods=['GET'])
 def get_entrees():
+    """
+    Retrieve entrees.
+    ---
+    tags:
+      - Kiosk
+      - Menu
+    responses:
+      200:
+        description: A list of entree items.
+    """
     entrees = db.session.execute(
         text("SELECT * FROM product_item WHERE type = :type ORDER BY product_id ASC"), 
         {'type': 'entree'}
@@ -123,6 +163,16 @@ def get_entrees():
 
 @kiosk_bp.route('/drinks', methods=['GET'])
 def get_drinks():
+    """
+    Retrieve drinks.
+    ---
+    tags:
+      - Kiosk
+      - Menu
+    responses:
+      200:
+        description: A list of drink items.
+    """
     fountain_drinks = db.session.execute(
         text("SELECT * FROM product_item WHERE type = :type ORDER BY product_id ASC"), 
         {'type': 'fountainDrink'}
@@ -184,6 +234,16 @@ def get_drinks():
 
 @kiosk_bp.route('/appetizers', methods=['GET'])
 def get_appetizers():
+    """
+    Retrieve appetizers.
+    ---
+    tags:
+      - Kiosk
+      - Menu
+    responses:
+      200:
+        description: A list of appetizer items.
+    """
     appetizers = db.session.execute(
         text("SELECT * FROM product_item WHERE type = :type ORDER BY product_id ASC"), 
         {'type': 'appetizer'}
@@ -217,6 +277,16 @@ def get_appetizers():
 
 @kiosk_bp.route('/desserts', methods=['GET'])
 def get_desserts():
+    """
+    Retrieve desserts.
+    ---
+    tags:
+      - Kiosk
+      - Menu
+    responses:
+      200:
+        description: A list of dessert items.
+    """
     desserts = db.session.execute(
         text("SELECT * FROM product_item WHERE type = :type ORDER BY product_id ASC"), 
         {'type': 'dessert'}
@@ -250,6 +320,73 @@ def get_desserts():
 
 @kiosk_bp.route('/orders', methods=['POST'])
 def create_order():
+    """
+    Create a new order.
+    ---
+    tags:
+      - Kiosk
+      - Orders
+    parameters:
+      - in: body
+        name: order
+        description: Details of the order to create.
+        required: true
+        schema:
+          type: object
+          properties:
+            total_price:
+              type: number
+              example: 25.50
+            cart_items:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: "Orange Chicken Bowl"
+                  quantity:
+                    type: integer
+                    example: 1
+                  basePrice:
+                    type: number
+                    example: 7.50
+                  premiumMultiplier:
+                    type: number
+                    example: 1.2
+                  components:
+                    type: object
+                    properties:
+                      sides:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            product_id:
+                              type: integer
+                              example: 101
+                            is_premium:
+                              type: boolean
+                              example: true
+                      entrees:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            product_id:
+                              type: integer
+                              example: 102
+                            is_premium:
+                              type: boolean
+                              example: false
+    responses:
+      201:
+        description: Order created successfully.
+      400:
+        description: Invalid order data.
+      500:
+        description: Internal server error.
+    """
     data = request.get_json()
     total_price = data.get('total_price')
     cart_items = data.get('cart_items')
@@ -348,6 +485,7 @@ def create_order():
         print('Error creating order:', e)
         return jsonify({'error': 'An error occurred while creating the order.'}), 500
 
+
 def get_item_price(item):
     quantity = item.get('quantity', 1)
     if 'basePrice' in item and 'premiumMultiplier' in item and 'components' in item:
@@ -398,30 +536,3 @@ def get_item_price(item):
             return 0.0
     else:
         return 0.0
-
-
-
-# def get_item_price(item):
-#     # Implement the pricing logic
-#     quantity = item.get('quantity', 1)
-#     if 'basePrice' in item and 'premiumMultiplier' in item and 'components' in item:
-#         base_price = float(item['basePrice'])
-#         premium_multiplier = float(item['premiumMultiplier'])
-#         components = item['components']
-#         total_premium_addition = 0.0
-#         # Sides
-#         for side in components.get('sides', []):
-#             if side.get('is_premium'):
-#                 total_premium_addition += float(side.get('premium_addition', 0))
-#         # Entrees
-#         for entree in components.get('entrees', []):
-#             if entree.get('is_premium'):
-#                 total_premium_addition += float(entree.get('premium_addition', 0))
-#         total_price = base_price + premium_multiplier * total_premium_addition
-#         return round(total_price * quantity, 2)
-#     elif 'price' in item:
-#         return round(float(item['price']) * quantity, 2)
-#     elif 'premium_addition' in item:
-#         return round(float(item.get('premium_addition', 0)) * quantity, 2)
-#     else:
-#         return 0.0

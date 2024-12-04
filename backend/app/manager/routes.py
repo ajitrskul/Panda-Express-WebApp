@@ -46,8 +46,21 @@ def date_pull():
     hourDate=str(currDate[0][0])
     return [queryTime,hourDate]
 
+
 @manager_bp.route('/xzreports', methods=['GET','POST'])
 def xreports_data():
+    """
+    Retrieve X and Z report data.
+    ---
+    tags:
+      - Manager
+      - Reports
+    responses:
+      200:
+        description: X and Z report data retrieved successfully.
+      500:
+        description: Internal server error while fetching report data.
+    """
     queryTime=(date_pull())[0]
     hourDate=(date_pull())[1]
     currDay=queryTime[5:10]  + "-" + queryTime[0:4]
@@ -153,8 +166,21 @@ def xreports_data():
                 }
     return returnDict
 
+
 @manager_bp.route('/pairreports', methods=['GET','POST'])
 def pair_reports():
+    """
+    Retrieve product pairing reports.
+    ---
+    tags:
+      - Manager
+      - Reports
+    responses:
+      200:
+        description: Product pairing reports retrieved successfully.
+      500:
+        description: Internal server error while fetching reports.
+    """
     try:
         # Pull Dates if selected and base queries off new dates
         with db.session.begin():
@@ -346,10 +372,32 @@ def date_pull():
 
 @manager_bp.route('/', methods=['GET'])
 def manager_dashboard():
+    """
+    Manager dashboard view.
+    ---
+    tags:
+      - Manager
+    responses:
+      200:
+        description: Welcome message for the Manager View.
+    """
     return {"message": "Welcome to the Manager View"}
+
 
 @manager_bp.route('/inventory', methods=["GET"])
 def inventory_items():
+    """
+    Retrieve all inventory items.
+    ---
+    tags:
+      - Manager
+      - Inventory
+    responses:
+      200:
+        description: A list of all inventory items.
+      500:
+        description: Internal server error.
+    """
     try:
         with db.session.begin():
             product_inventory = db.session.query(ProductItem).with_entities(ProductItem.product_name, ProductItem.quantity_in_cases).order_by(ProductItem.product_id).all()
@@ -378,6 +426,36 @@ def inventory_items_low():
 
 @manager_bp.route('/inventory/restock', methods=["POST"])
 def restock():
+    """
+    Restock a specific inventory item.
+    ---
+    tags:
+      - Manager
+      - Inventory
+    parameters:
+      - in: body
+        name: restock
+        description: Details of the item to restock.
+        required: true
+        schema:
+          type: object
+          properties:
+            itemName:
+              type: string
+              example: "Fried Rice"
+            amount:
+              type: integer
+              example: 10
+    responses:
+      200:
+        description: Item restocked successfully.
+      400:
+        description: Invalid item name or amount.
+      404:
+        description: Item not found.
+      500:
+        description: Internal server error while restocking.
+    """
     try:
         data = request.get_json()
         item_name = to_camel_case(data.get('itemName'))
@@ -403,8 +481,21 @@ def restock():
         print(f"Error: {e}")
         return jsonify({"error": "An error occurred while restocking inventory"}), 500
 
+
 @manager_bp.route('/inventory/restock/low', methods=["POST"])
 def restock_low():
+    """
+    Restock all low inventory items to minimum threshold.
+    ---
+    tags:
+      - Manager
+      - Inventory
+    responses:
+      200:
+        description: Low inventory items restocked successfully.
+      500:
+        description: Internal server error while restocking.
+    """
     try:
         with db.session.begin():
             product_inventory = db.session.query(ProductItem).filter(ProductItem.quantity_in_cases < 5).all()
@@ -421,8 +512,50 @@ def restock_low():
         print(f"Error: {e}")
         return jsonify({"error": "An error occurred while restocking inventory"}), 500
 
+
 @manager_bp.route('/productUsage', methods=["POST"])
 def product_usage_info():
+    """
+    Retrieve product usage data within a specified date range.
+    ---
+    tags:
+      - Manager
+      - Reports
+    parameters:
+      - in: body
+        name: date_range
+        description: Start and end dates for product usage analysis.
+        required: true
+        schema:
+          type: object
+          properties:
+            startDate:
+              type: string
+              format: date-time
+              example: "2024-01-01T00:00:00"
+            endDate:
+              type: string
+              format: date-time
+              example: "2024-01-31T23:59:59"
+    responses:
+      200:
+        description: Successfully retrieved product usage data.
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  productName:
+                    type: string
+                    example: "Orange Chicken"
+                  servingsUsed:
+                    type: integer
+                    example: 120
+      500:
+        description: Internal server error while retrieving product usage data.
+    """
     try:
         data = request.get_json()
         start = convert_to_postgres_timestamp(data.get("startDate"))
@@ -471,8 +604,21 @@ def product_usage_info():
     except Exception as e:
         print(f"Error: {e}")
 
+
 @manager_bp.route('/products', methods=["GET"])
 def get_products():
+    """
+    Retrieve all product details.
+    ---
+    tags:
+      - Manager
+      - Products
+    responses:
+      200:
+        description: A list of all products.
+      500:
+        description: Internal server error.
+    """
     try:
         with db.session.begin():
             products = db.session.query(ProductItem).with_entities( 
@@ -520,8 +666,38 @@ def get_products():
         print(f"An error occurred: {e}")
         return {}
 
+
 @manager_bp.route('/products/update', methods=["POST"])
 def update_products():
+    """
+    Update or add a product.
+    ---
+    tags:
+      - Manager
+      - Products
+    parameters:
+      - in: body
+        name: product
+        description: Details of the product to update or add.
+        required: true
+        schema:
+          type: object
+          properties:
+            product_id:
+              type: integer
+              example: 1
+            product_name:
+              type: string
+              example: "Orange Chicken"
+            type:
+              type: string
+              example: "entree"
+    responses:
+      200:
+        description: Product updated or added successfully.
+      500:
+        description: Internal server error while updating the product.
+    """
     data = request.get_json()
     id = data.get("product_id")
     try:
@@ -577,8 +753,32 @@ def update_products():
         print(f"An error occurred: {e}")
         return {}
 
+
 @manager_bp.route('/products/delete', methods=["POST"])
 def delete_products():
+    """
+    Delete a product.
+    ---
+    tags:
+      - Manager
+      - Products
+    parameters:
+      - in: body
+        name: product_id
+        description: ID of the product to delete.
+        required: true
+        schema:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+    responses:
+      200:
+        description: Product deleted successfully.
+      500:
+        description: Internal server error while deleting the product.
+    """
     data = request.get_json()
     id = data.get("id")
     try:
@@ -591,9 +791,11 @@ def delete_products():
         print(f"An error occurred: {e}")
         return {}
 
+
 def name_helper(text):
     words = re.findall(r'[A-Z][a-z]*|[a-z]+', text)
     return ' '.join(word.capitalize() for word in words)
+
 
 def convert_to_postgres_timestamp(iso_timestamp):
     try:
@@ -603,6 +805,7 @@ def convert_to_postgres_timestamp(iso_timestamp):
     except ValueError as e:
         return f"Error: {e}"
 
+
 def to_camel_case(input_string):
     words = input_string.split()
     camel_case_string = words[0].lower()
@@ -610,8 +813,80 @@ def to_camel_case(input_string):
         camel_case_string += word.capitalize()
     return camel_case_string
 
+
 @manager_bp.route('/salesreports', methods=['POST'])
 def salesReport():
+    """
+    Retrieve sales reports for a specified date range.
+    ---
+    tags:
+      - Manager
+      - Reports
+    parameters:
+      - in: body
+        name: date_range
+        description: Start and end dates for the sales report.
+        required: true
+        schema:
+          type: object
+          properties:
+            startDate:
+              type: string
+              format: date-time
+              example: "2024-01-01T00:00:00"
+            endDate:
+              type: string
+              format: date-time
+              example: "2024-01-31T23:59:59"
+    responses:
+      200:
+        description: Successfully retrieved sales report.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                totalSales:
+                  type: string
+                  example: "$10,000.00"
+                totalOrders:
+                  type: string
+                  example: "150"
+                histogram:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      category:
+                        type: string
+                        example: "Orange Chicken"
+                      count:
+                        type: integer
+                        example: 50
+                      sales:
+                        type: string
+                        example: "$500.00"
+                product1:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      example: "Orange Chicken"
+                    count:
+                      type: integer
+                      example: 100
+                product2:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      example: "Beef Broccoli"
+                    count:
+                      type: integer
+                      example: 80
+      500:
+        description: Internal server error while retrieving sales report.
+    """
     datesSelected = request.get_json()
 
     start_date = datesSelected['startDate']
@@ -709,8 +984,21 @@ def salesReport():
     
     return jsonify(output)
 
+
 @manager_bp.route('/employee/get', methods=['GET'])
 def getEmployees():
+    """
+    Retrieve all employees.
+    ---
+    tags:
+      - Manager
+      - Employees
+    responses:
+      200:
+        description: A list of all employees.
+      500:
+        description: Internal server error while fetching employees.
+    """
     employees = db.session.query(Employee.employee_id, Employee.first_name, Employee.last_name, Employee.email, Employee.role).all()
 
     employee_list = []
@@ -723,8 +1011,29 @@ def getEmployees():
     
     return jsonify(employee_list)
 
+
 @manager_bp.route('/employee/fire', methods=['POST'])
 def fireEmployee():
+    """
+    Fire an employee by updating their role to 'fired'.
+    ---
+    tags:
+      - Manager
+      - Employees
+    parameters:
+      - in: body
+        name: employee_id
+        description: ID of the employee to be fired.
+        required: true
+        schema:
+          type: string
+          example: "123456"
+    responses:
+      200:
+        description: Employee successfully fired.
+      404:
+        description: Employee not found.
+    """
     id = request.get_data()
     id = id.decode('utf-8')
 
@@ -739,8 +1048,27 @@ def fireEmployee():
     
     return {200: "Successfully fired employee"}
 
+
 @manager_bp.route('/employee/email', methods=['POST'])
 def checkEmail():
+    """
+    Check if an email exists in the employee database.
+    ---
+    tags:
+      - Manager
+      - Employees
+    parameters:
+      - in: body
+        name: email
+        description: Email address to check.
+        required: true
+        schema:
+          type: string
+          example: "john.doe@example.com"
+    responses:
+      200:
+        description: True if email does not exist; False otherwise.
+    """
     employeeEmail = request.get_data()
     employeeEmail = employeeEmail.decode('utf-8')
 
@@ -752,8 +1080,27 @@ def checkEmail():
     else:
         return jsonify(False)
 
+
 @manager_bp.route('/employee/addemail', methods=['POST'])
 def addEmailCheck():
+    """
+    Check if an email can be added (maximum of one duplicate allowed).
+    ---
+    tags:
+      - Manager
+      - Employees
+    parameters:
+      - in: body
+        name: email
+        description: Email address to check for duplicates.
+        required: true
+        schema:
+          type: string
+          example: "john.doe@example.com"
+    responses:
+      200:
+        description: True if the email can be added; False otherwise.
+    """
     employeeEmail = request.get_data()
     employeeEmail = employeeEmail.decode('utf-8')
 
@@ -767,8 +1114,44 @@ def addEmailCheck():
     else:
         return jsonify(False)
 
+
 @manager_bp.route('/employee/add', methods=['POST'])
 def addEmployee():
+    """
+    Add a new employee.
+    ---
+    tags:
+      - Manager
+      - Employees
+    parameters:
+      - in: body
+        name: employee
+        description: Employee details.
+        required: true
+        schema:
+          type: object
+          properties:
+            email:
+              type: string
+              example: "john.doe@example.com"
+            password:
+              type: string
+              example: "securepassword123"
+            first_name:
+              type: string
+              example: "John"
+            last_name:
+              type: string
+              example: "Doe"
+            role:
+              type: string
+              example: "cashier"
+    responses:
+      200:
+        description: Employee added successfully.
+      500:
+        description: Internal server error while adding the employee.
+    """
     data = request.get_json()
 
     employee_ids = db.session.query(Employee.employee_id).all()
@@ -785,8 +1168,46 @@ def addEmployee():
 
     return jsonify({"message": "employee data received"}), 200
 
+
 @manager_bp.route('/employee/edit', methods=['POST'])
 def editEmployee():
+    """
+    Edit an existing employee's details.
+    ---
+    tags:
+      - Manager
+      - Employees
+    parameters:
+      - in: body
+        name: employee
+        description: Employee details to update.
+        required: true
+        schema:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 123456
+            email:
+              type: string
+              example: "john.doe@example.com"
+            first_name:
+              type: string
+              example: "John"
+            last_name:
+              type: string
+              example: "Doe"
+            role:
+              type: string
+              example: "manager"
+    responses:
+      200:
+        description: Employee updated successfully.
+      404:
+        description: Employee not found.
+      500:
+        description: Internal server error while updating the employee.
+    """
     data = request.get_json()
 
     employee = db.session.query(Employee).filter_by(employee_id=data["id"]).first()
