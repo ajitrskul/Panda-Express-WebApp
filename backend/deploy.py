@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, send_from_directory
+from flask import Flask, jsonify, request, send_from_directory
 from app import register_extensions, register_blueprints, register_secret_key
 from app.config import Config
 import os
@@ -88,9 +88,15 @@ def swagger_json():
     }
     return jsonify(swagger_doc)
 
-SWAGGER_URL = '/swagger/'
+SWAGGER_URL = '/swagger'
 API_URL = '/swagger.json'
-swaggerui_blueprint = get_swaggerui_blueprint(SWAGGER_URL, API_URL)
+swaggerui_blueprint = get_swaggerui_blueprint(
+    SWAGGER_URL,
+    API_URL,
+    config={
+        'app_name': "Flask App API"
+    }
+)
 app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
 
 # Serve React app
@@ -98,9 +104,11 @@ app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
 def serve():
     return send_from_directory(app.static_folder, 'index.html')
 
-# Handle unmatched routes with React app
+# Handle unmatched routes (excluding Swagger UI)
 @app.errorhandler(404)
 def not_found(e):
+    if request.path.startswith(SWAGGER_URL):
+        return jsonify({"error": "Swagger UI resource not found"}), 404
     return send_from_directory(app.static_folder, 'index.html')
 
 if __name__ == "__main__":
