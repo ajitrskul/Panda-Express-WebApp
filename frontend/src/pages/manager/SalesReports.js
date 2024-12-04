@@ -120,9 +120,10 @@ export default function SalesReports() {
 
   return (
     <>
-      <div className="salesreport-bg">
-        <SidebarManager></SidebarManager>
-        <div className="fluid-container salesreport-container">
+      <div className="container-fluid page">
+      <SidebarManager />
+      <div className="page-background-container">
+      <div className="container page-background">
           <div className="row justify-content-start">
             <h1 className="col-12 sales-title">Sales Report</h1>
             <hr class="col-12 sales-divider"></hr>
@@ -293,6 +294,7 @@ export default function SalesReports() {
             </div>
           </div>
         </div>
+      </div>
       </div>
     </>
   );

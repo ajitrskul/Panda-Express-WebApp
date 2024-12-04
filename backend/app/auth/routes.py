@@ -16,8 +16,18 @@ import os
 HASH_API_KEY = os.getenv('HASH_API_KEY')
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
 
+
 @auth_bp.route('/', methods=['GET'])
 def auth_home():
+    """
+    Home endpoint for the authentication blueprint.
+    ---
+    tags:
+      - Authentication
+    responses:
+      200:
+        description: Welcome message for the login page.
+    """
     session.setdefault("name", None)
     session.setdefault("email", None)
     session.setdefault("state", "mystate")
@@ -26,6 +36,38 @@ def auth_home():
 
 @auth_bp.route('/signup', methods=['POST'])
 def handle_signup():
+    """
+    Sign up a new customer.
+    ---
+    tags:
+      - Authentication
+      - Customer
+    parameters:
+      - in: body
+        name: body
+        description: Customer signup details
+        required: true
+        schema:
+          type: object
+          properties:
+            email:
+              type: string
+              example: customer@example.com
+            password:
+              type: string
+              example: password123
+            first_name:
+              type: string
+              example: John
+            last_name:
+              type: string
+              example: Doe
+    responses:
+      200:
+        description: Signup successful
+      400:
+        description: Invalid input data
+    """
     data = request.get_json()
 
     with db.session.begin():
@@ -41,6 +83,24 @@ def handle_signup():
 
 @auth_bp.route('/signup/email', methods=['POST'])
 def emailExists():
+    """
+    Check if an email is already registered.
+    ---
+    tags:
+      - Authentication
+      - Customer
+    parameters:
+      - in: body
+        name: email
+        description: Email to check
+        required: true
+        schema:
+          type: string
+          example: customer@example.com
+    responses:
+      200:
+        description: Email exists (True/False)
+    """
     customerEmail = request.get_data()
     customerEmail = customerEmail.decode('utf-8')
 
@@ -52,8 +112,29 @@ def emailExists():
     else:
         return jsonify(False)
 
+
 @auth_bp.route("/signin/email", methods=['POST'])
 def signinEmail():
+    """
+    Retrieve the password for a customer's email.
+    ---
+    tags:
+      - Authentication
+      - Customer
+    parameters:
+      - in: body
+        name: email
+        description: Customer email
+        required: true
+        schema:
+          type: string
+          example: customer@example.com
+    responses:
+      200:
+        description: Password for the email
+      404:
+        description: Email not found
+    """
     customerEmail = request.get_data()
     customerEmail = customerEmail.decode('utf-8')
 
@@ -65,8 +146,35 @@ def signinEmail():
     else:
         return jsonify(False)  #email not in database
 
+
 @auth_bp.route("/signin/qr", methods=["POST"])
 def authenticateLogin():
+    """
+    Authenticate a customer using email and password.
+    ---
+    tags:
+      - Authentication
+      - Customer
+    parameters:
+      - in: body
+        name: login
+        description: Customer login details
+        required: true
+        schema:
+          type: object
+          properties:
+            email:
+              type: string
+              example: customer@example.com
+            password:
+              type: string
+              example: password123
+    responses:
+      200:
+        description: Customer authenticated
+      401:
+        description: Invalid credentials
+    """
     customerLogin = request.get_json() #get_json returns python dictionary
 
     #returns instance of customer model
@@ -82,8 +190,28 @@ def authenticateLogin():
         else:
             return jsonify(False)
 
+
 @auth_bp.route("/signin/customerdata", methods=["POST"])
 def getCustomerData():
+    """
+    Retrieve customer data by email.
+    ---
+    tags:
+      - Customer
+    parameters:
+      - in: body
+        name: email
+        description: Customer email
+        required: true
+        schema:
+          type: string
+          example: customer@example.com
+    responses:
+      200:
+        description: Customer data retrieved successfully
+      404:
+        description: Customer not found
+    """
     customerEmail = request.get_data()
     customerEmail = customerEmail.decode('utf-8')
 
@@ -94,25 +222,39 @@ def getCustomerData():
         return jsonify(False)
 
 
-
-
 @auth_bp.route("/login/db", methods=["POST"])
 def authenticate_db():
+    """
+    Authenticate an employee by email.
+    ---
+    tags:
+      - Authentication
+      - Employee
+    parameters:
+      - in: body
+        name: username
+        description: Employee email for authentication
+        required: true
+        schema:
+          type: string
+          example: employee@example.com
+    responses:
+      200:
+        description: Employee authenticated
+      404:
+        description: Employee not found
+    """
     data = request.get_json()
     email = data.get("username")
     with db.session.begin():
         employee = db.session.query(Employee).filter_by(email=email).first()
 
     if employee:
-        if employee.role == 'fired':
-            re_route_link = current_app.config['base_url'] + "/auth/signin/error"
-            return redirect(re_route_link)
-
         current_app.config["name"] = employee.first_name
         current_app.config["role"] = employee.role
         current_app.config["email"] = employee.email
         if employee.role == 'manager':
-            return jsonify({"success": True, "password": employee.password, "route": "/manager"})
+            return jsonify({"success": True, "password": employee.password, "route": "/manager/salesreports"})
         elif employee.role == 'fired':
             return jsonify({"success": True, "password": employee.password, "route": "/auth/error"})
         else:
@@ -123,6 +265,16 @@ def authenticate_db():
 
 @auth_bp.route("/signin/google", methods=["GET"])
 def authenticate_google():
+    """
+    Authenticate a user using Google OAuth.
+    ---
+    tags:
+      - Authentication
+      - Google OAuth
+    responses:
+      302:
+        description: Redirects to Google OAuth authorization URL
+    """
     flow = current_app.config['OAUTH_FLOW']
     authorization_url, _ = flow.authorization_url(state="mystate")
     return redirect(authorization_url)
@@ -130,6 +282,16 @@ def authenticate_google():
 
 @auth_bp.route("/callback")
 def callback():
+    """
+    Handle Google OAuth callback and retrieve user information.
+    ---
+    tags:
+      - Authentication
+      - Google OAuth
+    responses:
+      302:
+        description: Redirects based on user role (Manager, POS, or Error)
+    """
     try:
         flow = current_app.config['OAUTH_FLOW']
         flow.fetch_token(authorization_response=request.url)
@@ -152,12 +314,8 @@ def callback():
             employee = db.session.query(Employee).filter_by(email=email).first()
 
         if employee:
-            if employee.role == 'fired':
-                re_route_link = current_app.config['base_url'] + "/auth/signin/error"
-                return redirect(re_route_link)
-            
             if employee.role == 'manager':
-                re_route_link = current_app.config['base_url'] + "/manager"
+                re_route_link = current_app.config['base_url'] + "/manager/salesreports"
             elif employee.role == 'fired':
                 re_route_link = current_app.config['base_url'] + "/auth/error"
             else:
@@ -176,8 +334,19 @@ def callback():
         print(f"An error occurred: {e}")
         return redirect(re_route_link)
 
+
 @auth_bp.route("/manager/permission")
 def manager_perm():
+    """
+    Check if the current user has manager permissions.
+    ---
+    tags:
+      - Authentication
+      - Permissions
+    responses:
+      200:
+        description: Returns authentication status for manager access
+    """
     if("role" in current_app.config and current_app.config["role"] == 'cashier'):
         to_return = {"authenticate": True}
         return jsonify(to_return)
@@ -185,8 +354,37 @@ def manager_perm():
         to_return = {"authenticate": False}
         return jsonify(to_return)
  
+
 @auth_bp.route("/login/customer", methods=["POST"])
 def login():
+    """
+    Authenticate a customer by email and password.
+    ---
+    tags:
+      - Authentication
+      - Customer
+    parameters:
+      - in: body
+        name: credentials
+        description: Customer login credentials
+        required: true
+        schema:
+          type: object
+          properties:
+            email:
+              type: string
+              example: customer@example.com
+            password:
+              type: string
+              example: password123
+    responses:
+      200:
+        description: Customer authenticated successfully
+      401:
+        description: Incorrect password
+      404:
+        description: Customer email not found
+    """
     data = request.get_json()
     email = data.get("email")
     input_password = data.get("password")
@@ -216,6 +414,40 @@ def login():
 
 @auth_bp.route("/signup/customer", methods=["POST"])
 def sign_up():
+    """
+    Register a new customer with email and password.
+    ---
+    tags:
+      - Authentication
+      - Customer
+    parameters:
+      - in: body
+        name: details
+        description: Customer signup details
+        required: true
+        schema:
+          type: object
+          properties:
+            email:
+              type: string
+              example: customer@example.com
+            password:
+              type: string
+              example: password123
+            first_name:
+              type: string
+              example: John
+            last_name:
+              type: string
+              example: Doe
+    responses:
+      200:
+        description: Customer account created successfully
+      409:
+        description: Email already registered
+      500:
+        description: Internal server error during account creation
+    """
     data = request.get_json()
     email = data.get("email")
     password = data.get("password")
@@ -257,6 +489,27 @@ def sign_up():
 
 @auth_bp.route("/login/customer/info/<int:customer_id>", methods=["GET"])
 def get_customer_info(customer_id):
+    """
+    Retrieve customer information by ID.
+    ---
+    tags:
+      - Customer
+    parameters:
+      - in: path
+        name: customer_id
+        description: Customer ID
+        required: true
+        schema:
+          type: integer
+          example: 123
+    responses:
+      200:
+        description: Customer information retrieved successfully
+      404:
+        description: Customer not found
+      500:
+        description: Internal server error
+    """
     try:
         customer = db.session.query(Customer).filter_by(customer_id=customer_id).first()
         if customer:

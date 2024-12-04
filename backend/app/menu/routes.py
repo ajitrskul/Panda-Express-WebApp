@@ -3,13 +3,59 @@ from flask import request, jsonify
 from sqlalchemy import text
 from app.extensions import db
 
+
 @menu_bp.route('/', methods=['GET'])
 def customer_menu_home():
+    """
+    Welcome message for the Customer Menu.
+    ---
+    tags:
+      - Menu
+    responses:
+      200:
+        description: Welcome message for the Customer Menu.
+    """
     return {"message": "Welcome to the Customer Menu"}
+
 
 @menu_bp.route('/menu', methods=['GET'])
 def get_menu_items():
-
+    """
+    Retrieve menu items excluding appetizers, desserts, and drinks.
+    ---
+    tags:
+      - Menu
+    responses:
+      200:
+        description: List of menu items retrieved successfully.
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  menu_item_id:
+                    type: integer
+                  item_name:
+                    type: string
+                  max_entrees:
+                    type: integer
+                  max_sides:
+                    type: integer
+                  menu_item_base_price:
+                    type: number
+                    format: float
+                  premium_multiplier:
+                    type: number
+                    format: float
+                  menu_item_description:
+                    type: string
+                  calories:
+                    type: integer
+                  image:
+                    type: string
+    """
     single_a_la_carte = db.session.execute(
         text("SELECT * FROM menu_item WHERE item_name = 'aLaCarteSideMedium' LIMIT 1")
     ).fetchall()
@@ -44,8 +90,60 @@ def get_menu_items():
 
     return jsonify(menu_items_list), 200
 
+
 @menu_bp.route('/sides', methods=['GET'])
 def get_sides():
+    """
+    Retrieve all side items.
+    ---
+    tags:
+      - Menu
+      - Sides
+    responses:
+      200:
+        description: List of side items retrieved successfully.
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  product_id:
+                    type: integer
+                  product_name:
+                    type: string
+                  type:
+                    type: string
+                  is_seasonal:
+                    type: boolean
+                  is_available:
+                    type: boolean
+                  servings_remaining:
+                    type: integer
+                  allergens:
+                    type: string
+                  display_icons:
+                    type: string
+                  product_description:
+                    type: string
+                  premium_addition:
+                    type: number
+                  serving_size:
+                    type: string
+                  calories:
+                    type: integer
+                  saturated_fat:
+                    type: number
+                  carbohydrate:
+                    type: number
+                  protein:
+                    type: number
+                  image:
+                    type: string
+                  is_premium:
+                    type: boolean
+    """
     sides = db.session.execute(
         text("SELECT * FROM product_item WHERE type = :type ORDER BY product_id ASC"), 
         {'type': 'side'}
@@ -76,9 +174,19 @@ def get_sides():
 
     return jsonify(sides_list), 200
 
+
 @menu_bp.route('/alacarte', methods=['GET'])
 def get_a_la_carte():
-
+    """
+    Retrieve all a la carte items.
+    ---
+    tags:
+      - Menu
+      - A La Carte
+    responses:
+      200:
+        description: List of a la carte items retrieved successfully.
+    """
     a_la_carte = db.session.execute(
         text("""SELECT * FROM menu_item 
             WHERE item_name LIKE 'aLaCarte%' 
@@ -102,8 +210,19 @@ def get_a_la_carte():
 
     return jsonify(a_la_carte_list), 200
 
+
 @menu_bp.route('/entrees', methods=['GET'])
 def get_entrees():
+    """
+    Retrieve all entree items.
+    ---
+    tags:
+      - Menu
+      - Entrees
+    responses:
+      200:
+        description: List of entree items retrieved successfully.
+    """
     entrees = db.session.execute(
         text("SELECT * FROM product_item WHERE type = :type ORDER BY product_id ASC"), 
         {'type': 'entree'}
@@ -134,8 +253,20 @@ def get_entrees():
 
     return jsonify(entrees_list), 200
 
+
 @menu_bp.route('/appdessert', methods=['GET'])
 def get_appetizers():
+    """
+    Retrieve all appetizer and dessert items.
+    ---
+    tags:
+      - Menu
+      - Appetizers
+      - Desserts
+    responses:
+      200:
+        description: List of appetizers and desserts retrieved successfully.
+    """
     appetizers = db.session.execute(
         text("SELECT * FROM product_item WHERE type = :type ORDER BY product_id ASC"), 
         {'type': 'appetizer'}
@@ -175,6 +306,16 @@ def get_appetizers():
 
 @menu_bp.route('/drink', methods=['GET'])
 def get_drinks():
+    """
+    Retrieve all drink items.
+    ---
+    tags:
+      - Menu
+      - Drinks
+    responses:
+      200:
+        description: List of drinks retrieved successfully.
+    """
     drinks = db.session.execute(
         text("SELECT * FROM product_item WHERE type = :type ORDER BY product_id ASC"), 
         {'type': 'drink'}
@@ -207,6 +348,15 @@ def get_drinks():
 
 @menu_bp.route('/allitems', methods=['GET'])
 def get_all_items():
+    """
+    Retrieve all menu items.
+    ---
+    tags:
+      - Menu
+    responses:
+      200:
+        description: List of all menu items retrieved successfully.
+    """
     all_items = db.session.execute(
         text("SELECT * FROM menu_item")
     ).fetchall()
