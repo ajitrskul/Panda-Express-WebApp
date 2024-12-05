@@ -5,6 +5,7 @@ from app.extensions import db
 
 from app.models import Order, OrderMenuItem, OrderMenuItemProduct, MenuItem, ProductItem, Customer, Employee
 from datetime import datetime
+import pytz
 
 @kiosk_bp.route('/', methods=['GET'])
 def customer_kiosk_home():
@@ -398,8 +399,9 @@ def create_order():
 
     try:
         with db.session.begin_nested():
+            formatTime = datetime.now(pytz.timezone('America/Chicago')).strftime('%Y-%m-%d %H:%M:%S')
             order = Order(
-                order_date_time=datetime.now(),
+                order_date_time=formatTime,
                 total_price=total_price,
                 employee_id=None,
                 is_ready=False
