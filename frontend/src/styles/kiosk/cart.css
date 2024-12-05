@@ -388,8 +388,19 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 1060; /* Updated from 1000 to 1060 */
 }
+
+.deal-modal-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  width: 90%;
+  max-width: 400px;
+  z-index: 1061; /* Ensure content is above the overlay */
+}
+
 
 .deal-modal-content {
   background-color: #fff;
