@@ -187,11 +187,13 @@ def get_a_la_carte():
       200:
         description: List of a la carte items retrieved successfully.
     """
-    a_la_carte = db.session.execute(
-        text("""SELECT * FROM menu_item 
-            WHERE item_name LIKE 'aLaCarte%' 
-            ORDER BY menu_item_id ASC""")
-    ).fetchall()
+    query = text("""
+    SELECT * FROM menu_item 
+    WHERE item_name LIKE :prefix 
+    AND in_season = true  
+    ORDER BY menu_item_id ASC
+    """)
+    a_la_carte = db.session.execute(query, {'prefix': 'aLaCarte%'}).fetchall()
 
     a_la_carte_list = [
         {
@@ -268,7 +270,7 @@ def get_appetizers():
         description: List of appetizers and desserts retrieved successfully.
     """
     appetizers = db.session.execute(
-        text("SELECT * FROM product_item WHERE type = :type ORDER BY product_id ASC"), 
+        text("SELECT * FROM product_item WHERE type = :type AND in_season = true ORDER BY product_id ASC"), 
         {'type': 'appetizer'}
     ).fetchall()
 
@@ -317,7 +319,7 @@ def get_drinks():
         description: List of drinks retrieved successfully.
     """
     drinks = db.session.execute(
-        text("SELECT * FROM product_item WHERE type = :type ORDER BY product_id ASC"), 
+        text("SELECT * FROM product_item WHERE type = :type AND in_season = true ORDER BY product_id ASC"), 
         {'type': 'drink'}
     ).fetchall()
 
