@@ -13,6 +13,8 @@
   .navbar-drop-option, .navbar-drop-logout {
     padding: 5px 10px;
     cursor: pointer; /* Indicate it's clickable */
+    color: #a3080c; /* Set the logout text color to your navbar color */
+    font-weight: bold; /* Optionally make it bold */
   }
   
   .navbar-drop-option:hover, .navbar-drop-logout:hover {
