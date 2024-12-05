@@ -1,9 +1,11 @@
 import React from "react";
 
-function Footer({ navigate, onBack, menuEndpoint }) {
+function Footer({ firstName, lastName, beastPoints, navigate, onBack, menuEndpoint }) {
   return (
     <div className="footer" style={footerStyles}>
-      <span>Ethan (temp)</span>
+      {beastPoints !== 0 && firstName !== "" && lastName !== "" && (
+        <span>{firstName} {lastName} ({beastPoints} BPs)</span>
+      )}
       {menuEndpoint !== "/pos/menu" && (
         <button 
           style={backButtonStyles} 

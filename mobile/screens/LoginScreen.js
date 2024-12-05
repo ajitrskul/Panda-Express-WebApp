@@ -22,7 +22,6 @@ const LoginScreen = ({ navigation }) => {
 
         if (response.status === 200 && response.data.success) {
           const customerId = response.data.customer_id;
-          Alert.alert('Login Successful', `Welcome, ${email}!`);
           navigation.navigate('Home', { customerId }); 
         } else {
           setErrorMessage(response.data.message || 'Invalid email or password.');

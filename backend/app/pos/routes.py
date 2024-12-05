@@ -3,7 +3,7 @@ from flask import request, jsonify
 from sqlalchemy import text
 from app.extensions import db
 from datetime import datetime
-
+import pytz
 
 @pos_bp.route('/', methods=['GET'])
 def cashier_home():
@@ -429,6 +429,10 @@ def confirm_checkout():
             total:
               type: number
               format: float
+            customer_id:
+              type: integer
+            beast_points:
+              type: integer
     responses:
       201:
         description: Order confirmed and saved successfully.
@@ -439,13 +443,14 @@ def confirm_checkout():
     """
     try:
         order_data = request.get_json()
-        employee_id = 121202  # CHANGE LATER
-        
-        # Order Table
         order_items = order_data.get("items", [])
         total_price = order_data.get("total", 0.0)
-        order_date_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        customer_id = order_data.get("customer_id", None)
+        beast_points_used = order_data.get("beast_points_used", 0)
+        order_date_time = datetime.now(pytz.timezone('America/Chicago')).strftime('%Y-%m-%d %H:%M:%S')
+        employee_id = 121202  # CHANGE LATER
 
+        # Order Table
         insert_order_query = text("""
             INSERT INTO public."order" (order_date_time, employee_id, total_price, is_ready)
             VALUES (:order_date_time, :employee_id, :total_price, :is_ready)
@@ -527,6 +532,20 @@ def confirm_checkout():
                             "product_id": product_id
                         }
                     )
+
+        if customer_id:
+            update_beast_points_query = text("""
+                UPDATE public.customer_info
+                SET beast_points = beast_points - :beast_points_used
+                WHERE customer_id = :customer_id
+            """)
+            db.session.execute(
+                update_beast_points_query,
+                {
+                    "beast_points_used": beast_points_used,
+                    "customer_id": customer_id
+                }
+            )
 
         db.session.commit()
         return jsonify({"message": "Successfully confirmed", "order_id": order_id}), 201
