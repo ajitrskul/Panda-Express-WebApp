@@ -1,5 +1,44 @@
 /* navbar.css */
 
+.navbar-drop, .navbar-drop-signedin {
+    position: absolute; /* Position relative to parent */
+    top: 100%;        /* Place below the button */
+    right: 0;         /* Align to the right edge */
+    background-color: white; 
+    border: 1px solid #ccc; 
+    padding: 10px;
+    z-index: 10;     /* Ensure it appears above other elements */
+  }
+  
+  .navbar-drop-option, .navbar-drop-logout {
+    padding: 5px 10px;
+    cursor: pointer; /* Indicate it's clickable */
+  }
+  
+  .navbar-drop-option:hover, .navbar-drop-logout:hover {
+    background-color: #f0f0f0; /* Add a hover effect */
+  }
+  
+  /* Styles for the icons in the dropdown */
+  .nav-drop-icon {
+    margin-right: 5px; 
+  }
+
+  .nav-signin-text-container {
+    background-color: #a3080c; /* Match navbar background */
+    padding: 10px; 
+    color: white;
+  }
+  
+  .nav-signin-text {
+    margin: 0; /* Remove default margin */
+    font-size: 14px; 
+  }
+  
+  .nav-signin-name {
+    cursor: pointer; /* Indicate it's clickable for the dropdown */
+  }
+
 /* Hide navbar on very small screens */
 @media (max-width: 249px) {
     .navbar {
