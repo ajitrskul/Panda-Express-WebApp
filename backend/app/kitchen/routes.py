@@ -7,10 +7,31 @@ from sqlalchemy.orm import joinedload
 
 @kitchen_bp.route('/', methods=['GET'])
 def kitchen_display():
+    """
+    Home endpoint for the Kitchen View.
+    ---
+    tags:
+      - Kitchen
+    responses:
+      200:
+        description: Welcome message for the Kitchen View.
+    """
     return {"message": "Welcome to the Kitchen View"}
 
 @kitchen_bp.route('/orders', methods=['GET'])
 def get_pending_orders():
+    """
+    Retrieve all pending orders.
+    ---
+    tags:
+      - Kitchen
+      - Orders
+    responses:
+      200:
+        description: A list of pending orders with details.
+      500:
+        description: Internal server error while fetching orders.
+    """
     try:
         pending_orders = Order.query.filter_by(is_ready=False).options(
             joinedload(Order.order_menu_items)
@@ -56,6 +77,28 @@ def get_pending_orders():
 
 @kitchen_bp.route('/orders/<int:order_id>/ready', methods=['POST'])
 def mark_order_ready(order_id):
+    """
+    Mark an order as ready.
+    ---
+    tags:
+      - Kitchen
+      - Orders
+    parameters:
+      - in: path
+        name: order_id
+        description: The ID of the order to mark as ready.
+        required: true
+        schema:
+          type: integer
+          example: 123
+    responses:
+      200:
+        description: Order successfully marked as ready.
+      404:
+        description: Order not found.
+      500:
+        description: Internal server error while updating the order.
+    """
     try:
         order = Order.query.get(order_id)
         if not order:
@@ -63,7 +106,49 @@ def mark_order_ready(order_id):
 
         order.is_ready = True
         db.session.commit()
-        return jsonify({'message': 'Order marked as ready.'}), 200
+        # Fetch the updated order to confirm it's marked as ready
+        updated_order = Order.query.get(order_id)
+        if updated_order.is_ready:
+            return jsonify({'message': 'Order marked as ready.'}), 200
+        else:
+            return jsonify({'error': 'Failed to mark order as ready.'}), 500
     except Exception as e:
         print('Error marking order as ready:', e)
+        db.session.rollback()
         return jsonify({'error': 'An error occurred while updating the order.'}), 500
+
+@kitchen_bp.route('/orders/<int:order_id>', methods=['DELETE'])
+def delete_order(order_id):
+    """
+    Delete an order by ID.
+    ---
+    tags:
+      - Kitchen
+      - Orders
+    parameters:
+      - in: path
+        name: order_id
+        required: true
+        schema:
+          type: integer
+        description: ID of the order to delete.
+    responses:
+      200:
+        description: Order deleted successfully.
+      404:
+        description: Order not found.
+      500:
+        description: Internal server error.
+    """
+    try:
+        order = Order.query.get(order_id)
+        if not order:
+            return jsonify({'error': f'Order with ID {order_id} not found.'}), 404
+
+        db.session.delete(order)
+        db.session.commit()
+        return jsonify({'message': f'Order {order_id} deleted successfully.'}), 200
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        print('Error deleting order:', e)
+        return jsonify({'error': 'An error occurred while deleting the order.'}), 500

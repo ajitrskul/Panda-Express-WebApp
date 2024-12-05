@@ -1,47 +1,200 @@
 // Cart.js
 import React, { useState, useContext, useEffect } from 'react';
-import { FaTimes, FaPlus, FaMinus } from 'react-icons/fa';
+import { FaTimes, FaPlus, FaMinus, FaGift } from 'react-icons/fa';
 import '../../../styles/kiosk/cart.css';
 import ConfirmDialog from './ConfirmDialog';
 import { CartContext } from './CartContext';
 import api from '../../../services/api';
 import { useNavigate } from 'react-router-dom';
+import { AccountContext } from '../../auth/components/AccountContext';
 
 function Cart({ isOpen, toggleCart, cartItems }) {
+  // State variables
   const [showOverlay, setShowOverlay] = useState(false);
   const [overlayClass, setOverlayClass] = useState('');
-
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [itemToRemove, setItemToRemove] = useState(null);
-
   const [showOrderConfirmation, setShowOrderConfirmation] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-
   const { setCartItems } = useContext(CartContext);
-
+  const { customer, setCustomer } = useContext(AccountContext);
+  const [selectedDeal, setSelectedDeal] = useState(null);
+  const [showDealModal, setShowDealModal] = useState(false);
   const navigate = useNavigate();
 
+  // Function to apply the selected deal
+  const applyDeal = (deal) => {
+    if (deal === '20%') {
+      setSelectedDeal({ discount: 0.2, cost: 2000, description: '20% off' });
+    } else if (deal === '50%') {
+      setSelectedDeal({ discount: 0.5, cost: 5000, description: '50% off' });
+    }
+    setShowDealModal(false);
+  };
+
+  // Updated calculation functions inside the Cart component
+  function calculateSubtotal(cartItems) {
+    return cartItems.reduce(
+      (acc, item) => acc + getItemPrice(item) * item.quantity,
+      0
+    );
+  }
+
+  function calculateDiscountAmount(cartItems) {
+    const subtotal = calculateSubtotal(cartItems);
+    if (selectedDeal && selectedDeal.discount) {
+      return subtotal * selectedDeal.discount;
+    }
+    return 0;
+  }
+
+  function calculateDiscountedSubtotal(cartItems) {
+    const subtotal = calculateSubtotal(cartItems);
+    if (selectedDeal && selectedDeal.discount) {
+      return subtotal - calculateDiscountAmount(cartItems);
+    }
+    return subtotal;
+  }
+
+  function calculateTax(cartItems) {
+    const discountedSubtotal = calculateDiscountedSubtotal(cartItems);
+    const taxRate = 0.0825;
+    return discountedSubtotal * taxRate;
+  }
+
+  function calculateTotal(cartItems) {
+    const discountedSubtotal = calculateDiscountedSubtotal(cartItems);
+    return discountedSubtotal + calculateTax(cartItems);
+  }
+
+  function calculateSubtotal(cartItems) {
+    return cartItems.reduce(
+      (acc, item) => acc + getItemPrice(item) * item.quantity,
+      0
+    );
+  }
+  // Existing functions (getItemImage, formatProductName, getItemPrice)
+  function getItemImage(item) {
+    // Return the main item's image if available
+    if (item.image) {
+      return item.image;
+    } else {
+      // Fallback to a placeholder image
+      return '/path/to/placeholder-image.png';
+    }
+  }
+
+  function formatProductName(name) {
+    return name.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();
+  }
+
+  function getItemPrice(item) {
+    if (item.basePrice !== undefined && item.premiumMultiplier !== undefined) {
+      // Complex item (e.g., Bowl, Plate, Drink)
+      const basePrice = parseFloat(item.basePrice) || 0;
+      const premiumMultiplier = parseFloat(item.premiumMultiplier) || 1;
+      let totalPremiumAddition = 0;
+
+      // For drinks and fountain drinks
+      if (item.is_premium) {
+        const premiumAddition = parseFloat(item.premium_addition) || 0;
+        totalPremiumAddition += premiumAddition;
+      }
+
+      // Process components if they exist
+      if (item.components) {
+        // Sum premium additions for sides
+        if (item.components.sides && item.components.sides.length > 0) {
+          item.components.sides.forEach(side => {
+            let isPremium = side.is_premium;
+            if (typeof isPremium === 'string') {
+              isPremium = isPremium.toLowerCase() === 'true';
+            }
+            if (isPremium) {
+              const premiumAddition = parseFloat(side.premium_addition) || 0;
+              totalPremiumAddition += premiumAddition;
+            }
+          });
+        }
+
+        // Sum premium additions for entrees
+        if (item.components.entrees && item.components.entrees.length > 0) {
+          item.components.entrees.forEach(entree => {
+            let isPremium = entree.is_premium;
+            if (typeof isPremium === 'string') {
+              isPremium = isPremium.toLowerCase() === 'true';
+            }
+            if (isPremium) {
+              const premiumAddition = parseFloat(entree.premium_addition) || 0;
+              totalPremiumAddition += premiumAddition;
+            }
+          });
+        }
+      }
+
+      const totalPrice = basePrice + premiumMultiplier * totalPremiumAddition;
+      return totalPrice;
+    } else if (item.price !== undefined) {
+      // Simple item with a direct price
+      return parseFloat(item.price) || 0;
+    } else {
+      return 0;
+    }
+  }
+  
   const handleCheckout = async () => {
     try {
       const orderData = {
         total_price: calculateTotal(cartItems).toFixed(2),
         cart_items: cartItems,
       };
-
+  
+      // Include customer_id if the customer is signed in
+      if (customer && customer.isSignedIn) {
+        orderData.customer_id = customer.customer_id;
+  
+        // Include applied deal if any
+        if (selectedDeal) {
+          orderData.applied_deal = {
+            discount: selectedDeal.discount,
+            cost: selectedDeal.cost,
+            description: selectedDeal.description,
+          };
+        }
+      }
+  
       // Send the order data to the backend
       const response = await api.post('/kiosk/orders', orderData);
-
+  
       if (response.status === 201) {
         // Order created successfully
         console.log('Order created:', response.data);
-
-        // Clear the cart
+  
+        // Clear the cart and reset the deal
         setCartItems([]);
+        setSelectedDeal(null);
         toggleCart();
-
+  
+        // Fetch updated customer data if logged in
+        if (customer && customer.isSignedIn) {
+          try {
+            // Fetch the updated customer data
+            const customerResponse = await api.get(`/auth/login/customer/info/${customer.customer_id}`);
+            if (customerResponse.status === 200 && customerResponse.data.success) {
+              // Update the customer context with new beast_points
+              setCustomer(prevCustomer => ({
+                ...prevCustomer,
+                beast_points: customerResponse.data.data.beast_points,
+              }));
+            }
+          } catch (err) {
+            console.error('Error fetching updated customer data:', err);
+          }
+        }
+  
         // Show order confirmation
         setShowOrderConfirmation(true);
-
+  
         // Navigate to the kiosk option after a short delay
         setTimeout(() => {
           navigate('/kiosk');
@@ -57,6 +210,8 @@ function Cart({ isOpen, toggleCart, cartItems }) {
       setErrorMessage('Unable to process your order. Please try again.');
     }
   };
+  
+  
 
   useEffect(() => {
     if (isOpen) {
@@ -203,12 +358,27 @@ function Cart({ isOpen, toggleCart, cartItems }) {
             ))
           )}
         </div>
+        {customer && customer.isSignedIn && (
+          <div className="apply-deal-container">
+            <button className="apply-deal-button" onClick={() => setShowDealModal(true)}>
+              <FaGift /> Apply Deal!
+            </button>
+          </div>
+        )}
         <div className="cart-footer">
           <div className="cart-totals">
             <div className="cart-subtotal">
               <span>Subtotal</span>
               <span>${calculateSubtotal(cartItems).toFixed(2)}</span>
             </div>
+
+            {selectedDeal && (
+              <div className="cart-discount">
+                <span>Discount ({selectedDeal.description})</span>
+                <span>- ${calculateDiscountAmount(cartItems).toFixed(2)}</span>
+              </div>
+            )}
+
             <div className="cart-tax">
               <span>Tax</span>
               <span>${calculateTax(cartItems).toFixed(2)}</span>
@@ -222,7 +392,6 @@ function Cart({ isOpen, toggleCart, cartItems }) {
             Checkout
           </button>
         </div>
-
         {/* Confirmation Dialog for Removing Items */}
         {showConfirmDialog && (
           <ConfirmDialog
@@ -253,6 +422,35 @@ function Cart({ isOpen, toggleCart, cartItems }) {
           <div className="order-error-dialog">
             <p>{errorMessage}</p>
             <button className="close-error-button" onClick={closeErrorMessage}>
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Deal Selection Modal */}
+      {showDealModal && (
+        <div className="deal-modal-overlay">
+          <div className="deal-modal-content">
+            <h3>Select a Deal</h3>
+            <p>You have {customer.beast_points} Beast Points.</p>
+            <div className="deal-options">
+              <button
+                className="deal-option-button"
+                onClick={() => applyDeal('20%')}
+                disabled={customer.beast_points < 2000}
+              >
+                Spend 2000 Beast Points for 20% off
+              </button>
+              <button
+                className="deal-option-button"
+                onClick={() => applyDeal('50%')}
+                disabled={customer.beast_points < 5000}
+              >
+                Spend 5000 Beast Points for 50% off
+              </button>
+            </div>
+            <button className="close-deal-modal-button" onClick={() => setShowDealModal(false)}>
               Close
             </button>
           </div>
@@ -330,21 +528,5 @@ function getItemPrice(item) {
   }
 }
 
-function calculateSubtotal(cartItems) {
-  return cartItems.reduce(
-    (acc, item) => acc + getItemPrice(item) * item.quantity,
-    0
-  );
-}
-
-function calculateTax(cartItems) {
-  const subtotal = calculateSubtotal(cartItems);
-  const taxRate = 0.0825;
-  return subtotal * taxRate;
-}
-
-function calculateTotal(cartItems) {
-  return calculateSubtotal(cartItems) + calculateTax(cartItems);
-}
 
 export default Cart;

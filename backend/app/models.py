@@ -24,6 +24,7 @@ class ProductItem(db.Model):
     quantity_in_cases = db.Column(db.Integer, nullable=False)
     servings_per_case = db.Column(db.Integer, nullable=False)
     cost_per_case = db.Column(db.Integer, nullable=False)
+    in_season = db.Column(db.Boolean, nullable=True)
 
 class MenuItem(db.Model):
     __tablename__ = 'menu_item'
@@ -67,7 +68,7 @@ class Order(db.Model):
     total_price = db.Column(db.Numeric(7, 2), nullable=False)
     is_ready = db.Column(db.Boolean, nullable=True)
 
-    order_menu_items = db.relationship('OrderMenuItem', backref='order', lazy=True)
+    order_menu_items = db.relationship('OrderMenuItem', backref='order', lazy=True, cascade="all, delete-orphan")
 
 class OrderMenuItem(db.Model):
     __tablename__ = 'order_menu_item'
@@ -77,7 +78,7 @@ class OrderMenuItem(db.Model):
     menu_item_id = db.Column(db.Integer, db.ForeignKey('menu_item.menu_item_id'), nullable=False)
     subtotal_price = db.Column(db.Numeric(7, 2), nullable=False)
 
-    order_menu_item_products = db.relationship('OrderMenuItemProduct', backref='order_menu_item', lazy=True)
+    order_menu_item_products = db.relationship('OrderMenuItemProduct', backref='order_menu_item', lazy=True, cascade="all, delete-orphan")
 
 class OrderMenuItemProduct(db.Model):
     __tablename__ = 'order_menu_item_product'

@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import { MenuCarousel } from './pages/menu';
 import { KitchenMain } from './pages/kitchen';
 import { ManagerMain,XReports,ZReports, PairReports, RestockReports, Employees, Products, Inventory, ProductUsage, SalesReports} from './pages/manager';
-import { KioskMain, KioskLanding, OrderSelection, DrinkSelection, AppsAndMoreSelection } from './pages/kiosk';
+import { KioskMain, KioskLanding, OrderSelection, DrinkSelection, AppsAndMoreSelection, AlaCarteSelection } from './pages/kiosk';
 import { PosMain } from './pages/pos';
 import { AuthMain, SignUpPage, SignUpError, SignUpSuccess, AuthError, SignInPage, SignInQR, SignInSuccess, SignInError } from './pages/auth';
 
@@ -35,7 +35,7 @@ function App() {
                     <header className="App-header">
                       <nav><Link to="/menu">Menu Board</Link></nav>
                       <nav><Link to="/kitchen">Kitchen</Link></nav>
-                      <nav><Link to="/manager">Manager</Link></nav>
+                      <nav><Link to="/manager/salesreports">Manager</Link></nav>
                       <button onClick={translateLoad}>
                       <nav><Link to="/kiosk">Customer Kiosk</Link></nav>
                       </button>
@@ -70,6 +70,7 @@ function App() {
               <Route path=":itemName" element={<OrderSelection />} />
               <Route path="drink" element={<DrinkSelection />} />
               <Route path="appetizers-&-more" element={<AppsAndMoreSelection />} />
+              <Route path="a-la-carte" element={<AlaCarteSelection />} />
             </Route>
             {/* ... other routes */}
 

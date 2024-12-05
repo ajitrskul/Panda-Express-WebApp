@@ -6,7 +6,7 @@ const api = axios.create({
   baseURL: isLocal
     ? 'http://127.0.0.1:5001/api/'
     : 'https://project-3-01-beastmode-1fed971de919.herokuapp.com/api/',
-  timeout: isLocal ? 2000 : 10000, 
+  timeout: isLocal ? 5000 : 10000, 
 });
 
 if (isLocal) {

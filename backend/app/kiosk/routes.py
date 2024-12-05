@@ -3,15 +3,35 @@ from flask import request, jsonify
 from sqlalchemy import text
 from app.extensions import db
 
-from app.models import Order, OrderMenuItem, OrderMenuItemProduct, MenuItem, ProductItem, Employee
-from datetime import datetime, timezone
+from app.models import Order, OrderMenuItem, OrderMenuItemProduct, MenuItem, ProductItem, Customer, Employee
+from datetime import datetime
 
 @kiosk_bp.route('/', methods=['GET'])
 def customer_kiosk_home():
+    """
+    Home endpoint for the Customer Kiosk.
+    ---
+    tags:
+      - Kiosk
+    responses:
+      200:
+        description: Welcome message for the Customer Kiosk.
+    """
     return {"message": "Welcome to the Customer Kiosk"}
+
 
 @kiosk_bp.route('/menu', methods=['GET'])
 def get_menu_items():
+    """
+    Retrieve menu items.
+    ---
+    tags:
+      - Kiosk
+      - Menu
+    responses:
+      200:
+        description: A list of menu items.
+    """
     single_appetizer = db.session.execute(
         text("SELECT * FROM menu_item WHERE item_name = 'appetizerSmall' LIMIT 1")
     ).fetchall()
@@ -57,6 +77,16 @@ def get_menu_items():
 
 @kiosk_bp.route('/sides', methods=['GET'])
 def get_sides():
+    """
+    Retrieve sides.
+    ---
+    tags:
+      - Kiosk
+      - Menu
+    responses:
+      200:
+        description: A list of side items.
+    """
     sides = db.session.execute(
         text("SELECT * FROM product_item WHERE type = :type ORDER BY product_id ASC"), 
         {'type': 'side'}
@@ -90,6 +120,16 @@ def get_sides():
 
 @kiosk_bp.route('/entrees', methods=['GET'])
 def get_entrees():
+    """
+    Retrieve entrees.
+    ---
+    tags:
+      - Kiosk
+      - Menu
+    responses:
+      200:
+        description: A list of entree items.
+    """
     entrees = db.session.execute(
         text("SELECT * FROM product_item WHERE type = :type ORDER BY product_id ASC"), 
         {'type': 'entree'}
@@ -123,6 +163,16 @@ def get_entrees():
 
 @kiosk_bp.route('/drinks', methods=['GET'])
 def get_drinks():
+    """
+    Retrieve drinks.
+    ---
+    tags:
+      - Kiosk
+      - Menu
+    responses:
+      200:
+        description: A list of drink items.
+    """
     fountain_drinks = db.session.execute(
         text("SELECT * FROM product_item WHERE type = :type ORDER BY product_id ASC"), 
         {'type': 'fountainDrink'}
@@ -184,6 +234,16 @@ def get_drinks():
 
 @kiosk_bp.route('/appetizers', methods=['GET'])
 def get_appetizers():
+    """
+    Retrieve appetizers.
+    ---
+    tags:
+      - Kiosk
+      - Menu
+    responses:
+      200:
+        description: A list of appetizer items.
+    """
     appetizers = db.session.execute(
         text("SELECT * FROM product_item WHERE type = :type ORDER BY product_id ASC"), 
         {'type': 'appetizer'}
@@ -217,6 +277,16 @@ def get_appetizers():
 
 @kiosk_bp.route('/desserts', methods=['GET'])
 def get_desserts():
+    """
+    Retrieve desserts.
+    ---
+    tags:
+      - Kiosk
+      - Menu
+    responses:
+      200:
+        description: A list of dessert items.
+    """
     desserts = db.session.execute(
         text("SELECT * FROM product_item WHERE type = :type ORDER BY product_id ASC"), 
         {'type': 'dessert'}
@@ -250,27 +320,93 @@ def get_desserts():
 
 @kiosk_bp.route('/orders', methods=['POST'])
 def create_order():
+    """
+    Create a new order.
+    ---
+    tags:
+      - Kiosk
+      - Orders
+    parameters:
+      - in: body
+        name: order
+        description: Details of the order to create.
+        required: true
+        schema:
+          type: object
+          properties:
+            total_price:
+              type: number
+              example: 25.50
+            cart_items:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: "Orange Chicken Bowl"
+                  quantity:
+                    type: integer
+                    example: 1
+                  basePrice:
+                    type: number
+                    example: 7.50
+                  premiumMultiplier:
+                    type: number
+                    example: 1.2
+                  components:
+                    type: object
+                    properties:
+                      sides:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            product_id:
+                              type: integer
+                              example: 101
+                            is_premium:
+                              type: boolean
+                              example: true
+                      entrees:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            product_id:
+                              type: integer
+                              example: 102
+                            is_premium:
+                              type: boolean
+                              example: false
+    responses:
+      201:
+        description: Order created successfully.
+      400:
+        description: Invalid order data.
+      500:
+        description: Internal server error.
+    """
     data = request.get_json()
     total_price = data.get('total_price')
     cart_items = data.get('cart_items')
+    customer_id = data.get('customer_id')
+    applied_deal = data.get('applied_deal')
 
     if not cart_items or not total_price:
         return jsonify({'error': 'Invalid order data'}), 400
 
     try:
-        # Start a transaction
         with db.session.begin_nested():
-            # Create the Order
             order = Order(
                 order_date_time=datetime.now(),
                 total_price=total_price,
                 employee_id=None,
-                is_ready= False
+                is_ready=False
             )
             db.session.add(order)
-            db.session.flush()  # To get the order_id
+            db.session.flush()
 
-            # For each cart item, create OrderMenuItem and OrderMenuItemProduct
             for cart_item in cart_items:
                 name = cart_item.get('name')
                 quantity = cart_item.get('quantity', 1)
@@ -294,59 +430,87 @@ def create_order():
                         subtotal_price=subtotal_price / quantity
                     )
                     db.session.add(order_menu_item)
-                    db.session.flush()  # To get the order_menu_item_id
+                    db.session.flush()
 
-                    # Add OrderMenuItemProduct entries for sides and entrees
-                    # Sides
-                    for side in components.get('sides', []):
-                        product_id = side.get('product_id')
-                        if not product_id:
-                            return jsonify({'error': 'Product ID missing in side item'}), 400
-                        # Verify that the product exists
-                        product = ProductItem.query.get(product_id)
-                        if not product:
-                            return jsonify({'error': f'Product with ID {product_id} not found'}), 400
-                        # Create OrderMenuItemProduct
-                        order_menu_item_product = OrderMenuItemProduct(
-                            order_menu_item_id=order_menu_item.order_menu_item_id,
-                            product_id=product_id
-                        )
-                        db.session.add(order_menu_item_product)
-                    # Entrees
-                    for entree in components.get('entrees', []):
-                        product_id = entree.get('product_id')
-                        if not product_id:
-                            return jsonify({'error': 'Product ID missing in entree item'}), 400
-                        # Verify that the product exists
-                        product = ProductItem.query.get(product_id)
-                        if not product:
-                            return jsonify({'error': f'Product with ID {product_id} not found'}), 400
-                        # Create OrderMenuItemProduct
-                        order_menu_item_product = OrderMenuItemProduct(
-                            order_menu_item_id=order_menu_item.order_menu_item_id,
-                            product_id=product_id
-                        )
-                        db.session.add(order_menu_item_product)
+                    # If the item has components, add them
+                    if components:
+                        # Sides
+                        for side in components.get('sides', []):
+                            product_id = side.get('product_id')
+                            if not product_id:
+                                return jsonify({'error': 'Product ID missing in side item'}), 400
+                            product = ProductItem.query.get(product_id)
+                            if not product:
+                                return jsonify({'error': f'Product with ID {product_id} not found'}), 400
+                            order_menu_item_product = OrderMenuItemProduct(
+                                order_menu_item_id=order_menu_item.order_menu_item_id,
+                                product_id=product_id
+                            )
+                            db.session.add(order_menu_item_product)
+                        # Entrees
+                        for entree in components.get('entrees', []):
+                            product_id = entree.get('product_id')
+                            if not product_id:
+                                return jsonify({'error': 'Product ID missing in entree item'}), 400
+                            product = ProductItem.query.get(product_id)
+                            if not product:
+                                return jsonify({'error': f'Product with ID {product_id} not found'}), 400
+                            order_menu_item_product = OrderMenuItemProduct(
+                                order_menu_item_id=order_menu_item.order_menu_item_id,
+                                product_id=product_id
+                            )
+                            db.session.add(order_menu_item_product)
+                    else:
+                        # For items without components (e.g., drinks, appetizers), link the product directly
+                        product_id = cart_item.get('product_id') or cart_item.get('productId')
+                        if product_id:
+                            product = ProductItem.query.get(product_id)
+                            if not product:
+                                return jsonify({'error': f'Product with ID {product_id} not found'}), 400
+                            order_menu_item_product = OrderMenuItemProduct(
+                                order_menu_item_id=order_menu_item.order_menu_item_id,
+                                product_id=product_id
+                            )
+                            db.session.add(order_menu_item_product)
+            if customer_id:
+                customer = Customer.query.get(customer_id)
+                if customer:
+                    # Convert total_price to float
+                    total_price_float = float(total_price)
+                    # Calculate beastpoints (total_price in cents)
+                    beastpoints_awarded = int(round(total_price_float * 100))
+                    # Update customer's beastpoints
+                    customer.beast_points += beastpoints_awarded
+                    db.session.add(customer)  # Add customer back to session
+                else:
+                    print(f"Customer with ID {customer_id} not found.")
+            
+            # Apply deal if any
+            if customer_id and applied_deal:
+                customer = Customer.query.get(customer_id)
+                if customer:
+                    # Check if customer has enough beast points
+                    if customer.beast_points >= applied_deal['cost']:
+                        # Deduct beast points
+                        customer.beast_points -= applied_deal['cost']
+                        # Adjust total price
+                        total_price_float = float(total_price)
+                        discount_amount = total_price_float * applied_deal['discount']
+                        order.total_price = total_price_float - discount_amount
+                        db.session.add(customer)
+                    else:
+                        return jsonify({'error': 'Not enough beast points for this deal.'}), 400
+                else:
+                    return jsonify({'error': 'Customer not found.'}), 404
 
-                # Handle simple items (e.g., drinks, appetizers)
-                if not components:
-                    # Create OrderMenuItem entries based on quantity
-                    for _ in range(quantity):
-                        order_menu_item = OrderMenuItem(
-                            order_id=order.order_id,
-                            menu_item_id=menu_item.menu_item_id,
-                            subtotal_price=subtotal_price / quantity
-                        )
-                        db.session.add(order_menu_item)
-                        db.session.flush()
 
-            # Commit the transaction
             db.session.commit()
         return jsonify({'message': 'Order created successfully', 'order_id': order.order_id}), 201
     except Exception as e:
         db.session.rollback()
         print('Error creating order:', e)
         return jsonify({'error': 'An error occurred while creating the order.'}), 500
+
 
 def get_item_price(item):
     quantity = item.get('quantity', 1)
@@ -398,30 +562,3 @@ def get_item_price(item):
             return 0.0
     else:
         return 0.0
-
-
-
-# def get_item_price(item):
-#     # Implement the pricing logic
-#     quantity = item.get('quantity', 1)
-#     if 'basePrice' in item and 'premiumMultiplier' in item and 'components' in item:
-#         base_price = float(item['basePrice'])
-#         premium_multiplier = float(item['premiumMultiplier'])
-#         components = item['components']
-#         total_premium_addition = 0.0
-#         # Sides
-#         for side in components.get('sides', []):
-#             if side.get('is_premium'):
-#                 total_premium_addition += float(side.get('premium_addition', 0))
-#         # Entrees
-#         for entree in components.get('entrees', []):
-#             if entree.get('is_premium'):
-#                 total_premium_addition += float(entree.get('premium_addition', 0))
-#         total_price = base_price + premium_multiplier * total_premium_addition
-#         return round(total_price * quantity, 2)
-#     elif 'price' in item:
-#         return round(float(item['price']) * quantity, 2)
-#     elif 'premium_addition' in item:
-#         return round(float(item.get('premium_addition', 0)) * quantity, 2)
-#     else:
-#         return 0.0
