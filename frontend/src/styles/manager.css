@@ -708,7 +708,7 @@
 }
     
 .inventory-card .restock-input {
-    width: 60px;
+    width: 50px;
     padding: 5px;
     text-align: center;
     align-items: center;
@@ -722,11 +722,15 @@
     margin-top: 10px;
 }
 
+.restock-button {
+    background-color: rgb(17, 39, 39);
+}
+
 .inventory-card .inventory-buttons {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 10px;
+    gap: 5px;
     margin-top: 10px;
 }
 

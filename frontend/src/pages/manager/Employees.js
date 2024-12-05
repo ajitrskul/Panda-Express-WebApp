@@ -547,22 +547,22 @@ function Employees() {
                 <i class="bi bi-x-lg"></i>
               </button>
               <form onSubmit={validateEmployeeChanges}>
-                <div className="row text-start" style={{marginBottom: "30px"}}>
-                  <label className="employee-add-label" style={{marginLeft:"10px"}}>Email:</label>
+                <div className="row text-start justify-content-center text-center" style={{marginBottom: "30px"}}>
+                  <label className="employee-add-label text-center" style={{marginLeft:"10px"}}>Email:</label>
                   <input name="email" value={newEmployee.email} className={newEmployeeError.valid_email.email_class} placeholder="email" onChange={({ target }) => {
                     handleAddEmployeeInput(target.name, target.value);
                   }}></input>
-                  {newEmployeeError.valid_email.isHighlighted && <p className="add-employee-error">{newEmployeeError.email}</p>}            
-                  <label className="employee-add-label" style={{marginLeft:"10px"}}>First Name:</label>
+                  {newEmployeeError.valid_email.isHighlighted && <p className="add-employee-error text-center">{newEmployeeError.email}</p>}            
+                  <label className="employee-add-label text-center" style={{marginLeft:"10px"}}>First Name:</label>
                   <input name="first_name" value={newEmployee.first_name} className={newEmployeeError.valid_first_name.first_name_class} placeholder="first name" onChange={({ target }) => {
                     handleAddEmployeeInput(target.name, target.value);
                   }}></input>
-                  {newEmployeeError.valid_first_name.isHighlighted && <p className="add-employee-error">{newEmployeeError.first_name}</p>}
+                  {newEmployeeError.valid_first_name.isHighlighted && <p className="add-employee-error text-center">{newEmployeeError.first_name}</p>}
                   <label style={{marginLeft:"10px"}}>Last Name:</label>
                   <input name="last_name" value={newEmployee.last_name} className={newEmployeeError.valid_last_name.last_name_class} placeholder="last name" onChange={({ target }) => {
                     handleAddEmployeeInput(target.name, target.value);
                   }}></input>
-                  {newEmployeeError.valid_last_name.isHighlighted && <p className="add-employee-error">{newEmployeeError.last_name}</p>}
+                  {newEmployeeError.valid_last_name.isHighlighted && <p className="add-employee-error text-center">{newEmployeeError.last_name}</p>}
                   <label style={{marginLeft:"10px"}}>Role:</label>
                   <select name="role" value={newEmployee.role} className={newEmployeeError.valid_role.role_class} onChange={({ target }) => {
                     handleAddEmployeeInput(target.name, target.value);
@@ -594,45 +594,76 @@ function Employees() {
               <button className="employee-close-button" onClick={closePopUp}>
                 <i class="bi bi-x-lg"></i>
               </button>
-              <form onSubmit={validateEmployeeInput}>
-                <div className="row text-start" style={{marginBottom: "30px"}}>
-                  <label className="employee-add-label" style={{marginLeft:"10px"}}>Email:</label>
-                  <input name="email" value={newEmployee.email} className={newEmployeeError.valid_email.email_class} placeholder="email" onChange={({ target }) => {
-                    handleAddEmployeeInput(target.name, target.value);
-                  }}></input>
-                  {newEmployeeError.valid_email.isHighlighted && <p className="add-employee-error">{newEmployeeError.email}</p>}            
-                  <label className="employee-add-label" style={{marginLeft:"10px"}}>First Name:</label>
-                  <input name="first_name" value={newEmployee.first_name} className={newEmployeeError.valid_first_name.first_name_class} placeholder="first name" onChange={({ target }) => {
-                    handleAddEmployeeInput(target.name, target.value);
-                  }}></input>
-                  {newEmployeeError.valid_first_name.isHighlighted && <p className="add-employee-error">{newEmployeeError.first_name}</p>}
-                  <label style={{marginLeft:"10px"}}>Last Name:</label>
-                  <input name="last_name" value={newEmployee.last_name} className={newEmployeeError.valid_last_name.last_name_class} placeholder="last name" onChange={({ target }) => {
-                    handleAddEmployeeInput(target.name, target.value);
-                  }}></input>
-                  {newEmployeeError.valid_last_name.isHighlighted && <p className="add-employee-error">{newEmployeeError.last_name}</p>}
-                  <label style={{marginLeft:"10px"}}>Role:</label>
-                  <select name="role" value={newEmployee.role} className={newEmployeeError.valid_role.role_class} onChange={({ target }) => {
-                    handleAddEmployeeInput(target.name, target.value);
-                  }}>
+              <form onSubmit={validateEmployeeChanges} className="employee-form">
+                <div className="row justify-content-center align-items-center" style={{ marginBottom: "30px" }}>
+                  <label className="employee-add-label text-center">Email:</label>
+                  <input
+                    name="email"
+                    value={newEmployee.email}
+                    className={`text-center ${newEmployeeError.valid_email.email_class}`}
+                    placeholder="email"
+                    onChange={({ target }) => {
+                      handleAddEmployeeInput(target.name, target.value);
+                    }}
+                  />
+                  {newEmployeeError.valid_email.isHighlighted && (
+                    <p className="add-employee-error">{newEmployeeError.email}</p>
+                  )}
+
+                  <label className="employee-add-label text-center">First Name:</label>
+                  <input
+                    name="first_name"
+                    value={newEmployee.first_name}
+                    className={`text-center ${newEmployeeError.valid_first_name.first_name_class}`}
+                    placeholder="first name"
+                    onChange={({ target }) => {
+                      handleAddEmployeeInput(target.name, target.value);
+                    }}
+                  />
+                  {newEmployeeError.valid_first_name.isHighlighted && (
+                    <p className="add-employee-error">{newEmployeeError.first_name}</p>
+                  )}
+
+                  <label className="employee-add-label text-center">Last Name:</label>
+                  <input
+                    name="last_name"
+                    value={newEmployee.last_name}
+                    className={`text-center ${newEmployeeError.valid_last_name.last_name_class}`}
+                    placeholder="last name"
+                    onChange={({ target }) => {
+                      handleAddEmployeeInput(target.name, target.value);
+                    }}
+                  />
+                  {newEmployeeError.valid_last_name.isHighlighted && (
+                    <p className="add-employee-error">{newEmployeeError.last_name}</p>
+                  )}
+
+                  <label className="employee-add-label text-center">Role:</label>
+                  <select
+                    name="role"
+                    value={newEmployee.role}
+                    className={`text-center ${newEmployeeError.valid_role.role_class}`}
+                    onChange={({ target }) => {
+                      handleAddEmployeeInput(target.name, target.value);
+                    }}
+                  >
                     <option value="">--Select a role--</option>
-                    <option value="manager">manager</option>
-                    <option value="cashier">cashier</option>
+                    <option value="manager">Manager</option>
+                    <option value="cashier">Cashier</option>
+                    <option value="fired">Fired</option>
                   </select>
-                  {newEmployeeError.valid_role.isHighlighted && <p className="add-employee-error">{newEmployeeError.role}</p>}
-                  <label style={{marginLeft:"10px"}}>Password (optional):</label>
-                  <input name="password" value={newEmployee.password} className={newEmployeeError.valid_password.password_class} placeholder="password" onChange={({ target }) => {
-                    handleAddEmployeeInput(target.name, target.value);
-                  }}></input>
-                  {newEmployeeError.valid_password.isHighlighted && <p className="add-employee-error">{newEmployeeError.last_name}</p>}
+                  {newEmployeeError.valid_role.isHighlighted && (
+                    <p className="add-employee-error">{newEmployeeError.role}</p>
+                  )}
                 </div>
                 <div className="row justify-content-center">
-                  <button type="submit" className={submitClass.button_class}>
+                  <button type="submit" className={`submit-btn ${submitClass.button_class}`}>
                     Submit
                     <div className={submitClass.loading_class} role="status"></div>
                   </button>
                 </div>
               </form>
+
             </div>
           </>
         }
@@ -649,7 +680,7 @@ function Employees() {
               <input 
                 type="text" 
                 id="employee-search" 
-                placeholder="employee name" 
+                placeholder="e.g., John Smith" 
                 className="employee-search"
                 value={search} 
                 onChange={(e) => setSearch(e.target.value)}>
@@ -667,7 +698,7 @@ function Employees() {
         </div>
         <div className="row justify-content-center employee-card" styles={{minWidth:"900px"}}>
           <div className="col-12 fluid-container">
-            <div className="row justify-content-start" style={{minWidth: "900px"}}>
+            <div className="row justify-content-start text-center" style={{minWidth: "900px"}}>
               <div className="col-1 employee-table-bg">
                 ID
               </div>
@@ -680,16 +711,12 @@ function Employees() {
               <div className="col-3 employee-table-bg">
                 Employee Role
               </div>
-              <div className="col employee-table-bg">
-                Edit
-              </div>
             </div>
             <hr className="report-divider"></hr>
 
-
             
             {employeeDisplay.map(employee => (
-              <div className="row employee-row align-items-center">
+              <div className="row employee-row align-items-center text-center">
                 <div className="col-1 employee-row-bg">
                   {employee.id}
                 </div>
@@ -703,11 +730,11 @@ function Employees() {
                   {employee.role}
                 </div>
                 <div className="col text-center employee-button-row">
+                  <button className="edit-employee-button mx-2" onClick={() => {openEditEmployee(employee.id)}}>
+                    <i class="bi bi-pencil-square"></i>
+                  </button>
                   <button className="fire-button" onClick={() => {fireEmployee(employee.id)}}>
                     <i class="bi bi-x-lg"></i>
-                  </button>
-                  <button className="edit-employee-button" onClick={() => {openEditEmployee(employee.id)}}>
-                    <i class="bi bi-pencil-square"></i>
                   </button>
                 </div>
               </div>

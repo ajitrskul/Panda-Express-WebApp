@@ -15,7 +15,7 @@ function KioskLanding() {
   }
 
   return (
-    <div className="container-fluid d-flex align-items-center justify-content-center vh-100 cover">
+    <div className="container-fluid d-flex align-items-center justify-content-center vh-100 cover kiosk-landing-order">
        <NavBar></NavBar>
       <div className="button-landing-container">
         <button 
@@ -30,8 +30,6 @@ function KioskLanding() {
           <i class="bi bi-translate translate-icon" onClick={initTranslate}></i>
         </button>
       </div>
-     
-     
     </div>
   );
 }

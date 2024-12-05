@@ -10,15 +10,15 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  padding-top: 90px; /* Align with navbar spacing */
   align-items: center;
+  padding-top: 3rem;
 }
 
 /* Heading */
 .kitchen-container h1 {
   color: white;
   font-size: 3rem;
-  margin-bottom: 30px;
+  margin-bottom: 10px;
 }
 
 /* Orders Container */
@@ -91,7 +91,7 @@
   color: white;
   border: none;
   padding: 10px;
-  width: 48%;
+  width: 75%;
   border-radius: 5px;
   cursor: pointer;
   font-size: 1rem;
@@ -110,7 +110,7 @@
   color: white;
   border: none;
   padding: 10px;
-  width: 48%;
+  width: 20%;
   border-radius: 5px;
   cursor: pointer;
   font-size: 1rem;
@@ -159,6 +159,10 @@
   color: #a3080c;
 }
 
+.ready h3 {
+  color: #1e9b44;
+}
+
 .modal-content p {
   color: #333;
   margin-bottom: 20px;
@@ -184,12 +188,26 @@
   transition: background-color 0.3s, transform 0.2s;
 }
 
+.confirm-ready-button {
+  background-color: #218838; /* Red color for 'Delete' action */
+  color: #fff;
+  padding: 10px 20px;
+  width: 40%;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
 .confirm-delete-button:hover {
   background-color: #c82333;
   transform: scale(1.05);
 }
 
 /* Cancel Delete Button */
+.cancel-ready-button,
 .cancel-delete-button {
   background-color: #6c757d; /* Grey color for 'Cancel' action */
   color: #fff;
@@ -203,6 +221,7 @@
   transition: background-color 0.3s, transform 0.2s;
 }
 
+.cancel-ready-button,
 .cancel-delete-button:hover {
   background-color: #5a6268;
   transform: scale(1.05);
@@ -251,25 +270,6 @@
   background-color: goldenrod;
 }
 
-/* Consistent Padding at Different Screen Widths */
-@media (min-width: 250px) {
-  .kitchen-container {
-      padding-top: 150px;
-  }
-}
-
-@media (min-width: 400px) {
-  .kitchen-container {
-      padding-top: 120px;
-  }
-}
-
-@media (min-width: 768px) {
-  .kitchen-container {
-      padding-top: 90px;
-  }
-}
-
 /* Responsive Design */
 @media (max-width: 768px) {
   .order-card {
@@ -278,6 +278,8 @@
 
   .order-buttons {
     flex-direction: column;
+    display: flex;
+    justify-content: space-between;
   }
 
   .mark-ready-button,
@@ -299,4 +301,17 @@
     width: 100%;
     margin-bottom: 10px;
   }
+}
+
+.order-card {
+  display: flex;
+  flex-direction: column; 
+  justify-content: space-between; 
+  border: 2px solid;
+  padding: 16px;
+  margin: 10px;
+  border-radius: 8px;
+  background-color: #f9f9f9; 
+  height: 100%; 
+  box-sizing: border-box;
 }

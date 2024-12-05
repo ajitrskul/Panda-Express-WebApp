@@ -129,16 +129,16 @@
   width:fit-content;
   padding:2px 10px;
 
-  margin-right: 10px;
+  margin-right: 0.5rem;
 
-  font-size:24px;
+  font-size:1.5rem;
   font-weight:bold;
 
   display:inline-block;
 }
 
 .fire-button:hover {
-  background-color: rgb(222, 0, 0);
+  background-color: rgb(71, 21, 21);
 }
 
 .fire-button:active {
@@ -152,16 +152,16 @@
   width:fit-content;
   padding:2px 10px;
 
-  background-color: #A3080C;
+  background-color: #1881d6;
   color:white;
 
-  font-size:24px;
+  font-size:1.5rem;
 
   display:inline-block;
 }
 
 .edit-employee-button:hover {
-  background-color: #cd0c13;
+  background-color: #175080;
 }
 
 .edit-employee-button:active {
@@ -209,7 +209,7 @@
   left:50%;
   top:50%;
   transform:translateY(-275px) translateX(-300px);
-  height:550px;
+  height:450px;
   width:600px;
 
   padding:25px 0px;
@@ -268,7 +268,7 @@
 .employee-add-input {
   margin-left: 20px !important;
   margin-bottom: 5px; 
-  width: 580px !important;
+  width: 400px !important;
   height: 30px;
 
   border-radius:15px;
@@ -303,10 +303,10 @@
   left:50%;
   top:50%;
   transform:translateY(-275px) translateX(-300px);
-  height:550px;
+  height:450px;
   width:600px;
 
-  padding:25px 0px;
+  padding:25px 0px 0px 0px;
 
   background-color:white;
 
