@@ -38,6 +38,16 @@ function Inventory() {
     }
   };
 
+  const handleRemove = async (itemName) => {
+    try {
+      const amount = restockAmounts[itemName];
+      await api.post("/manager/inventory/remove", { itemName, amount });
+      window.location.reload();
+    } catch (error) {
+      console.error(`Error removing item "${itemName}":`, error);
+    }
+  };
+
   const handleSearch = async (e) => {
     const term = e.target.value.toLowerCase();
     setSearchTerm(term);
@@ -56,7 +66,7 @@ function Inventory() {
     try {
       for (const item of inventory) {
         const amount = restockAmounts[item.name];
-        await api.post("/manager/inventory/restock", { itemName: item.name, amount });
+        await api.post("/manager/inventory/restock/low", { itemName: item.name, amount });
       }
       window.location.reload();
     } catch (error) {
@@ -93,7 +103,7 @@ function Inventory() {
             />
             <button
               onClick={handleRestockAll}
-              className="btn btn-success"
+              className="btn btn-danger"
             >
               Restock All Low Items
             </button>
@@ -122,12 +132,20 @@ function Inventory() {
                         onChange={(e) => handleInputChange(e, item.name)}
                         className="form-control restock-input"
                       />
-                      <button
-                        onClick={() => handleRestock(item.name)}
-                        className="btn btn-primary restock-button"
-                      >
-                        Restock
-                      </button>
+                    </div>
+                    <div className="inventory-buttons">
+                        <button
+                          onClick={() => handleRestock(item.name)}
+                          className="btn btn-success restock-button"
+                        >
+                          Restock
+                        </button>
+                        <button
+                          onClick={() => handleRemove(item.name)}
+                          className="btn btn-warning remove-button"
+                        >
+                          Remove
+                        </button>
                     </div>
                   </div>
                 </div>

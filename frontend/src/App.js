@@ -35,7 +35,7 @@ function App() {
                     <header className="App-header">
                       <nav><Link to="/menu">Menu Board</Link></nav>
                       <nav><Link to="/kitchen">Kitchen</Link></nav>
-                      <nav><Link to="/manager">Manager</Link></nav>
+                      <nav><Link to="/manager/salesreports">Manager</Link></nav>
                       <button onClick={translateLoad}>
                       <nav><Link to="/kiosk">Customer Kiosk</Link></nav>
                       </button>
