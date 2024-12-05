@@ -354,3 +354,121 @@
 .close-error-button:hover {
   background-color: #e55a4e;
 }
+
+/* Apply Deal Button */
+.apply-deal-container {
+  text-align: center;
+  margin: 10px 20px;
+}
+
+.apply-deal-button {
+  background-color: #ffc107; /* Bootstrap warning color */
+  color: #212529;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.3s ease;
+}
+
+.apply-deal-button:hover {
+  background-color: #e0a800;
+}
+
+/* Deal Modal Overlay */
+.deal-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.deal-modal-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  width: 90%;
+  max-width: 400px;
+}
+
+.deal-modal-content h3 {
+  margin-bottom: 15px;
+}
+
+.deal-modal-content p {
+  margin-bottom: 20px;
+}
+
+.deal-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.deal-option-button {
+  background-color: #28a745; /* Bootstrap success color */
+  color: #fff;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.deal-option-button:disabled {
+  background-color: #6c757d; /* Bootstrap secondary color */
+  cursor: not-allowed;
+}
+
+.deal-option-button:hover:not(:disabled) {
+  background-color: #218838;
+}
+
+.close-deal-modal-button {
+  margin-top: 20px;
+  background-color: #dc3545; /* Bootstrap danger color */
+  color: #fff;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.close-deal-modal-button:hover {
+  background-color: #c82333;
+}
+
+/* Cart Discount */
+.cart-discount {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  color: #28a745; /* Green color to indicate savings */
+}
+
+.cart-discount span {
+  font-weight: bold;
+}
+
+/* Adjustments for responsiveness */
+@media (max-width: 768px) {
+  .deal-modal-content {
+    width: 95%;
+  }
+
+  .deal-option-button {
+    font-size: 0.9rem;
+  }
+}

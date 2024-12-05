@@ -391,6 +391,7 @@ def create_order():
     total_price = data.get('total_price')
     cart_items = data.get('cart_items')
     customer_id = data.get('customer_id')
+    applied_deal = data.get('applied_deal')
 
     if not cart_items or not total_price:
         return jsonify({'error': 'Invalid order data'}), 400
@@ -483,7 +484,26 @@ def create_order():
                     db.session.add(customer)  # Add customer back to session
                 else:
                     print(f"Customer with ID {customer_id} not found.")
-                    
+            
+            # Apply deal if any
+            if customer_id and applied_deal:
+                customer = Customer.query.get(customer_id)
+                if customer:
+                    # Check if customer has enough beast points
+                    if customer.beast_points >= applied_deal['cost']:
+                        # Deduct beast points
+                        customer.beast_points -= applied_deal['cost']
+                        # Adjust total price
+                        total_price_float = float(total_price)
+                        discount_amount = total_price_float * applied_deal['discount']
+                        order.total_price = total_price_float - discount_amount
+                        db.session.add(customer)
+                    else:
+                        return jsonify({'error': 'Not enough beast points for this deal.'}), 400
+                else:
+                    return jsonify({'error': 'Customer not found.'}), 404
+
+
             db.session.commit()
         return jsonify({'message': 'Order created successfully', 'order_id': order.order_id}), 201
     except Exception as e:
