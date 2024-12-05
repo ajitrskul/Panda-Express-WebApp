@@ -12,7 +12,6 @@ import {
 import api from '../services/api';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'; 
 import QRCode from 'react-native-qrcode-svg'; 
-
 const { height } = Dimensions.get('window');
 
 const HomeScreen = ({ route, navigation }) => { 
@@ -86,6 +85,7 @@ const HomeScreen = ({ route, navigation }) => {
   const qrData = JSON.stringify({
     customer_id: customerInfo.customer_id,
     email: customerInfo.email,
+    password: customerInfo.password,
     first_name: customerInfo.first_name,
     last_name: customerInfo.last_name,
     beast_points: customerInfo.beast_points,
@@ -140,8 +140,8 @@ const HomeScreen = ({ route, navigation }) => {
             <QRCode
                 value={qrData}
                 size={200}
-                color="#FFFFFF" 
-                backgroundColor="#a3080c" 
+                color="black" 
+                backgroundColor="white" 
             />
         </View>
 
@@ -158,6 +158,10 @@ const HomeScreen = ({ route, navigation }) => {
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#000',
+  },
   background: {
     flex: 1,
     width: '100%',
@@ -186,26 +190,31 @@ const styles = StyleSheet.create({
   },
   header: {
     width: '100%',
-    paddingVertical: 10, 
+    height: 100, 
     paddingHorizontal: 10,
     backgroundColor: 'rgba(163, 8, 12, 0.8)', 
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    alignItems: 'flex-end', 
+    paddingBottom: 10, 
     zIndex: 2, 
-  },
-  logo: {
+},
+logo: {
     width: 100, 
     height: 40,
-  },
-  logoutButton: {
+    marginBottom: 0, 
+},
+logoutButton: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: '#7f0b15',
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 5,
-  },
+    marginBottom: 0,
+    marginRight: 20,
+},
   logoutButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
@@ -260,15 +269,10 @@ const styles = StyleSheet.create({
   },
   qrContainer: {
     alignItems: 'center',
+    justifyContent: 'center',
     marginTop: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 6,
-    backgroundColor: '#a3080c', 
-    padding: 10,
-    borderRadius: 15,
+    padding: 20,
+    backgroundColor: '#FFFFFF',
   },
   instructionContainer: {
     flexDirection: 'row',

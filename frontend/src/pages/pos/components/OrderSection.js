@@ -1,4 +1,4 @@
-import React from "react";
+import { React } from "react";
 
 function OrderSection({ 
   orderNumber, 
@@ -9,7 +9,9 @@ function OrderSection({
   onIncreaseQuantity, 
   onDecreaseQuantity, 
   onChangeQuantity,
-  disableActions 
+  disableActions,
+  onQRSignInToggle,
+  customerId
 }) {
   const taxAmount = parseFloat(total) * 0.0625;
   const totalWithTax = parseFloat(total) + taxAmount;
@@ -135,7 +137,7 @@ function OrderSection({
       </div>
       <hr style={{ margin: "10px 0", borderColor: "#555" }} />
       <div className="order-buttons">
-      <button
+        <button
           className="checkout-btn"
           style={{
             backgroundColor: disableActions ? "#6c757d" : "#28a745",
@@ -148,6 +150,19 @@ function OrderSection({
           Checkout
         </button>
         <button
+          className="btn btn-primary"
+          style={{
+            backgroundColor: customerId !== 0 ? "#6c757d" : "#0d6efd",
+            cursor: customerId !== 0 ? "not-allowed" : "pointer",
+            opacity: customerId !== 0 ? 0.6 : 1,
+            borderColor: "#6c757d",
+          }}
+          onClick={onQRSignInToggle} 
+          disabled={customerId !== 0}
+        >
+          <i class="bi bi-qr-code-scan"></i>
+        </button>
+        <button
           className="cancel-btn"
           style={{
             backgroundColor: currentOrder.length === 0 ? "#6c757d" : "#dc3545",
@@ -157,7 +172,7 @@ function OrderSection({
           onClick={onCancel}
           disabled={currentOrder.length === 0}
         >
-          Cancel
+          X
         </button>
       </div>
     </div>

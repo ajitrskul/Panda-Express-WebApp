@@ -10,12 +10,13 @@ function AuthMain() {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState(null);
   const navigate = useNavigate();
+  const [employee_id, setEmployeeId] = useState(null);
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await api.post("/auth/login/db", { username });
+      const response = await api.post("/auth/login/db", { username, employee_id });
       if (response.data.success) {
         const hashData = await fetch(`${process.env.REACT_APP_HASH_API_KEY}validate?plain=${password}&hashed=${response.data.password}`);
         const validate = await hashData.json();
