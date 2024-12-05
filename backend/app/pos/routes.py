@@ -462,7 +462,7 @@ def confirm_checkout():
                 "order_date_time": order_date_time,
                 "employee_id": employee_id,
                 "total_price": total_price,
-                "is_ready": False  
+                "is_ready": True  
             }
         )
         db.session.commit()
