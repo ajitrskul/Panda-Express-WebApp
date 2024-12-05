@@ -403,10 +403,13 @@ def inventory_items():
     """
     try:
         with db.session.begin():
-            product_inventory = db.session.query(ProductItem).with_entities(ProductItem.product_name, ProductItem.quantity_in_cases).order_by(ProductItem.product_id).all()
+            product_inventory = db.session.query(ProductItem).with_entities(ProductItem.product_name, ProductItem.quantity_in_cases, ProductItem.image).order_by(ProductItem.product_id).all()
 
         inventory_data = [
-            {"name": name_helper(product.product_name), "inventoryRemaining": product.quantity_in_cases} for product in product_inventory
+            {"name": name_helper(product.product_name), 
+             "inventoryRemaining": product.quantity_in_cases,
+             "image": product.image
+            } for product in product_inventory
         ]
         return jsonify(inventory_data)
     except Exception as e:
@@ -427,18 +430,19 @@ def inventory_items_low():
         print(f"An error occurred: {e}")
         return {}
 
-@manager_bp.route('/inventory/restock', methods=["POST"])
-def restock():
+
+@manager_bp.route('/inventory/update', methods=["PUT"])
+def update_inventory():
     """
-    Restock a specific inventory item.
+    Update the quantity of a specific inventory item.
     ---
     tags:
       - Manager
       - Inventory
     parameters:
       - in: body
-        name: restock
-        description: Details of the item to restock.
+        name: update
+        description: Details of the item to update.
         required: true
         schema:
           type: object
@@ -448,23 +452,23 @@ def restock():
               example: "Fried Rice"
             amount:
               type: integer
-              example: 10
+              example: -10
     responses:
       200:
-        description: Item restocked successfully.
+        description: Item updated successfully.
       400:
         description: Invalid item name or amount.
       404:
         description: Item not found.
       500:
-        description: Internal server error while restocking.
+        description: Internal server error while updating inventory.
     """
     try:
         data = request.get_json()
         item_name = to_camel_case(data.get('itemName'))
         amount = data.get('amount')
 
-        if not item_name or not amount or not isinstance(amount, int) or amount <= 0:
+        if not item_name or not isinstance(amount, int):
             return jsonify({"error": "Invalid item name or amount"}), 400
 
         with db.session.begin():
@@ -473,44 +477,23 @@ def restock():
             if not item:
                 return jsonify({"error": "Item not found"}), 404
 
+            # Update the quantity
             item.quantity_in_cases += amount
 
+            # Ensure quantity does not go below zero
+            if item.quantity_in_cases < 0:
+                db.session.rollback()
+                return jsonify({"error": "Quantity cannot be negative"}), 400
+
             db.session.commit()
 
-        return {}
+        return jsonify({"message": "Item updated successfully."}), 200
 
     except Exception as e:
         db.session.rollback()
         print(f"Error: {e}")
-        return jsonify({"error": "An error occurred while restocking inventory"}), 500
+        return jsonify({"error": "An error occurred while updating inventory"}), 500
 
-
-@manager_bp.route('/inventory/remove', methods=["POST"])
-def remove():
-    try:
-        data = request.get_json()
-        item_name = to_camel_case(data.get('itemName'))
-        amount = data.get('amount')
-
-        if not item_name or not amount or not isinstance(amount, int) or amount <= 0:
-            return jsonify({"error": "Invalid item name or amount"}), 400
-
-        with db.session.begin():
-            item = db.session.query(ProductItem).filter_by(product_name=item_name).first()
-
-            if not item:
-                return jsonify({"error": "Item not found"}), 404
-
-            item.quantity_in_cases -= amount
-
-            db.session.commit()
-
-        return {}
-
-    except Exception as e:
-        db.session.rollback()
-        print(f"Error: {e}")
-        return jsonify({"error": "An error occurred while removing inventory"}), 500
 
 @manager_bp.route('/inventory/restock/low', methods=["POST"])
 def restock_low():
@@ -528,7 +511,7 @@ def restock_low():
     """
     try:
         with db.session.begin():
-            product_inventory = db.session.query(ProductItem).filter(ProductItem.quantity_in_cases < 5).all()
+            product_inventory = db.session.query(ProductItem).filter(ProductItem.quantity_in_cases < 10).all()
 
             for item in product_inventory:
                 item.quantity_in_cases = 10

@@ -9,6 +9,7 @@ function KitchenMain() {
   // State variables for delete confirmation modal
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [showReadyModal, setShowReadyModal] = useState(false);
 
   // Fetch pending orders from /kitchen/orders
   const fetchOrders = async () => {
@@ -92,14 +93,13 @@ function KitchenMain() {
   };
 
   // Function to mark an order as ready
-  const markOrderReady = async (orderId) => {
+  const markOrderReady = async () => {
     try {
-      const response = await api.post(`/kitchen/orders/${orderId}/ready`);
+      const response = await api.post(`/kitchen/orders/${selectedOrderId}/ready`);
       if (response.status === 200) {
-        // Remove the order from the state
-        setOrders(prevOrders => prevOrders.filter(order => order.order_id !== orderId));
-        // Immediately fetch the latest orders
-        fetchOrders();
+        setOrders((prevOrders) => prevOrders.filter((order) => order.order_id !== selectedOrderId));
+        setShowReadyModal(false);
+        setSelectedOrderId(null);
       }
     } catch (error) {
       console.error("Error marking order as ready:", error);
@@ -128,17 +128,28 @@ function KitchenMain() {
     }
   };
 
+  const handleReadyClick = (orderId) => {
+    setSelectedOrderId(orderId);
+    setShowReadyModal(true);
+  };
+
   // Function to cancel deletion
   const handleCancelDelete = () => {
     setShowDeleteModal(false);
     setSelectedOrderId(null);
   };
 
+  const handleCancelReady = () => {
+    setShowReadyModal(false);
+    setSelectedOrderId(null);
+  };
+
   return (
     <div className="kitchen-container">
-      <h1>Kitchen View</h1>
+      <h1 style={{color: "black"}}>Kitchen View</h1>
+      <hr style={{ marginBottom: "20px", borderTop: "1px solid black", width: "80%" }} />
       {orders.length === 0 ? (
-        <p className="no-orders">No pending orders.</p>
+        <p className="no-orders">No pending orders...</p>
       ) : (
         <div className="orders-container">
           {orders.map(order => {
@@ -146,7 +157,7 @@ function KitchenMain() {
             const cardColor = getOrderCardColor(totalElapsedSeconds);
             return (
               <div key={order.order_id} className="order-card" style={{ borderColor: cardColor }}>
-                <h3>Order #{order.order_id}</h3>
+                <h3 style={{ color: cardColor, textShadow: "1px 1px 0 black, -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black", }}>Order #{order.order_id}</h3>
                 <p>Order Time: {new Date(order.order_date_time).toLocaleTimeString()}</p>
                 <p>Elapsed Time: {elapsedMinutes}m {elapsedSeconds}s</p>
                 <div className="order-items">
@@ -164,12 +175,30 @@ function KitchenMain() {
                   ))}
                 </div>
                 <div className="order-buttons">
-                  <button className="mark-ready-button" onClick={() => markOrderReady(order.order_id)}>Mark as Ready</button>
-                  <button className="delete-order-button" onClick={() => handleDeleteClick(order.order_id)}>Delete Order</button>
+                  <button className="mark-ready-button" onClick={() => handleReadyClick(order.order_id)}>✓</button>
+                  <button className="delete-order-button" onClick={() => handleDeleteClick(order.order_id)}>X</button>
                 </div>
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Order Ready Confirmation Modal */}
+      {showReadyModal && (
+        <div className="modal-overlay">
+          <div className="modal-content ready">
+            <h3>Mark Order as Ready</h3>
+            <p>Are you sure you want to mark order #{selectedOrderId} as ready?</p>
+            <div className="modal-buttons">
+              <button className="confirm-ready-button" onClick={markOrderReady}>
+                Confirm
+              </button>
+              <button className="cancel-ready-button" onClick={handleCancelReady}>
+                Cancel
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

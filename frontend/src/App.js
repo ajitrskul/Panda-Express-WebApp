@@ -27,43 +27,24 @@ function App() {
       <CartProvider>
         <Router>
           <Routes>
-            <Route
-              path="/"
-              element={
-                <>
-                  <div className="container-fluid d-flex justify-content-center vh-100 pt-5">
-                    <header className="App-header">
-                      <nav><Link to="/menu">Menu Board</Link></nav>
-                      <nav><Link to="/kitchen">Kitchen</Link></nav>
-                      <nav><Link to="/manager/salesreports">Manager</Link></nav>
-                      <button onClick={translateLoad}>
-                      <nav><Link to="/kiosk">Customer Kiosk</Link></nav>
-                      </button>
-                    
-                    <nav><Link to="/pos">Cashier POS</Link></nav>
-                      <nav><Link to="/auth">Login</Link></nav>
-                    </header>
-                  </div>
-                </>
-              }
-            />
+            <Route path="/" element={<AuthMain />} />
+            
             <Route path="/menu" element={<MenuCarousel />} />
 
             <Route path="/kitchen" element={<KitchenMain />} />
 
-          <Route path="/manager" element={<ManagerMain />} />
-          <Route path="/manager/xreports" element={<XReports />} />
-          <Route path="/manager/zreports" element={<ZReports />} />
-          <Route path="/manager/restockreports" element={<RestockReports />} />
-          <Route path="/manager/pairreports" element={<PairReports />} />
-          <Route path="/manager/employees" element={<Employees />} />
-          <Route path="/manager/products" element={<Products/>} />
-          <Route path="/manager/inventory" element={<Inventory />} />
-          <Route path="/manager/productusage" element={<ProductUsage />} />
-          <Route path="/manager" element={<ManagerMain />} />
-          <Route path="/manager/salesreports" element={<SalesReports />} />
+            <Route path="/manager" element={<ManagerMain />} />
+            <Route path="/manager/xreports" element={<XReports />} />
+            <Route path="/manager/zreports" element={<ZReports />} />
+            <Route path="/manager/restockreports" element={<RestockReports />} />
+            <Route path="/manager/pairreports" element={<PairReports />} />
+            <Route path="/manager/employees" element={<Employees />} />
+            <Route path="/manager/products" element={<Products/>} />
+            <Route path="/manager/inventory" element={<Inventory />} />
+            <Route path="/manager/productusage" element={<ProductUsage />} />
+            <Route path="/manager" element={<ManagerMain />} />
+            <Route path="/manager/salesreports" element={<SalesReports />} />
 
-            {/* ... other routes */}
             <Route path="/kiosk" element={<KioskLanding />} />
             <Route path="/kiosk/order/*" element={<KioskOrderLayout />}>
               <Route index element={<KioskMain />} />
@@ -72,9 +53,8 @@ function App() {
               <Route path="appetizers-&-more" element={<AppsAndMoreSelection />} />
               <Route path="a-la-carte" element={<AlaCarteSelection />} />
             </Route>
-            {/* ... other routes */}
 
-              <Route path="/pos" element={<PosMain />} />
+            <Route path="/pos" element={<PosMain />} />
 
             <Route path="/auth" element={<AuthMain />} />
             <Route path="/auth/signup" element={<SignUpPage />}></Route>
