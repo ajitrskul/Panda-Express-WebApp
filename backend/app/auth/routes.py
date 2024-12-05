@@ -516,6 +516,7 @@ def get_customer_info(customer_id):
             customer_data = {
                 "customer_id": customer.customer_id,
                 "email": customer.email,
+                "password": customer.password,
                 "first_name": customer.first_name,
                 "last_name": customer.last_name,
                 "beast_points": customer.beast_points,

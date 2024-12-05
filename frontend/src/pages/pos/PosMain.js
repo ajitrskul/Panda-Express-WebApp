@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../services/api";
 import "../../styles/pos.css";
@@ -7,10 +7,12 @@ import OrderSection from "./components/OrderSection";
 import Footer from "./components/Footer";
 import SizeSelection from "./components/SizeSelection";
 import { Modal, Button } from "react-bootstrap";
+import { QrReader } from "react-qr-reader";
 
 function PosMain() {
   const [currentOrder, setCurrentOrder] = useState([]);
   const [orderNumber, setOrderNumber] = useState(null);
+  const [originalTotal, setOriginalTotal] = useState(0);
   const [total, setTotal] = useState(0);
   const [menuEndpoint, setMenuEndpoint] = useState("/pos/menu");
   const [currentWorkflow, setCurrentWorkflow] = useState(null);
@@ -23,6 +25,43 @@ function PosMain() {
   const [halfSideActivated, setHalfSideActivated] = useState(false);
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const disableActions = currentWorkflow !== null || currentOrder.length === 0;
+  const [showQRScanner, setShowQRScanner] = useState(false);
+  const isProcessingQRRef = useRef(false);
+  const [QRStatus, setQRStatus] = useState({
+    isLoading: false,
+    loadingVisual: false,
+    videoClass: "col-12 qr-video",
+    errorMsg: "",
+    QRFrame: "qr-frame"
+  });
+  const [customerId, setCustomerId] = useState(0);
+  const [beastPoints, setBeastPoints] = useState(0);
+  const [beastPointsUsed, setBeastPointsUsed] = useState(0);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [selectedDiscount, setSelectedDiscount] = useState(null);
+
+  const applyDiscount = (discountType, discountCost) => {
+    if (selectedDiscount === discountType) {
+      setTotal(originalTotal); 
+      setSelectedDiscount(null); 
+    } 
+    else if (beastPoints >= discountCost) {
+      let discountMultiplier = 1;
+      if (discountType === "20%") discountMultiplier = 0.8;
+      if (discountType === "45%") discountMultiplier = 0.55;
+      if (discountType === "75%") discountMultiplier = 0.25;
+  
+      const newTotal = originalTotal * discountMultiplier;
+  
+      setTotal(newTotal); 
+      setSelectedDiscount(discountType);
+      setBeastPointsUsed(discountCost); 
+    } else {
+      alert(`Not enough Beast Points for ${discountType} discount.`);
+    }
+  };
+  
 
   useEffect(() => {
     const fetchNextOrderNumber = async () => {
@@ -38,6 +77,15 @@ function PosMain() {
 
     fetchNextOrderNumber();
   }, []);
+
+  useEffect(() => {
+    const calculateOriginalTotal = currentOrder.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    );
+    setOriginalTotal(calculateOriginalTotal);
+    setTotal(calculateOriginalTotal);
+  }, [currentOrder]);
 
   const resetCurrentWorkflow = () => {
     setCurrentWorkflow(null);
@@ -269,14 +317,12 @@ function PosMain() {
       const response = await api.post("/pos/checkout/confirm", {
         items: currentOrder,
         total: (total*1.0625).toFixed(2),
+        customer_id: customerId,
+        beast_points_used: beastPointsUsed,
       });
 
       if (response.status === 201) {
-        setCurrentOrder([]);
-        setTotal(0);
-        setOrderNumber(orderNumber + 1);
-        resetCurrentWorkflow();
-        setShowCheckoutModal(false);
+        window.location.reload();
       } 
       else {
         throw new Error("Failed to finalize the order");
@@ -286,6 +332,48 @@ function PosMain() {
       alert("Error during checkout. Please try again.");
       setShowCheckoutModal(false);
     }
+  };
+
+  const testSignIn = async (customerLogin) => {
+    const signinSuccess = await api.post("/auth/signin/qr", customerLogin);
+    console.log(signinSuccess);
+    if (signinSuccess.data) {
+      setShowQRScanner(false);
+      setQRStatus({
+        isLoading: false,
+        loadingVisual: false,
+        videoClass: "col-12 qr-video",
+        errorMsg: "",
+        QRFrame: 'qr-frame'});
+      setCustomerId(signinSuccess.data.customer_id);
+      setFirstName(signinSuccess.data.first_name); 
+      setLastName(signinSuccess.data.last_name); 
+      setBeastPoints(signinSuccess.data.beast_points); 
+      return;
+    }
+    else {
+      setQRStatus({
+        isLoading: true,
+        loadingVisual: false,
+        videoClass: "col-12 qr-video qr-video-error",
+        errorMsg: 'Invalid QR Code',
+        QRFrame: "qr-frame qr-frame-error"});
+
+      setTimeout(() => { //delay before resetting to no error frame
+        setQRStatus({
+          isLoading: false,
+          loadingVisual: false,
+          videoClass: "col-12 qr-video",
+          errorMsg: "",
+          QRFrame: 'qr-frame'
+        });
+      },2000)
+    }
+  };
+
+  const handleQRClose = () => {
+    setShowQRScanner(false);
+    isProcessingQRRef.current = false; 
   };
 
   return (
@@ -315,20 +403,20 @@ function PosMain() {
           total={total}
           onCheckout={handleCheckout}
           onCancel={() => {
-            setCurrentOrder([]);
-            setTotal(0);
-            setCurrentWorkflow(null);
-            setWorkflowStep(0);
-            setMenuEndpoint("/pos/menu");
-            setCurrentSubitemType(null);
+            window.location.reload();
           }}
           onIncreaseQuantity={handleIncreaseQuantity}
           onDecreaseQuantity={handleDecreaseQuantity}
           onChangeQuantity={handleChangeQuantity}
           disableActions={disableActions}
+          customerId={customerId}
+          onQRSignInToggle={() => setShowQRScanner(true)}
         />
       </div>
       <Footer 
+        firstName={firstName}
+        lastName={lastName}
+        beastPoints={beastPoints}
         navigate={navigate} 
         menuEndpoint={menuEndpoint}
         onBack={() => {
@@ -381,19 +469,190 @@ function PosMain() {
 
       <Modal show={showCheckoutModal} onHide={() => setShowCheckoutModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Confirm Checkout</Modal.Title>
+          <Modal.Title>Submit Order #{orderNumber}?</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Are you sure you want to finalize Order #{orderNumber}?
-          <br />
-          <strong>Total Amount: ${(total*1.0625).toFixed(2)}</strong>
+          {beastPoints > 0 && (
+            <div>
+              <p>{firstName} has <strong>{beastPoints}</strong> Beast Points!</p>
+              <div className="d-flex flex-column">
+              <Button
+                variant={selectedDiscount === "20%" ? "success" : "outline-success"}
+                className="mb-2"
+                onClick={() => applyDiscount("20%", 3000)}
+                disabled={beastPoints < 3000}
+              >
+                20% Discount (3000 BPs)
+              </Button>
+              <Button
+                variant={selectedDiscount === "45%" ? "success" : "outline-success"}
+                className="mb-2"
+                onClick={() => applyDiscount("45%", 5000)}
+                disabled={beastPoints < 5000}
+              >
+                45% Discount (5000 BPs)
+              </Button>
+              <Button
+                className="mb-2"
+                variant={selectedDiscount === "75%" ? "success" : "outline-success"}
+                onClick={() => applyDiscount("75%", 8000)}
+                disabled={beastPoints < 8000}
+              >
+                75% Discount (8000 BPs)
+              </Button>
+              </div>
+            </div>
+          )}
+          {(customerId !== 0) && ( <hr /> )}
+          <div style={{ textAlign: "right" }}>
+            <p style={{ display: "flex", justifyContent: "space-between" }}>
+              <span>Subtotal:</span>
+              <span>${originalTotal.toFixed(2)}</span>
+            </p>
+
+            {selectedDiscount && (
+              <p style={{ display: "flex", justifyContent: "space-between", color: "green" }}>
+                <span>
+                  <strong>Discount ({selectedDiscount}):</strong>
+                </span>
+                <span>- ${Math.abs(originalTotal - total).toFixed(2)}</span>
+              </p>
+            )}
+
+            <p style={{ display: "flex", justifyContent: "space-between" }}>
+              <span>Tax:</span>
+              <span>${(total * 0.0625).toFixed(2)}</span>
+            </p>
+
+            <p
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                fontWeight: "bold",
+                fontSize: "1.2em",
+                color: "black",
+                marginBottom: "0px",
+              }}
+            >
+              <span>Total:</span>
+              <span>${(total * 1.0625).toFixed(2)}</span>
+            </p>
+          </div>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowCheckoutModal(false)}>
             Cancel
           </Button>
+          {(customerId === 0) && (
+            <Button
+              variant="primary"
+              className="btn btn-primary pos-qr-signin-btn"
+              onClick={() => setShowQRScanner(true)}
+            >
+              <i className="bi bi-qr-code-scan"></i>
+            </Button>
+          )}
           <Button variant="success" onClick={confirmCheckout}>
-            Confirm Checkout
+            Checkout
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={showQRScanner} onHide={handleQRClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Scan QR Code</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <QrReader onResult={(result) => {
+              if (QRStatus.isLoading || !result) { //return immediately if function already running or there is no qr code
+                return;
+              }
+              else { //there is a qr code & function not running
+                setQRStatus({ //set loading & visuals
+                  isLoading: true,
+                  loadingVisual: true,
+                  videoClass: "col-12 qr-video qr-video-loading",
+                  errorMsg: "",
+                  QRFrame: 'qr-frame qr-frame-loading',
+                })
+                let customerLogin  = {}
+                console.log(result.text);
+                try { //attempt to parse QR code into JSON
+                  const scannedInfo = JSON.parse(result.text);
+                  
+                  //check that all fields are present before setting customerLogin
+                  if (
+                    scannedInfo.email != null &&
+                    scannedInfo.password != null
+                  ) {
+                    customerLogin = {
+                      email: scannedInfo.email,
+                      password: scannedInfo.password,
+                    };
+
+                    try { //all fields were present -> authenticate user
+                      testSignIn(customerLogin);
+                    } catch(err) { //error authenticating user
+                      navigate("/auth/signin/error");
+                      window.location.reload();
+                    } 
+                  }
+                  else { //if not all fields are present end function immediately
+                    setQRStatus({
+                      isLoading: true,
+                      loadingVisual: false,
+                      videoClass: "col-12 qr-video qr-video-error",
+                      errorMsg: 'Invalid QR Code',
+                      QRFrame: 'qr-frame qr-frame-error'
+                    });
+
+                    setTimeout(() => { //delay before resetting to no error frame
+                      setQRStatus({
+                        isLoading: false,
+                        loadingVisual: false,
+                        videoClass: "col-12 qr-video",
+                        errorMsg: "",
+                        QRFrame: 'qr-frame'
+                      });
+                    },2000)
+                    return;
+                  }
+                } catch(err) { //error parsing Login (invalid QR code most likely)
+                  setQRStatus({
+                    isLoading: true,
+                    loadingVisual: false,
+                    videoClass: "col-12 qr-video qr-video-error",
+                    errorMsg: 'Invalid QR Code',
+                    QRFrame: 'qr-frame qr-frame-error'});
+
+                  setTimeout(() => { //delay before resetting to no error frame
+                    setQRStatus({
+                      isLoading: false,
+                      loadingVisual: false,
+                      videoClass: "col-12 qr-video",
+                      errorMsg: "",
+                      QRFrame: 'qr-frame'
+                    });
+                  },2000)
+                  return;
+                }
+
+                setQRStatus({ //function done running
+                  isLoading: false,
+                  loadingVisual: false,
+                  videoClass: "col-12 qr-video",
+                  errorMsg: "",
+                  QRFrame: 'qr-frame'
+                });
+              }
+              }}
+              className={QRStatus.videoClass}
+            />
+            <p className="qr-error-msg text-center">{QRStatus.errorMsg}</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleQRClose}>
+            Close
           </Button>
         </Modal.Footer>
       </Modal>

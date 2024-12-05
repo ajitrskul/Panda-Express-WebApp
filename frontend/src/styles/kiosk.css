@@ -27,7 +27,7 @@
 .kiosk-landing-order {
     /* background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('https://t4.ftcdn.net/jpg/04/81/88/03/360_F_481880392_qj1h5f1QVbYlzwh2n1yiJHM5L4KOUMSN.jpg'); */
     background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('https://t4.ftcdn.net/jpg/04/81/88/03/360_F_481880392_qj1h5f1QVbYlzwh2n1yiJHM5L4KOUMSN.jpg');
-    /* background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('../assets/order-background.png'); */
+    /* background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.3)), url('../assets/order-background.png'); */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -36,6 +36,7 @@
     min-height: 100vh; 
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 .card {

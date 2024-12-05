@@ -2,12 +2,17 @@ import React, { useState, useEffect } from "react";
 import { SidebarManager } from './components/SidebarManager';
 import '../../styles/manager.css';
 import api from '../../services/api'; 
+import { Modal, Button } from "react-bootstrap";
 
 function Products() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [newProduct, setNewProduct] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeactivateModal, setShowDeactivateModal] = useState(false);
+  const [showActivateModal, setShowActivateModal] = useState(false);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -37,24 +42,6 @@ function Products() {
     }
   };
 
-  const deleteProduct = async (id) => {
-    try {
-      await api.post("/manager/products/delete", { id });
-      window.location.reload();
-    } catch (error) {
-      console.error("Error deleting product:", error);
-    }
-  };
-
-  const activateProduct = async (id) => {
-    try {
-      await api.post("/manager/products/activate", { id });
-      window.location.reload();
-    } catch (error) {
-      console.error("Error deleting product:", error);
-    }
-  };
-
   const handleInputChange = (e, field) => {
     const { value, type, checked } = e.target;
     setNewProduct((prev) => ({
@@ -69,6 +56,12 @@ function Products() {
 
   const saveModal = async (e) => {
     e.preventDefault();
+
+    if (!newProduct?.type || newProduct.type === "") {
+      alert("Please select a valid product type.");
+      return;
+    }
+
     try {
       await api.post("/manager/products/update", newProduct);
       window.location.reload();
@@ -87,6 +80,38 @@ function Products() {
     return <div>Loading...</div>;
   }
 
+  const handleDeactivate = (product) => {
+    setSelectedProduct(product);
+    setShowDeactivateModal(true);
+  };
+
+  const handleActivate = (product) => {
+    setSelectedProduct(product);
+    setShowActivateModal(true);
+  };
+
+  const confirmDeactivate = async () => {
+    try {
+      await api.post("/manager/products/delete", { id: selectedProduct.product_id });
+      setShowDeactivateModal(false);
+      setSelectedProduct(null);
+      window.location.reload();
+    } catch (error) {
+      console.error("Error deactivating product:", error);
+    }
+  };
+
+  const confirmActivate = async () => {
+    try {
+      await api.post("/manager/products/activate", { id: selectedProduct.product_id });
+      setShowActivateModal(false);
+      setSelectedProduct(null);
+      window.location.reload();
+    } catch (error) {
+      console.error("Error reactivating product:", error);
+    }
+  };
+
   return (
     <div className="container-fluid page">
       <SidebarManager />
@@ -104,9 +129,9 @@ function Products() {
             />
             <button
               onClick={() => handleCardClick({ })}
-              className="btn btn-danger"
+              className="btn btn-success"
             >
-              Add New Product
+              +
             </button>
           </div>
           <div className="row">
@@ -114,31 +139,40 @@ function Products() {
               <div
                 key={item.product_name}
                 className={`col-12 col-sm-6 col-md-4 col-lg-3 mb-4`}
-                onClick={() => handleCardClick(item)}
               >
                 <div className="card h-100 w-100 d-flex justify-content-center align-items-center bg-white hover-zoom inventory-card">
                   <div className="card-body">
-                    <h5 className="card-text">{item.product_name}</h5>
+                    <h5 className="card-text" style={{fontSize: '1.25rem'}}>{item.product_name}</h5>
+                    <img src={item.image} className="card-img-top" alt={item.product_name} />
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleCardClick(item);
+                      }}
+                      className="btn btn-primary edit-button"
+                      style={{paddingRight: '10px', marginRight: '5px'}}
+                    >
+                      <i class="bi bi-pencil-square"></i>
+                    </button>
                     {item.in_season && (<button
                         onClick={(e) => {
                           e.stopPropagation();
-                          deleteProduct(item.product_id);
+                          handleDeactivate(item);
                         }}
                         className="btn btn-danger delete-button"
                       >
-                        Delete
+                        X
                       </button>)}
                     {!item.in_season && (<button
                         onClick={(e) => {
                           e.stopPropagation();
-                          activateProduct(item.product_id);
+                          handleActivate(item);
                         }}
                         className="btn btn-success delete-button"
                       >
-                        Activate
+                        ✓
                       </button>)}
                   </div>
-                  <div className="hover-view">Click To View Details</div>
                 </div>
               </div>
             ))}
@@ -159,24 +193,26 @@ function Products() {
                     value={newProduct.product_name}
                     onChange={(e) => handleInputChange(e, "product_name")}
                     required
+                    placeholder="E.g., Sugar Chicken"
                   />
                 </div>
                 <div className="col-md-6 mb-3">
                   <label>Type</label>
                   <select
-                    type="text"
                     className="form-control text-center"
-                    value={newProduct.type}
+                    value={newProduct?.type || ""}
                     onChange={(e) => handleInputChange(e, "type")}
                     required
                   >
-                    <option value>Select Option</option>
-                    <option value="side">side</option>
-                    <option value="entree">entree</option>
-                    <option value="appetizer">appetizer</option>
-                    <option value="dessert">dessert</option>
-                    <option value="fountainDrink">fountainDrink</option>
-                    <option value="drink">drink</option>
+                    <option value="" disabled>
+                      Select Option
+                    </option>
+                    <option value="side">Side</option>
+                    <option value="entree">Entree</option>
+                    <option value="appetizer">Appetizer</option>
+                    <option value="dessert">Dessert</option>
+                    <option value="fountainDrink">Fountain Drink</option>
+                    <option value="drink">Drink</option>
                   </select>
                 </div>
                 <div className="col-md-6 mb-3">
@@ -187,6 +223,7 @@ function Products() {
                     value={newProduct.servings_remaining}
                     onChange={(e) => handleInputChange(e, "servings_remaining")}
                     required
+                    placeholder="E.g., 50"
                   />
                 </div>
                 <div className="col-md-6 mb-3">
@@ -197,6 +234,7 @@ function Products() {
                     value={newProduct.allergens}
                     onChange={(e) => handleInputChange(e, "allergens")}
                     required
+                    placeholder="E.g., Contains Nuts"
                   />
                 </div>
                 <div className="col-md-6 mb-3">
@@ -207,6 +245,7 @@ function Products() {
                     value={newProduct.display_icons}
                     onChange={(e) => handleInputChange(e, "display_icons")}
                     required
+                    placeholder="E.g., 3"
                   />
                 </div>
                 <div className="col-md-6 mb-3">
@@ -217,6 +256,7 @@ function Products() {
                     value={newProduct.product_description}
                     onChange={(e) => handleInputChange(e, "product_description")}
                     required
+                    placeholder="E.g., A classic dish"
                   ></input>
                 </div>
                 <div className="col-md-6 mb-3">
@@ -227,6 +267,7 @@ function Products() {
                     value={newProduct.premium_addition}
                     onChange={(e) => handleInputChange(e, "premium_addition")}
                     required
+                    placeholder="E.g., 2.00"
                   />
                 </div>
                 <div className="col-md-6 mb-3">
@@ -237,6 +278,7 @@ function Products() {
                     value={newProduct.serving_size}
                     onChange={(e) => handleInputChange(e, "serving_size")}
                     required
+                    placeholder="E.g., 100"
                   />
                 </div>
                 <div className="col-md-6 mb-3">
@@ -247,6 +289,7 @@ function Products() {
                     value={newProduct.calories}
                     onChange={(e) => handleInputChange(e, "calories")}
                     required
+                    placeholder="E.g., 100"
                   />
                 </div>
                 <div className="col-md-6 mb-3">
@@ -257,6 +300,7 @@ function Products() {
                     value={newProduct.saturated_fat}
                     onChange={(e) => handleInputChange(e, "saturated_fat")}
                     required
+                    placeholder="E.g., 100"
                   />
                 </div>
                 <div className="col-md-6 mb-3">
@@ -267,6 +311,7 @@ function Products() {
                     value={newProduct.carbohydrate}
                     onChange={(e) => handleInputChange(e, "carbohydrate")}
                     required
+                    placeholder="E.g., 100"
                   />
                 </div>
                 <div className="col-md-6 mb-3">
@@ -277,16 +322,18 @@ function Products() {
                     value={newProduct.protein}
                     onChange={(e) => handleInputChange(e, "protein")}
                     required
+                    placeholder="E.g., 100"
                   />
                 </div>
                 <div className="col-md-6 mb-3">
-                  <label>Image</label>
+                  <label>Image URL</label>
                   <input
                     type="text"
                     className="form-control text-center"
                     value={newProduct.image}
                     onChange={(e) => handleInputChange(e, "image")}
                     required
+                    placeholder="E.g., www.site.com/img.jpg"
                   />
                 </div>
                 <div className="col-md-6 mb-3">
@@ -297,6 +344,7 @@ function Products() {
                     value={newProduct.cpc}
                     onChange={(e) => handleInputChange(e, "cpc")}
                     required
+                    placeholder="E.g., 12.99"
                   />
                 </div>
                 <div className="col-md-4 mb-3">
@@ -326,9 +374,9 @@ function Products() {
               </div>
               <button
                 type="submit"
-                className="btn btn-primary"
+                className="btn btn-success"
               >
-                Save
+                Add Product
               </button>
             </form>
           </div>
@@ -336,6 +384,39 @@ function Products() {
       )}
         </div>
       </div>
+      <Modal show={showDeactivateModal} onHide={() => setShowDeactivateModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Deactivate Product</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to deactivate <strong>{selectedProduct?.product_name}</strong>?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowDeactivateModal(false)}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={confirmDeactivate}>
+            Deactivate
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={showActivateModal} onHide={() => setShowActivateModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Reactivate Product</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to reactivate <strong>{selectedProduct?.product_name}</strong>?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowActivateModal(false)}>
+            Cancel
+          </Button>
+          <Button variant="success" onClick={confirmActivate}>
+            Activate
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }
