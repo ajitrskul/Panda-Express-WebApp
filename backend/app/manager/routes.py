@@ -15,39 +15,12 @@ from random import randrange
 # Global Variables used for resetting X and Z Reports
 newZ=False
 zLeave=False
+maxDate=""
 startDatePair="2024-09-23 00:00:00"
 endDatePair="2024-09-23 00:00:00"
 
-def date_pull():
-    # Check variables that reset X and Z reports
-    global newZ
-    global zLeave
-    # Find max date in database, to get X Reports Data
-    currDate=db.session.execute(
-    #text("""SELECT order_date_time FROM "order" WHERE order_id = (SELECT max(order_id) FROM "order");""")
-    text(""" SELECT max(order_date_time) FROM "order";""")
-    ).fetchall()
-
-    # Reset X and Z Reports, if Z Reports are clicked and another page is clicked
-    # This happens by pulling all order data > than the latest order time stamp 
-    # (which will return nothing)
-    data=request.data.decode("utf-8")
-    if (data=="Z"):
-         newZ=True
-    if (data=="LEAVE"):
-         zLeave=True
-    if newZ and zLeave:
-        queryTime=str(currDate[0][0])
-    elif zLeave:
-        zLeave=False
-        queryTime=str(currDate[0][0])[0:10] + " 00:00:00"
-    else:
-        queryTime=str(currDate[0][0])[0:10] + " 00:00:00"
-    hourDate=str(currDate[0][0])
-    return [queryTime,hourDate]
-
-
 @manager_bp.route('/xzreports', methods=['GET','POST'])
+
 def xreports_data():
     """
     Retrieve X and Z report data.
@@ -61,11 +34,41 @@ def xreports_data():
       500:
         description: Internal server error while fetching report data.
     """
-    queryTime=(date_pull())[0]
-    hourDate=(date_pull())[1]
+    # Check variables that reset X and Z reports
+    global newZ
+    global zLeave
+    global maxDate
+
+    # Find max date in database, to get X Reports Data
+    currDate=db.session.execute(
+    #text("""SELECT order_date_time FROM "order" WHERE order_id = (SELECT max(order_id) FROM "order");""")
+    text(""" SELECT max(order_date_time) FROM "order";""")
+    ).fetchall()
+   
+    # Reset X and Z Reports, if Z Reports are clicked and another page is clicked
+    # This happens by pulling all order data > than the latest order time stamp 
+    # (which will return nothing)
+    queryTime=""
+    data=request.data.decode("utf-8")
+    if (data=="Z"):
+         newZ=True
+    if (data=="LEAVE"):
+         zLeave=True
+    if (maxDate!=str(currDate[0][0])):
+        newZ=False
+        zLeave=False
+    if newZ and zLeave:
+        queryTime=str(currDate[0][0])
+    elif zLeave:
+        zLeave=False
+        queryTime=str(currDate[0][0])[0:10] + " 00:00:00"
+    else:
+        queryTime=str(currDate[0][0])[0:10] + " 00:00:00"
+    hourDate=str(currDate[0][0])
+    
     currDay=queryTime[5:10]  + "-" + queryTime[0:4]
     currHour=int(hourDate[11:13])-9
-    
+    maxDate=str(currDate[0][0])
     # Query Total sales
     dailySales= db.session.execute(
     text(f"""SELECT SUM(total_price) FROM "order" WHERE order_date_time > '{queryTime}';""")
