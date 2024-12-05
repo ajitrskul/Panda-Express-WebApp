@@ -14,7 +14,7 @@ export default function SignInSuccess() {
     const interval = setInterval(() => {
       setTimer(timer-1);
       if (timer === 1) {
-        navigate('/kiosk');
+        navigate('/kiosk/order');
         window.location.reload();
       }
     }, 1000);

@@ -17,7 +17,7 @@ function Cart({ isOpen, toggleCart, cartItems }) {
   const [showOrderConfirmation, setShowOrderConfirmation] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const { setCartItems } = useContext(CartContext);
-  const { customer, setCustomer } = useContext(AccountContext);
+  const { customer, setCustomer, customerSignOut } = useContext(AccountContext);
   const [selectedDeal, setSelectedDeal] = useState(null);
   const [showDealModal, setShowDealModal] = useState(false);
   const navigate = useNavigate();
@@ -198,6 +198,7 @@ function Cart({ isOpen, toggleCart, cartItems }) {
         // Navigate to the kiosk option after a short delay
         setTimeout(() => {
           navigate('/kiosk');
+          customerSignOut();
         }, 2000);
       } else {
         // Handle unexpected responses

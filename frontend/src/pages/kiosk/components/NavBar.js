@@ -142,7 +142,10 @@ export function NavBar(){
               {
               loginBar &&
               <div className="navbar-drop-signedin text-start">
-                <div className="navbar-drop-logout" onClick={customerSignOut}>
+                <div className="navbar-drop-logout" onClick={() => {
+                  customerSignOut(); // Perform logout logic
+                  navigate(`/kiosk`); // Redirect to kiosk page
+                }}>
                   <i className="bi bi-box-arrow-in-left nav-drop-icon"></i>
                   Log Out
                 </div>
