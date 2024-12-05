@@ -1,9 +1,9 @@
-// AppsAndMoreSelection.js
+// AlaCarteSelection.js
 import React, { useState, useEffect, useContext } from 'react';
 import '../../styles/kiosk.css';
 import MenuItemCard from './components/MenuItemCard';
 import InfoCard from './components/InfoCard';
-import SizeSelectionDialog from './components/SizeSelectionDialog';
+import SizeSelectionDialog from './components/SizeSelectionDialog'; 
 import api from '../../services/api';
 import { CartContext } from './components/CartContext';
 import { NavBar } from "./components/NavBar";
@@ -12,14 +12,12 @@ const formatProductName = (name) => {
   return name.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();
 };
 
-const AppsAndMoreSelection = () => {
-  const [appetizers, setAppetizers] = useState([]);
-  const [desserts, setDesserts] = useState([]);
+const AlaCarteSelection = () => {
+  const [sides, setSides] = useState([]);
+  const [entrees, setEntrees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedInfo, setSelectedInfo] = useState(null);
-
-  // State variables for size selection
   const [showSizeDialog, setShowSizeDialog] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [selectedItemType, setSelectedItemType] = useState(null);
@@ -27,64 +25,62 @@ const AppsAndMoreSelection = () => {
   const { cartItems, setCartItems } = useContext(CartContext);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchItems = async () => {
       try {
-        const [appetizerResponse, dessertResponse] = await Promise.all([
-          api.get('/kiosk/appetizers'),
-          api.get('/kiosk/desserts')
-        ]);
-        setAppetizers(appetizerResponse.data);
-        setDesserts(dessertResponse.data);
+        const sidesResponse = await api.get('/kiosk/sides');
+        const entreesResponse = await api.get('/kiosk/entrees');
+        setSides(sidesResponse.data);
+        setEntrees(entreesResponse.data);
       } catch (err) {
-        setError('Failed to fetch data. Please try again later.');
+        setError('Failed to fetch items. Please try again later.');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
+    fetchItems();
   }, []);
 
   const getSizeOptions = (itemType, selectedItem) => {
     let sizeOptions = [];
-    if (itemType === 'appetizer') {
+    if (itemType === 'side') {
       sizeOptions = [
         {
-          item_name: 'appetizerSmall',
-          display_name: 'Small',
-          menu_item_base_price: 2.00,
+          item_name: 'aLaCarteSideMedium',
+          display_name: 'Medium',
+          menu_item_base_price: 4.40,
           premium_multiplier: 1,
         },
         {
-          item_name: 'appetizerLarge',
+          item_name: 'aLaCarteSideLarge',
           display_name: 'Large',
-          menu_item_base_price: 8.00,
+          menu_item_base_price: 5.40,
           premium_multiplier: 1,
         },
       ];
-    } else if (itemType === 'dessert') {
+    } else if (itemType === 'entree') {
       sizeOptions = [
         {
-          item_name: 'dessertSmall',
+          item_name: 'aLaCarteEntreeSmall',
           display_name: 'Small',
-          menu_item_base_price: 2.00,
+          menu_item_base_price: 5.20,
           premium_multiplier: 1,
         },
         {
-          item_name: 'dessertMedium',
+          item_name: 'aLaCarteEntreeMedium',
           display_name: 'Medium',
-          menu_item_base_price: 6.20,
-          premium_multiplier: 1,
+          menu_item_base_price: 8.50,
+          premium_multiplier: 2,
         },
         {
-          item_name: 'dessertLarge',
+          item_name: 'aLaCarteEntreeLarge',
           display_name: 'Large',
-          menu_item_base_price: 8.00,
-          premium_multiplier: 1,
+          menu_item_base_price: 11.20,
+          premium_multiplier: 3,
         },
       ];
     }
-
+  
     // Calculate total price for each size option
     const calculatedSizeOptions = sizeOptions.map((sizeOption) => {
       let totalPrice = sizeOption.menu_item_base_price;
@@ -96,10 +92,9 @@ const AppsAndMoreSelection = () => {
         total_price: totalPrice,
       };
     });
-
+  
     return calculatedSizeOptions;
   };
-
   const handleItemSelect = (item, type) => {
     console.log('Selected item:', item);
     setSelectedItem(item);
@@ -132,8 +127,7 @@ const AppsAndMoreSelection = () => {
       size: size, // Include size information
       basePrice: size.menu_item_base_price,
       premiumMultiplier: size.premium_multiplier,
-      menuItemName: size.item_name,
-      name: size.item_name, // Set the menu item name
+      name: size.item_name,
       is_premium: selectedItem.is_premium,
       premium_addition: selectedItem.premium_addition,
     };
@@ -171,41 +165,38 @@ const AppsAndMoreSelection = () => {
   return (
     <div className="kiosk-landing-order container-fluid">
       <NavBar />
-      {/* Appetizers Section */}
+      <h2 className="mt-4 text-white">Sides</h2>
       <div className="row pt-4 px-3 justify-content-center">
-        <h2 className="text-center mb-4" style={{ color: "white", fontWeight: "bold" }}>Appetizers</h2>
-        {appetizers.map((appetizer, index) => (
-          <div className="col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center mb-4" key={index}>
+        {sides.map((side, index) => (
+          <div className="col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center mb-4" key={`side-${index}`}>
             <MenuItemCard
-              name={formatProductName(appetizer.product_name)}
-              image={appetizer.image}
-              description={appetizer.calories + " Calories"}
+              name={formatProductName(side.product_name)}
+              image={side.image}
               price={'See Options'}
-              isPremium={appetizer.is_premium}
-              isSeasonal={appetizer.is_seasonal}
-              isAvailable={appetizer.is_available}
-              onClick={() => handleItemSelect(appetizer, 'appetizer')}
-              onInfoClick={() => handleInfoClick(appetizer)}
+              isPremium={side.is_premium}
+              isSeasonal={side.is_seasonal}
+              isAvailable={side.is_available}
+              description={side.calories + ' Calories'}
+              onClick={() => handleItemSelect(side, 'side')}
+              onInfoClick={() => handleInfoClick(side)}
             />
           </div>
         ))}
       </div>
-
-      {/* Desserts Section */}
+      <h2 className="mt-4 text-white">Entrees</h2>
       <div className="row pt-4 px-3 justify-content-center">
-        <h2 className="text-center mb-4" style={{ color: "white", fontWeight: "bold" }}>Desserts</h2>
-        {desserts.map((dessert, index) => (
-          <div className="col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center mb-4" key={index}>
+        {entrees.map((entree, index) => (
+          <div className="col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center mb-4" key={`entree-${index}`}>
             <MenuItemCard
-              name={formatProductName(dessert.product_name)}
-              image={dessert.image}
-              description={dessert.calories + " Calories"}
+              name={formatProductName(entree.product_name)}
+              image={entree.image}
               price={'See Options'}
-              isPremium={dessert.is_premium}
-              isSeasonal={dessert.is_seasonal}
-              isAvailable={dessert.is_available}
-              onClick={() => handleItemSelect(dessert, 'dessert')}
-              onInfoClick={() => handleInfoClick(dessert)}
+              isPremium={entree.is_premium}
+              isSeasonal={entree.is_seasonal}
+              isAvailable={entree.is_available}
+              description={entree.calories + ' Calories'}
+              onClick={() => handleItemSelect(entree, 'entree')}
+              onInfoClick={() => handleInfoClick(entree)}
             />
           </div>
         ))}
@@ -226,7 +217,7 @@ const AppsAndMoreSelection = () => {
         />
       )}
 
-      {/* Size Selection Dialog */}
+
       {showSizeDialog && (
         <SizeSelectionDialog
           item={selectedItem}
@@ -239,4 +230,4 @@ const AppsAndMoreSelection = () => {
   );
 };
 
-export default AppsAndMoreSelection;
+export default AlaCarteSelection;
