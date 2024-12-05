@@ -168,7 +168,7 @@ function Inventory() {
                   className={`card h-100 w-100 d-flex align-content-center px-2 py-1 ${
                     item.inventoryRemaining < 10 ? "border-danger inventory-card" : "border-white inventory-card"
                   }`}
-                  style={{borderWidth: "10px"}}
+                  style={{borderWidth: "5px"}}
                 >
                   <div className="card-body">
                     <h5 className="card-title text-center" style={{ fontSize: '1.25rem' }}>{item.name}</h5>

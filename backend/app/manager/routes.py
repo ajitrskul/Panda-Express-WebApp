@@ -417,10 +417,10 @@ def inventory_items():
 def inventory_items_low():
     try:
         with db.session.begin():
-            product_inventory = db.session.query(ProductItem).with_entities(ProductItem.product_name, ProductItem.quantity_in_cases).filter(ProductItem.quantity_in_cases < 5).order_by(ProductItem.product_id).all()
+            product_inventory = db.session.query(ProductItem).with_entities(ProductItem.product_name, ProductItem.quantity_in_cases, ProductItem.image).filter(ProductItem.quantity_in_cases < 5).order_by(ProductItem.product_id).all()
 
         inventory_data = [
-            {"name": name_helper(product.product_name), "inventoryRemaining": product.quantity_in_cases} for product in product_inventory
+            {"name": name_helper(product.product_name), "inventoryRemaining": product.quantity_in_cases, "image": product.image} for product in product_inventory
         ]
         return jsonify(inventory_data)
     except Exception as e:

@@ -701,7 +701,6 @@
 }
     
 .inventory-card h5 {
-    font-size: 24px;
     color: rgb(70, 70, 70);
     margin-bottom: 10px;
     overflow-wrap: break-word;
@@ -795,5 +794,18 @@
 
   .form-product .check-label{
     margin-right: 20px;
+  }
+
+  .remaining {
+    font-size: 1rem;
+  }
+  
+  .reimg {
+    width: 150px; 
+    height: 150px; 
+    object-fit: cover; 
+    border-radius: 10px; 
+    margin: 0 auto 1rem; 
+    display: block; 
   }
   
