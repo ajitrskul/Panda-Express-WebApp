@@ -139,14 +139,19 @@
 
 .carousel-button {
     position: absolute;
-    top: 10px;
-    left: 12px;
-    color: #A3080C;
-    font-size: 120%;
-    background-color: #A3080C;
+    top: 5px;
+    left: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
     border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    opacity: 0; 
+    transition: opacity 0.3s ease;
+    z-index: 10;
 }
 
-.carousel-button:hover {
-    color: white;
+.carousel-button:hover  {
+    opacity: 1; 
 }
