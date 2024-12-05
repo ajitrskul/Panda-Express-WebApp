@@ -7,6 +7,8 @@ import { CartContext } from './CartContext';
 import api from '../../../services/api';
 import { useNavigate } from 'react-router-dom';
 
+import { AccountContext } from '../../auth/components/AccountContext';
+
 function Cart({ isOpen, toggleCart, cartItems }) {
   const [showOverlay, setShowOverlay] = useState(false);
   const [overlayClass, setOverlayClass] = useState('');
@@ -19,6 +21,8 @@ function Cart({ isOpen, toggleCart, cartItems }) {
 
   const { setCartItems } = useContext(CartContext);
 
+  const { customer, setCustomer } = useContext(AccountContext);
+  
   const navigate = useNavigate();
 
   const handleCheckout = async () => {
@@ -27,21 +31,43 @@ function Cart({ isOpen, toggleCart, cartItems }) {
         total_price: calculateTotal(cartItems).toFixed(2),
         cart_items: cartItems,
       };
-
+  
+      // Include customer_id if the customer is signed in
+      if (customer && customer.isSignedIn) {
+        orderData.customer_id = customer.customer_id;
+      }
+  
       // Send the order data to the backend
       const response = await api.post('/kiosk/orders', orderData);
-
+  
       if (response.status === 201) {
         // Order created successfully
         console.log('Order created:', response.data);
-
+  
         // Clear the cart
         setCartItems([]);
         toggleCart();
-
+  
+        // Fetch updated customer data if logged in
+        if (customer && customer.isSignedIn) {
+          try {
+            // Fetch the updated customer data
+            const customerResponse = await api.get(`/auth/login/customer/info/${customer.customer_id}`);
+            if (customerResponse.status === 200 && customerResponse.data.success) {
+              // Update the customer context with new beast_points
+              setCustomer(prevCustomer => ({
+                ...prevCustomer,
+                beast_points: customerResponse.data.data.beast_points,
+              }));
+            }
+          } catch (err) {
+            console.error('Error fetching updated customer data:', err);
+          }
+        }
+  
         // Show order confirmation
         setShowOrderConfirmation(true);
-
+  
         // Navigate to the kiosk option after a short delay
         setTimeout(() => {
           navigate('/kiosk');
@@ -57,6 +83,7 @@ function Cart({ isOpen, toggleCart, cartItems }) {
       setErrorMessage('Unable to process your order. Please try again.');
     }
   };
+  
 
   useEffect(() => {
     if (isOpen) {

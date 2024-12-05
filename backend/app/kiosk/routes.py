@@ -3,8 +3,8 @@ from flask import request, jsonify
 from sqlalchemy import text
 from app.extensions import db
 
-from app.models import Order, OrderMenuItem, OrderMenuItemProduct, MenuItem, ProductItem, Employee
-from datetime import datetime, timezone
+from app.models import Order, OrderMenuItem, OrderMenuItemProduct, MenuItem, ProductItem, Customer, Employee
+from datetime import datetime
 
 @kiosk_bp.route('/', methods=['GET'])
 def customer_kiosk_home():
@@ -390,6 +390,7 @@ def create_order():
     data = request.get_json()
     total_price = data.get('total_price')
     cart_items = data.get('cart_items')
+    customer_id = data.get('customer_id')
 
     if not cart_items or not total_price:
         return jsonify({'error': 'Invalid order data'}), 400
@@ -470,7 +471,19 @@ def create_order():
                                 product_id=product_id
                             )
                             db.session.add(order_menu_item_product)
-
+            if customer_id:
+                customer = Customer.query.get(customer_id)
+                if customer:
+                    # Convert total_price to float
+                    total_price_float = float(total_price)
+                    # Calculate beastpoints (total_price in cents)
+                    beastpoints_awarded = int(round(total_price_float * 100))
+                    # Update customer's beastpoints
+                    customer.beast_points += beastpoints_awarded
+                    db.session.add(customer)  # Add customer back to session
+                else:
+                    print(f"Customer with ID {customer_id} not found.")
+                    
             db.session.commit()
         return jsonify({'message': 'Order created successfully', 'order_id': order.order_id}), 201
     except Exception as e:
