@@ -20,8 +20,20 @@ startDatePair="2024-09-23 00:00:00"
 endDatePair="2024-09-23 00:00:00"
 
 @manager_bp.route('/xzreports', methods=['GET','POST'])
-def xreports_data():
 
+def xreports_data():
+    """
+    Retrieve X and Z report data.
+    ---
+    tags:
+      - Manager
+      - Reports
+    responses:
+      200:
+        description: X and Z report data retrieved successfully.
+      500:
+        description: Internal server error while fetching report data.
+    """
     # Check variables that reset X and Z reports
     global newZ
     global zLeave
