@@ -1,0 +1,51 @@
+.custom-inv-card {
+    display: flex;
+    flex-direction: column; 
+    justify-content: space-between; 
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    height: 100%; 
+}
+  
+.cbody {
+    display: flex;
+    flex-direction: column; 
+    justify-content: space-between; 
+    height: 100%; 
+}
+  
+.ctitle {
+    text-align: center;
+    font-size: 1.20rem;
+    margin-bottom: 1rem;
+}
+  
+.remaining {
+    text-align: center;
+    font-size: 1rem;
+    margin: 1rem 0; 
+}
+  
+.inventory-restock {
+    margin-top: auto;
+}
+  
+.rebutton {
+    width: 100%; 
+    padding: 0.5rem;
+    font-size: 1rem;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+  
+.rebutton:hover {
+    background-color: #218838; 
+}
+  
