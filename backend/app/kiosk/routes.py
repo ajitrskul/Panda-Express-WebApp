@@ -89,7 +89,7 @@ def get_sides():
         description: A list of side items.
     """
     sides = db.session.execute(
-        text("SELECT * FROM product_item WHERE type = :type ORDER BY product_id ASC"), 
+        text("SELECT * FROM product_item WHERE type = :type AND in_season = true ORDER BY product_id ASC"), 
         {'type': 'side'}
     ).fetchall()
 
@@ -132,7 +132,7 @@ def get_entrees():
         description: A list of entree items.
     """
     entrees = db.session.execute(
-        text("SELECT * FROM product_item WHERE type = :type ORDER BY product_id ASC"), 
+        text("SELECT * FROM product_item WHERE type = :type AND in_season = true ORDER BY product_id ASC"), 
         {'type': 'entree'}
     ).fetchall()
 
@@ -174,36 +174,8 @@ def get_drinks():
       200:
         description: A list of drink items.
     """
-    fountain_drinks = db.session.execute(
-        text("SELECT * FROM product_item WHERE type = :type ORDER BY product_id ASC"), 
-        {'type': 'fountainDrink'}
-    ).fetchall()
-
-    fountain_drinks_list = [
-        {
-            "product_id": fountain_drink.product_id,
-            "product_name": fountain_drink.product_name,
-            "type": fountain_drink.type,
-            "is_seasonal": fountain_drink.is_seasonal,
-            "is_available": fountain_drink.is_available,
-            "servings_remaining": fountain_drink.servings_remaining,
-            "allergens": fountain_drink.allergens,
-            "display_icons": fountain_drink.display_icons,
-            "product_description": fountain_drink.product_description,
-            "premium_addition": fountain_drink.premium_addition,
-            "serving_size": fountain_drink.serving_size,
-            "calories": fountain_drink.calories,
-            "saturated_fat": fountain_drink.saturated_fat,
-            "carbohydrate": fountain_drink.carbohydrate,
-            "protein": fountain_drink.protein,
-            "image": fountain_drink.image,
-            "is_premium": fountain_drink.is_premium,
-        }
-        for fountain_drink in fountain_drinks
-    ]
-
     drinks = db.session.execute(
-        text("SELECT * FROM product_item WHERE type = :type1 OR type = :type2 ORDER BY product_id ASC"), 
+        text("SELECT * FROM product_item WHERE type = :type1 AND in_season = true OR type = :type2 AND in_season = true ORDER BY product_id ASC"), 
         {'type1': 'drink', 'type2': 'fountainDrink'}
     ).fetchall()
 
@@ -230,7 +202,7 @@ def get_drinks():
         for drink in drinks
     ]
 
-    return jsonify(fountain_drinks_list + drinks_list), 200
+    return jsonify(drinks_list), 200
 
 
 @kiosk_bp.route('/appetizers', methods=['GET'])
@@ -246,7 +218,7 @@ def get_appetizers():
         description: A list of appetizer items.
     """
     appetizers = db.session.execute(
-        text("SELECT * FROM product_item WHERE type = :type ORDER BY product_id ASC"), 
+        text("SELECT * FROM product_item WHERE type = :type AND in_season = true ORDER BY product_id ASC"), 
         {'type': 'appetizer'}
     ).fetchall()
 
@@ -289,7 +261,7 @@ def get_desserts():
         description: A list of dessert items.
     """
     desserts = db.session.execute(
-        text("SELECT * FROM product_item WHERE type = :type ORDER BY product_id ASC"), 
+        text("SELECT * FROM product_item WHERE type = :type AND in_season = true ORDER BY product_id ASC"), 
         {'type': 'dessert'}
     ).fetchall()
 

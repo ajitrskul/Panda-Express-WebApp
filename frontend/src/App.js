@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 // Import all pages
 import { MenuCarousel } from './pages/menu';
@@ -16,12 +16,6 @@ import KioskOrderLayout from './pages/kiosk/KioskOrderLayout';
 import { AccountProvider } from './pages/auth/components/AccountContext';
 
 function App() {
-  /* Reload the page when kiosk is clicked, so that google translate element will initialize*/
-  /*Reset default language to English */
-  const translateLoad = () =>{
-    window.location.reload()
-    document.cookie="googtrans=/en/en;"
-  }
   return (
     <AccountProvider>
       <CartProvider>

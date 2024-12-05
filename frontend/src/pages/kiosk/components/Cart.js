@@ -25,9 +25,11 @@ function Cart({ isOpen, toggleCart, cartItems }) {
   // Function to apply the selected deal
   const applyDeal = (deal) => {
     if (deal === '20%') {
-      setSelectedDeal({ discount: 0.2, cost: 2000, description: '20% off' });
-    } else if (deal === '50%') {
-      setSelectedDeal({ discount: 0.5, cost: 5000, description: '50% off' });
+      setSelectedDeal({ discount: 0.2, cost: 3000, description: '20% off' });
+    } else if (deal === '45%') {
+      setSelectedDeal({ discount: 0.5, cost: 5000, description: '45% off' });
+    } else if (deal === '75%') {
+      setSelectedDeal({ discount: 0.5, cost: 8000, description: '75% off' });
     }
     setShowDealModal(false);
   };
@@ -439,16 +441,23 @@ function Cart({ isOpen, toggleCart, cartItems }) {
               <button
                 className="deal-option-button"
                 onClick={() => applyDeal('20%')}
-                disabled={customer.beast_points < 2000}
+                disabled={customer.beast_points < 3000}
               >
-                Spend 2000 Beast Points for 20% off
+                Spend 3000 Beast Points for 20% off
               </button>
               <button
                 className="deal-option-button"
-                onClick={() => applyDeal('50%')}
+                onClick={() => applyDeal('45%')}
                 disabled={customer.beast_points < 5000}
               >
-                Spend 5000 Beast Points for 50% off
+                Spend 5000 Beast Points for 45% off
+              </button>
+              <button
+                className="deal-option-button"
+                onClick={() => applyDeal('75%')}
+                disabled={customer.beast_points < 8000}
+              >
+                Spend 8000 Beast Points for 75% off
               </button>
             </div>
             <button className="close-deal-modal-button" onClick={() => setShowDealModal(false)}>

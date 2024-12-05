@@ -87,7 +87,7 @@ def get_sides():
         description: List of side items retrieved successfully.
     """
     sides = db.session.execute(
-        text("SELECT * FROM product_item WHERE type = :type ORDER BY product_id ASC"), 
+        text("SELECT * FROM product_item WHERE type = :type AND in_season = true ORDER BY product_id ASC"), 
         {'type': 'side'}
     ).fetchall()
 
@@ -130,7 +130,7 @@ def get_entrees():
         description: List of entree items retrieved successfully.
     """
     entrees = db.session.execute(
-        text("SELECT * FROM product_item WHERE type = :type ORDER BY product_id ASC"), 
+        text("SELECT * FROM product_item WHERE type = :type AND in_season = true ORDER BY product_id ASC"), 
         {'type': 'entree'}
     ).fetchall()
 
@@ -173,7 +173,7 @@ def get_a_la_carte():
         description: List of a la carte items retrieved successfully.
     """
     products = db.session.execute(
-        text("SELECT * FROM product_item WHERE type = :type1 OR type = :type2 ORDER BY product_id ASC"), 
+        text("SELECT * FROM product_item WHERE type = :type1 AND in_season = true OR type = :type2 AND in_season = true ORDER BY product_id ASC"), 
         {'type1': 'entree', 'type2': 'side'}
     ).fetchall()
 
@@ -217,7 +217,7 @@ def get_appetizers():
         description: List of appetizers and desserts retrieved successfully.
     """
     products = db.session.execute(
-        text("SELECT * FROM product_item WHERE type = :type1 OR type = :type2 ORDER BY product_id ASC"), 
+        text("SELECT * FROM product_item WHERE type = :type1 OR type = :type2 AND in_season = true  ORDER BY product_id ASC"), 
         {'type1': 'appetizer', 'type2': 'dessert'}
     ).fetchall()
 
@@ -260,7 +260,7 @@ def get_drinks():
         description: List of drinks retrieved successfully.
     """
     drinks = db.session.execute(
-        text("SELECT * FROM product_item WHERE type = :type1 OR type = :type2 ORDER BY product_id ASC"), 
+        text("SELECT * FROM product_item WHERE type = :type1 AND in_season = true OR type = :type2 AND in_season = true ORDER BY product_id ASC"), 
         {'type1': 'drink', 'type2': 'fountainDrink'}
     ).fetchall()
 
