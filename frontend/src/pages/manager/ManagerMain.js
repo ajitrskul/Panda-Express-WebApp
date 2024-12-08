@@ -221,7 +221,7 @@ function ManagerMain() {
           {selectedOrder ? (
             <>
               <div style={{ textAlign: "center", marginBottom: "20px" }}>
-                <h5>Order #{selectedOrder.order_id} Receipt</h5>
+                <h4>Order #{selectedOrder.order_id} Receipt</h4>
                 <p>
                   {new Date(selectedOrder.order_date_time).toLocaleString()}
                 </p>
@@ -237,7 +237,7 @@ function ManagerMain() {
                   </thead>
                   <tbody>
                     {selectedOrder.items.map((item, index) => (
-                      <tr key={index} style={{ borderBottom: "1px solid #ddd" }}>
+                      <tr key={index}>
                         <td style={{ padding: "5px", textAlign: "left" }}>
                           <strong>{item.item_name}</strong>
                           <ul style={{ margin: "5px 0 0 15px", padding: "0" }}>
@@ -256,30 +256,57 @@ function ManagerMain() {
                   </tbody>
                 </table>
               </div>
+              <div style={{ borderBottom: "1px solid #ddd" }}></div>
+              <div style={{ textAlign: "right", marginTop: "10px", fontSize: "1.1em" }}>
+  {(() => {
+    const subtotalSum = selectedOrder.items.reduce(
+      (sum, item) => sum + parseFloat(item.subtotal_price.replace("$", "")),
+      0
+    );
 
-              <div style={{ textAlign: "right", marginTop: "10px" }}>
-                {(() => {
-                  const subtotalSum = selectedOrder.items.reduce(
-                    (sum, item) => sum + parseFloat(item.subtotal_price.replace("$", "")),
-                    0
-                  );
-                  const totalPrice = parseFloat(selectedOrder.total_price.replace("$", ""));
-                  const discount = (subtotalSum - totalPrice).toFixed(2);
+    const totalPrice = parseFloat(selectedOrder.total_price.replace("$", ""));
+    const taxRate = 0.0825;
+    const taxAmount = Math.round(subtotalSum * taxRate * 100) / 100;
+    const discountPercentage = Math.round(
+      ((1 - totalPrice / (subtotalSum + taxAmount)) * 100)
+    );
+    const discountAmount = Math.round(
+      (subtotalSum + taxAmount) * (discountPercentage / 100) * 100
+    ) / 100;
 
-                  if (discount > 0) {
-                    return (
-                      <>
-                        <h6>
-                          <strong>Discount:</strong> -${discount}
-                        </h6>
-                      </>
-                    );
-                  }
-                })()}
-                <h6>
-                  <strong>Total:</strong> {selectedOrder.total_price}
-                </h6>
-              </div>
+    return (
+      <div style={{ display: "inline-block", textAlign: "right" }}>
+        <div style={{ marginBottom: "5px", fontSize: "0.9em" }}>
+          <span style={{ fontWeight: "bold" }}>Subtotal:</span>{" "}
+          ${subtotalSum.toFixed(2)}
+        </div>
+        <div style={{ marginBottom: "5px", fontSize: "0.9em" }}>
+          <span style={{ fontWeight: "bold" }}>Tax:</span> ${taxAmount.toFixed(2)}
+        </div>
+        {discountPercentage > 0 && (
+          <div style={{ marginBottom: "5px", color: "green", fontSize: "0.9em" }}>
+            <span style={{ fontWeight: "bold" }}>
+              Discount ({discountPercentage}%):
+            </span>{" "}
+            -${discountAmount.toFixed(2)}
+          </div>
+        )}
+        <div
+          style={{
+            marginTop: "10px",
+            fontWeight: "bold",
+            fontSize: "1.2em",
+            borderTop: "1px solid #ddd",
+            paddingTop: "5px",
+          }}
+        >
+          <span>Total:</span> ${totalPrice.toFixed(2)}
+        </div>
+      </div>
+    );
+  })()}
+</div>
+
             </>
           ) : (
             <p>Loading order details...</p>
