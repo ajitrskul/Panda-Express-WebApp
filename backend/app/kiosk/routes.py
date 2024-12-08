@@ -472,7 +472,7 @@ def create_order():
                     # Convert total_price to float
                     total_price_float = float(total_price)
                     # Calculate beastpoints (total_price in cents)
-                    beastpoints_awarded = int(round(total_price_float * 100))
+                    beastpoints_awarded = int(round(total_price_float * 100 / 10))
                     # Update customer's beastpoints
                     customer.beast_points += beastpoints_awarded
                     db.session.add(customer)  # Add customer back to session

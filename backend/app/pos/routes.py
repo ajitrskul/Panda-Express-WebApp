@@ -534,7 +534,7 @@ def confirm_checkout():
                     )
 
         if customer_id:
-            beast_points_earned = int(total_price * 100)  # 1 point per cent
+            beast_points_earned = int(total_price * 100 / 10)  # 1 point per 10 cents
             update_beast_points_query = text("""
                 UPDATE public.customer_info
                 SET beast_points = beast_points + :beast_points_earned - :beast_points_used
