@@ -382,10 +382,17 @@ def create_order():
             db.session.flush()
 
             for cart_item in cart_items:
+                print(cart_item)
                 name = cart_item.get('name')
                 quantity = cart_item.get('quantity', 1)
-                base_price = cart_item.get('basePrice')
+                base_price = float(cart_item.get('basePrice'))
                 premium_multiplier = cart_item.get('premiumMultiplier')
+                is_premium = cart_item.get('isPremium')
+                try:
+                    premium_addition = float(cart_item.get('premium_addition'))
+                except (TypeError, ValueError):
+                    premium_addition = float(0.0)  # Default value
+                    print("Invalid premium_addition value, defaulting to 0.0")
                 components = cart_item.get('components')
 
                 # Get the MenuItem by name
@@ -394,14 +401,17 @@ def create_order():
                     return jsonify({'error': f'Menu item "{name}" not found'}), 400
 
                 # Calculate subtotal_price for this cart item
-                subtotal_price = get_item_price(cart_item)
+                if is_premium or menu_item.menu_item_id in [5,6,7,8,9,10,11,12,13,14,15,16,17,18]:
+                    subtotal_price = base_price + premium_addition * premium_multiplier
+                else:
+                    subtotal_price = base_price
 
                 # Create OrderMenuItem entries based on quantity
                 for _ in range(quantity):
                     order_menu_item = OrderMenuItem(
                         order_id=order.order_id,
                         menu_item_id=menu_item.menu_item_id,
-                        subtotal_price=subtotal_price / quantity
+                        subtotal_price=subtotal_price
                     )
                     db.session.add(order_menu_item)
                     db.session.flush()
@@ -484,55 +494,3 @@ def create_order():
         db.session.rollback()
         print('Error creating order:', e)
         return jsonify({'error': 'An error occurred while creating the order.'}), 500
-
-
-def get_item_price(item):
-    quantity = item.get('quantity', 1)
-    if 'basePrice' in item and 'premiumMultiplier' in item and 'components' in item:
-        # Convert base price and premium multiplier with error handling
-        try:
-            base_price = float(item.get('basePrice') or 0)
-        except ValueError:
-            base_price = 0.0
-        try:
-            premium_multiplier = float(item.get('premiumMultiplier') or 1)
-        except ValueError:
-            premium_multiplier = 1.0
-        components = item['components']
-        total_premium_addition = 0.0
-        # Sides
-        for side in components.get('sides', []):
-            is_premium = side.get('is_premium', False)
-            if isinstance(is_premium, str):
-                is_premium = is_premium.lower() == 'true'
-            if is_premium:
-                try:
-                    premium_addition = float(side.get('premium_addition') or 0)
-                except ValueError:
-                    premium_addition = 0.0
-                total_premium_addition += premium_addition
-        # Entrees
-        for entree in components.get('entrees', []):
-            is_premium = entree.get('is_premium', False)
-            if isinstance(is_premium, str):
-                is_premium = is_premium.lower() == 'true'
-            if is_premium:
-                try:
-                    premium_addition = float(entree.get('premium_addition') or 0)
-                except ValueError:
-                    premium_addition = 0.0
-                total_premium_addition += premium_addition
-        total_price = base_price + premium_multiplier * total_premium_addition
-        return round(total_price * quantity, 2)
-    elif 'price' in item:
-        try:
-            return round(float(item.get('price') or 0) * quantity, 2)
-        except ValueError:
-            return 0.0
-    elif 'premium_addition' in item:
-        try:
-            return round(float(item.get('premium_addition') or 0) * quantity, 2)
-        except ValueError:
-            return 0.0
-    else:
-        return 0.0

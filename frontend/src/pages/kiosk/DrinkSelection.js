@@ -1,4 +1,3 @@
-// DrinkSelection.js
 import React, { useState, useEffect, useContext } from 'react';
 import '../../styles/kiosk.css';
 import MenuItemCard from './components/MenuItemCard';
@@ -7,6 +6,7 @@ import SizeSelectionDialog from './components/SizeSelectionDialog'; // Import th
 import api from '../../services/api';
 import { CartContext } from './components/CartContext';
 import { NavBar } from "./components/NavBar";
+import { useNavigate } from 'react-router-dom';
 
 const formatProductName = (name) => {
   return name.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();
@@ -19,7 +19,7 @@ const DrinkSelection = () => {
   const [selectedInfo, setSelectedInfo] = useState(null);
   const [showSizeDialog, setShowSizeDialog] = useState(false);
   const [selectedDrink, setSelectedDrink] = useState(null);
-
+  const navigate = useNavigate();
   const { cartItems, setCartItems } = useContext(CartContext);
 
   useEffect(() => {
@@ -74,8 +74,6 @@ const DrinkSelection = () => {
     return calculatedSizeOptions;
   };
   const handleDrinkSelect = (drink) => {
-    console.log('Selected drink:', drink);
-
     if (drink.type === 'fountainDrink') {
       // Prompt size selection
       setSelectedDrink(drink);
@@ -112,6 +110,7 @@ const DrinkSelection = () => {
       // Add to cart with quantity 1
       setCartItems([...cartItems, { ...item, quantity: 1 }]);
     }
+    navigate('/kiosk/order');
   };
 
   const handleSizeSelect = (size) => {
@@ -124,11 +123,8 @@ const DrinkSelection = () => {
       name: size.item_name,
       product_id: selectedDrink.product_id,
     };
-    console.log(size.item_name)
 
     addToCart(cartItem);
-
-    // Close size selection dialog
     setShowSizeDialog(false);
     setSelectedDrink(null);
   };

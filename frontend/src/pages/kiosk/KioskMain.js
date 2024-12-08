@@ -48,7 +48,6 @@ function KioskMain() {
     let formattedName = formatItemName(item.item_name)
       .toLowerCase()
       .replace(/\s+/g, '-');
-    console.log(formattedName);
   
     if (formattedName === "drink") {
       navigate(`/kiosk/order/drink`); // Changed 'drinks' to 'drink'

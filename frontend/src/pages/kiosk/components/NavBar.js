@@ -23,7 +23,6 @@ export function NavBar(){
       );
       setTemp(Math.round(resp.data.main.temp));
       setIconSrc(`https://openweathermap.org/img/wn/${resp.data.weather[0].icon}@2x.png`);
-      console.log(resp.data);
     }
     catch(error){
       console.error("no return");

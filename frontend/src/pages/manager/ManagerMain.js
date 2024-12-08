@@ -196,7 +196,7 @@ function ManagerMain() {
       <SidebarManager />
       <div
         className="page-background-container orders-section"
-        style={{ height: "100vh", paddingRight: '60px'}}
+        style={{ height: "100vh", paddingRight: '60px', paddingLeft: "350px"}}
         ref={tableContainerRef}
       >
         <h1 className="my-3">Order History</h1>

@@ -166,10 +166,10 @@ function Cart({ isOpen, toggleCart, cartItems }) {
       }
   
       // Send the order data to the backend
+      console.log("Order Data", orderData);
       const response = await api.post('/kiosk/orders', orderData);
   
       if (response.status === 201) {
-        // Order created successfully
         console.log('Order created:', response.data);
   
         // Clear the cart and reset the deal
