@@ -387,24 +387,33 @@ def create_order():
                 quantity = cart_item.get('quantity', 1)
                 base_price = float(cart_item.get('basePrice'))
                 premium_multiplier = cart_item.get('premiumMultiplier')
-                is_premium = cart_item.get('isPremium')
                 try:
                     premium_addition = float(cart_item.get('premium_addition'))
                 except (TypeError, ValueError):
-                    premium_addition = float(0.0)  # Default value
-                    print("Invalid premium_addition value, defaulting to 0.0")
+                    premium_addition = float(0.0) 
                 components = cart_item.get('components')
 
                 # Get the MenuItem by name
                 menu_item = MenuItem.query.filter_by(item_name=name).first()
                 if not menu_item:
                     return jsonify({'error': f'Menu item "{name}" not found'}), 400
+                
+                premium_count = 0
+                if components:
+                    for side in components.get('sides', []):
+                        if side.get('is_premium'):
+                            premium_count += 1
+                            premium_addition = float(side.get('premium_addition'))
+
+                    for entree in components.get('entrees', []):
+                        if entree.get('is_premium'):
+                            premium_count += 1
+                            premium_addition = float(entree.get('premium_addition'))
+                else:
+                    premium_count = 1
 
                 # Calculate subtotal_price for this cart item
-                if is_premium or menu_item.menu_item_id in [5,6,7,8,9,10,11,12,13,14,15,16,17,18]:
-                    subtotal_price = base_price + premium_addition * premium_multiplier
-                else:
-                    subtotal_price = base_price
+                subtotal_price = base_price + (premium_addition * premium_multiplier * premium_count)
 
                 # Create OrderMenuItem entries based on quantity
                 for _ in range(quantity):

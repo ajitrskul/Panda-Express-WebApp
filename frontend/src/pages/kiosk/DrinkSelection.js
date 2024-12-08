@@ -80,12 +80,13 @@ const DrinkSelection = () => {
       setShowSizeDialog(true);
     } else {
       // 'drink' type items are added directly
-      const basePrice = 2.10; // Base price for 'drinks' menu_item
+      const basePrice = 2.10; 
       const premiumMultiplier = 1;
 
       const cartItem = {
         ...drink,
         basePrice: basePrice,
+        premium_addition: parseFloat(drink.premium_addition),
         premiumMultiplier: premiumMultiplier,
         name: 'drink',
       };
@@ -162,7 +163,7 @@ const DrinkSelection = () => {
               price={
                 drink.type === 'fountainDrink'
                   ? 'See Options'
-                  : (2.10 + (drink.is_premium ? parseFloat(drink.premium_addition) || 0 : 0)).toFixed(2)
+                  : (parseFloat(drink.premium_addition))
               }
               isPremium={drink.is_premium}
               isSeasonal={drink.is_seasonal}

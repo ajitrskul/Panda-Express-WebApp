@@ -94,50 +94,40 @@ function Cart({ isOpen, toggleCart, cartItems }) {
     if (item.basePrice !== undefined && item.premiumMultiplier !== undefined) {
       // Complex item (e.g., Bowl, Plate, Drink)
       const basePrice = parseFloat(item.basePrice) || 0;
-      const premiumMultiplier = parseFloat(item.premiumMultiplier) || 1;
+      let premiumMultiplier = parseFloat(item.premiumMultiplier) || 1;
       let totalPremiumAddition = 0;
 
-      // For drinks and fountain drinks
-      if (item.is_premium) {
+      if (item.type == "drink" || item.type == "fountainDrink" || item.name.startsWith("aLaCarte")) {
         const premiumAddition = parseFloat(item.premium_addition) || 0;
-        totalPremiumAddition += premiumAddition;
+        totalPremiumAddition += (premiumAddition * premiumMultiplier);
       }
-
-      // Process components if they exist
-      if (item.components) {
-        // Sum premium additions for sides
+      else if (item.components) {
         if (item.components.sides && item.components.sides.length > 0) {
           item.components.sides.forEach(side => {
-            let isPremium = side.is_premium;
-            if (typeof isPremium === 'string') {
-              isPremium = isPremium.toLowerCase() === 'true';
-            }
-            if (isPremium) {
+            if (side.is_premium) {
               const premiumAddition = parseFloat(side.premium_addition) || 0;
-              totalPremiumAddition += premiumAddition;
+              totalPremiumAddition += premiumAddition * premiumMultiplier;
             }
           });
         }
-
-        // Sum premium additions for entrees
         if (item.components.entrees && item.components.entrees.length > 0) {
           item.components.entrees.forEach(entree => {
-            let isPremium = entree.is_premium;
-            if (typeof isPremium === 'string') {
-              isPremium = isPremium.toLowerCase() === 'true';
-            }
-            if (isPremium) {
-              const premiumAddition = parseFloat(entree.premium_addition) || 0;
-              totalPremiumAddition += premiumAddition;
+            if (entree.is_premium) {
+              console.log()
+              const premiumAddition = parseFloat(entree.premium_addition);
+              console.log(premiumAddition);
+              totalPremiumAddition += (parseFloat(entree.premium_addition) * premiumMultiplier);
             }
           });
         }
       }
 
-      const totalPrice = basePrice + premiumMultiplier * totalPremiumAddition;
+      const totalPrice = basePrice + totalPremiumAddition;
       return totalPrice;
-    } else if (item.price !== undefined) {
+    } 
+    else if (item.price !== undefined) {
       // Simple item with a direct price
+      console.log("wtf")
       return parseFloat(item.price) || 0;
     } else {
       return 0;

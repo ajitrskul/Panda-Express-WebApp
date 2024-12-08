@@ -192,7 +192,7 @@ function PosMain() {
       subitems,
       price:
         parseFloat(currentWorkflow.price) +
-        subitems.reduce((sum, si) => sum + (parseFloat(si.premium_addition) || 0) * (si.quantity || 1), 0),
+        subitems.reduce((sum, si) => sum + (parseFloat(si.premium_addition)) * (parseFloat(currentWorkflow.multiplier))  * (si.quantity || 1), 0),
     };
 
     setCurrentOrder((prevOrder) => [...prevOrder, finalizedItem]);
