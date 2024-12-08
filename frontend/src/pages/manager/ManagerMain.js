@@ -15,6 +15,7 @@ function ManagerMain() {
   const [inputPage, setInputPage] = useState(1); 
   const [selectedOrder, setSelectedOrder] = useState(null); 
   const [showModal, setShowModal] = useState(false); 
+  const [confirmDeleteOrderId, setConfirmDeleteOrderId] = useState(null); 
 
   const fetchOrders = async (page = 1, limit = rowsPerPage) => {
     setIsLoading(true);
@@ -96,6 +97,7 @@ function ManagerMain() {
   const closeModal = () => {
     setShowModal(false); 
     setSelectedOrder(null);
+    setConfirmDeleteOrderId(null);
   };
 
   const areProductsEqual = (products1, products2) => {
@@ -134,6 +136,29 @@ function ManagerMain() {
     }
   };  
 
+  const handleDeleteClick = async (orderId) => {
+    if (confirmDeleteOrderId === orderId) {
+      try {
+        const response = await api.delete(`/manager/orders/${orderId}`);
+        if (response.status === 200) {
+          setOrders((prevOrders) =>
+            prevOrders.filter((order) => order.order_id !== orderId)
+          );
+          await fetchOrders(currentPage, rowsPerPage); 
+        }
+      } 
+      catch (error) {
+        console.error("Error deleting order:", error);
+      } 
+      finally {
+        closeModal();
+        setConfirmDeleteOrderId(null);
+      }
+    } else {
+      setConfirmDeleteOrderId(orderId);
+    }
+  };
+
   return (
     <div className="container-fluid" style={{ paddingRight: "0px" }}>
       <SidebarManager />
@@ -162,7 +187,7 @@ function ManagerMain() {
                     <td>{order.order_id}</td>
                     <td>{order.total_price}</td>
                     <td>
-                      <StatusBadge status={order.status === false ? "In-Progress" : "Completed"} />
+                      <StatusBadge status={order.status} />
                     </td>
                     <td>{new Date(order.order_date_time).toLocaleString()}</td>
                   </tr>
@@ -213,7 +238,7 @@ function ManagerMain() {
             {"Order Details "}
             {selectedOrder && (
               <StatusBadge
-                status={selectedOrder.status === false ? "In-Progress" : "Completed"}
+                status= {selectedOrder.status}
                 onClick={() => toggleStatus(selectedOrder)}
                 style={{ cursor: "pointer", marginLeft: "10px" }}
               />
@@ -231,9 +256,9 @@ function ManagerMain() {
         >
           {selectedOrder ? (
             <>
-              <div style={{ textAlign: "center", marginBottom: "20px" }}>
+              <div style={{ textAlign: "center", marginTop: '15px' }}>
                 <h4>Order #{selectedOrder.order_id} Receipt</h4>
-                <p>
+                <p style={{marginBottom: "15px"}}>
                   {new Date(selectedOrder.order_date_time).toLocaleString()}
                 </p>
               </div>
@@ -243,7 +268,6 @@ function ManagerMain() {
                   <thead>
                     <tr style={{ borderBottom: "1px solid #ddd" }}>
                       <th style={{ textAlign: "left", padding: "5px" }}>Item</th>
-                      <th style={{ textAlign: "center", padding: "5px" }}>Quantity</th>
                       <th style={{ textAlign: "right", padding: "5px" }}>Subtotal</th>
                     </tr>
                   </thead>
@@ -282,7 +306,6 @@ function ManagerMain() {
                               ))}
                             </ul>
                           </td>
-                          <td style={{ textAlign: "center", padding: "5px" }}>{item.quantity}</td>
                           <td style={{ textAlign: "right", padding: "5px" }}>
                             ${item.subtotal_price.toFixed(2)}
                           </td>
@@ -294,7 +317,7 @@ function ManagerMain() {
               </div>
 
               <div style={{ borderBottom: "1px solid #ddd" }}></div>
-              
+
               <div style={{ textAlign: "right", marginTop: "10px", fontSize: "1.1em" }}>
                 {(() => {
                   const subtotalSum = selectedOrder.items.reduce(
@@ -351,8 +374,17 @@ function ManagerMain() {
         </Modal.Body>
 
         <Modal.Footer>
-          <Button variant="danger" onClick={closeModal}>
-            Delete
+          <Button
+            variant={
+              selectedOrder && confirmDeleteOrderId === selectedOrder.order_id
+                ? "danger"
+                : "warning"
+            }
+            onClick={() => selectedOrder && handleDeleteClick(selectedOrder.order_id)}
+          >
+            {selectedOrder && confirmDeleteOrderId === selectedOrder.order_id
+              ? "Confirm Delete"
+              : "Delete"}
           </Button>
           <Button variant="secondary" onClick={closeModal}>
             Close

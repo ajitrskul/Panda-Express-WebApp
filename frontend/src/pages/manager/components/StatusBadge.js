@@ -1,12 +1,20 @@
 import React from "react";
 
 const StatusBadge = ({ status, onClick }) => {
+  const displayStatus =
+    status === "Loading..." ? "Loading..." :
+    status === true || status === null ? "Completed" :
+    status === false ? "In-Progress" :
+    "Unknown";
+
   const badgeClassMap = {
     "Completed": "bg-success",
     "In-Progress": "bg-warning",
+    "Loading...": "bg-secondary",
+    "Unknown": "bg-secondary"
   };
 
-  const badgeClass = badgeClassMap[status] || "bg-secondary";
+  const badgeClass = badgeClassMap[displayStatus] || "bg-secondary";
 
   return (
     <span
@@ -14,7 +22,7 @@ const StatusBadge = ({ status, onClick }) => {
       style={{ cursor: onClick ? "pointer" : "default" }}
       onClick={onClick ? onClick : undefined} 
     >
-      {status || "Unknown"}
+      {displayStatus}
     </span>
   );
 };

@@ -174,18 +174,23 @@ function KitchenMain() {
             return (
               <div key={order.order_id} className="order-card" style={{ borderColor: cardColor }}>
                 <h3 style={{ color: cardColor, textShadow: "1px 1px 0 black, -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black", }}>Order #{order.order_id}</h3>
-                <p>Order Time: {new Date(order.order_date_time).toLocaleTimeString()}</p>
-                <p>Elapsed Time: {elapsedMinutes}m {elapsedSeconds}s</p>
+                <p>
+                  {elapsedMinutes}m {elapsedSeconds}s ago 
+                  <span style={{ fontSize: "0.8rem", color: "gray", marginLeft: "10px" }}>
+                    (Ordered at {new Date(order.order_date_time).toLocaleTimeString()})
+                  </span>
+                </p>
                 <div className="order-items">
                   {groupMenuItems(order.order_menu_items).map((groupedItem, index) => (
                     <div key={index} className="order-item">
                       <h4>
-                        {formatName(groupedItem.menu_item_name)} ({groupedItem.quantity})
+                        {groupedItem.quantity > 1 ? `${groupedItem.quantity}x ` : ""}
+                        {formatName(groupedItem.menu_item_name)}
                       </h4>
                       <div className="components">
                         {groupedItem.components.map((comp, idx) => (
-                          <p style={{fontSize: '0.9rem'}} key={idx}>
-                            - <strong>{formatName(comp.type)}:</strong> {formatName(comp.product_name)}
+                          <p style={{ fontSize: "0.9rem" }} key={idx}>
+                            - {formatName(comp.product_name)}
                           </p>
                         ))}
                       </div>

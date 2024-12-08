@@ -1373,13 +1373,12 @@ def get_order_details(order_id):
                 ]
             })
 
-        # Construct the full order details
         order_details = {
             "order_id": order.order_id,
             "order_date_time": order.order_date_time.isoformat(),
             "employee_id": order.employee_id,
             "total_price": f"${order.total_price:,.2f}",
-            "status": "Completed" if order.is_ready else "In-Progress",
+            "status": order.is_ready,
             "items": detailed_menu_items,
         }
 
@@ -1388,3 +1387,40 @@ def get_order_details(order_id):
     except Exception as e:
         print(f"Failed to fetch order details: {e}")
         return jsonify({"error": "Failed to fetch order details"}), 500
+
+
+@manager_bp.route('/orders/<int:order_id>', methods=['DELETE'])
+def delete_order(order_id):
+    """
+    Delete an order by ID.
+    ---
+    tags:
+      - Kitchen
+      - Orders
+    parameters:
+      - in: path
+        name: order_id
+        required: true
+        schema:
+          type: integer
+        description: ID of the order to delete.
+    responses:
+      200:
+        description: Order deleted successfully.
+      404:
+        description: Order not found.
+      500:
+        description: Internal server error.
+    """
+    try:
+        order = Order.query.get(order_id)
+        if not order:
+            return jsonify({'error': f'Order with ID {order_id} not found.'}), 404
+
+        db.session.delete(order)
+        db.session.commit()
+        return jsonify({'message': f'Order {order_id} deleted successfully.'}), 200
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        print('Error deleting order:', e)
+        return jsonify({'error': 'An error occurred while deleting the order.'}), 500
