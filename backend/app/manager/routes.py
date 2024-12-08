@@ -11,6 +11,9 @@ from datetime import datetime
 from sqlalchemy import text
 import re
 from random import randrange
+import os
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 
 # Global Variables used for resetting X and Z Reports
 newZ=False
@@ -1424,3 +1427,64 @@ def delete_order(order_id):
         db.session.rollback()
         print('Error deleting order:', e)
         return jsonify({'error': 'An error occurred while deleting the order.'}), 500
+    
+
+@manager_bp.route('/orders/<int:order_id>/email', methods=['POST'])
+def send_receipt(order_id):
+    data = request.get_json()
+    recipient_email = data.get("recipient_email")
+
+    if not recipient_email:
+        return jsonify({"error": "Recipient email is required"}), 400
+
+    try:
+        # Fetch order details
+        order_query = text("""
+            SELECT order_id, order_date_time, total_price
+            FROM public."order"
+            WHERE order_id = :order_id
+        """)
+        order = db.session.execute(order_query, {"order_id": order_id}).fetchone()
+
+        if not order:
+            return jsonify({"error": "Order not found"}), 404
+
+        menu_items_query = text("""
+            SELECT mi.item_name, omi.subtotal_price
+            FROM public.order_menu_item omi
+            JOIN public.menu_item mi ON omi.menu_item_id = mi.menu_item_id
+            WHERE omi.order_id = :order_id
+        """)
+        menu_items = db.session.execute(menu_items_query, {"order_id": order_id}).fetchall()
+
+        order_items_html = "".join(
+            f"<li>{item.item_name} - ${item.subtotal_price:,.2f}</li>" for item in menu_items
+        )
+        email_content = f"""
+        <h1>Your Order Receipt</h1>
+        <p>Order ID: {order.order_id}</p>
+        <p>Date: {order.order_date_time.isoformat()}</p>
+        <p>Items:</p>
+        <ul>{order_items_html}</ul>
+        <p><strong>Total: ${order.total_price:,.2f}</strong></p>
+        """
+        print(email_content)
+
+        message = Mail(
+            from_email='beastmode1inc@gmail.com',
+            to_emails=recipient_email,
+            subject='Your Receipt from BeastMode Inc',
+            html_content=email_content
+        )
+
+        sg = SendGridAPIClient(os.getenv('SENDGRID_API_KEY')) 
+        response = sg.send(message)
+
+        if response.status_code not in range(200, 300):
+            return jsonify({"error": "Failed to send email"}), 500
+
+        return jsonify({"message": "Receipt sent successfully"}), 200
+
+    except Exception as e:
+        print(f"Error sending email: {e}")
+        return jsonify({"error": "An error occurred while sending the receipt"}), 500

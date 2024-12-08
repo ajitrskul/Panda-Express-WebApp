@@ -17,6 +17,32 @@ function ManagerMain() {
   const [showModal, setShowModal] = useState(false); 
   const [confirmDeleteOrderId, setConfirmDeleteOrderId] = useState(null); 
   const [updatingOrderId, setUpdatingOrderId] = useState(null);
+  const [emailSending, setEmailSending] = useState(false);
+
+  const handleEmailReceipt = async () => {
+    if (!selectedOrder) return;
+
+    const email = prompt("Enter the recipient's email address:");
+    if (!email) return;
+
+    setEmailSending(true); 
+    try {
+      const response = await api.post(`/manager/orders/${selectedOrder.order_id}/email`, { email });
+      if (response.status === 200) {
+        alert("Receipt emailed successfully!");
+      } 
+      else {
+        alert("Failed to send email. Please try again.");
+      }
+    } 
+    catch (error) {
+      console.error("Error sending email:", error);
+      alert("An error occurred while sending the email.");
+    } 
+    finally {
+      setEmailSending(false); 
+    }
+  };
 
   const fetchOrders = async (page = 1, limit = rowsPerPage) => {
     setIsLoading(true);
@@ -377,6 +403,13 @@ function ManagerMain() {
         </Modal.Body>
 
         <Modal.Footer>
+          <Button
+            variant="primary"
+            onClick={handleEmailReceipt}
+            disabled={emailSending}
+          >
+            {emailSending ? "Sending..." : "✉"}
+          </Button>
           <Button
             variant={
               selectedOrder && confirmDeleteOrderId === selectedOrder.order_id
