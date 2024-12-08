@@ -98,7 +98,6 @@ const AlaCarteSelection = () => {
     return calculatedSizeOptions;
   };
   const handleItemSelect = (item, type) => {
-    console.log('Selected item:', item);
     setSelectedItem(item);
     setSelectedItemType(type);
     setShowSizeDialog(true);

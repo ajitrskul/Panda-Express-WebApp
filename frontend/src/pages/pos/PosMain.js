@@ -8,6 +8,7 @@ import Footer from "./components/Footer";
 import SizeSelection from "./components/SizeSelection";
 import { Modal, Button } from "react-bootstrap";
 import { QrReader } from "react-qr-reader";
+import { toast } from "react-toastify";
 
 function PosMain() {
   const [currentOrder, setCurrentOrder] = useState([]);
@@ -40,6 +41,7 @@ function PosMain() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [selectedDiscount, setSelectedDiscount] = useState(null);
+  const [recipientEmail, setRecipientEmail] = useState("");
 
   const applyDiscount = (discountType, discountCost) => {
     if (selectedDiscount === discountType) {
@@ -190,7 +192,7 @@ function PosMain() {
       subitems,
       price:
         parseFloat(currentWorkflow.price) +
-        subitems.reduce((sum, si) => sum + (parseFloat(si.premium_addition) || 0) * (si.quantity || 1), 0),
+        subitems.reduce((sum, si) => sum + (parseFloat(si.premium_addition)) * (parseFloat(currentWorkflow.multiplier))  * (si.quantity || 1), 0),
     };
 
     setCurrentOrder((prevOrder) => [...prevOrder, finalizedItem]);
@@ -314,25 +316,50 @@ function PosMain() {
 
   const confirmCheckout = async () => {
     try {
-      const response = await api.post("/pos/checkout/confirm", {
+      const checkoutResponse = await api.post("/pos/checkout/confirm", {
         items: currentOrder,
-        total: (total*1.0625).toFixed(2),
+        total: (total * 1.0825).toFixed(2),
         customer_id: customerId,
         beast_points_used: beastPointsUsed,
       });
+  
+      if (checkoutResponse.status === 201) {
+        toast.success("Order successfully processed!");
+        if (recipientEmail) {
+          try {
+            const newOrderNumber = checkoutResponse.data.order_number || orderNumber;
+            const emailResponse = await api.post(`/manager/orders/${newOrderNumber}/email`, {
+              email: recipientEmail,
+            });
+  
+            if (emailResponse.status === 200) {
+              toast.success("Receipt emailed successfully!");
+            } 
+            else {
+              console.error("Email Error:", emailResponse.data);
+              toast.error("Failed to send receipt email.");
+            }
+          } catch (emailError) {
+            console.error("Email Error:", emailError);
+            toast.error("Failed to send receipt email.");
+          }
+        }
 
-      if (response.status === 201) {
-        window.location.reload();
+        setTimeout(() => {
+          window.location.reload();
+        }, 5000); 
       } 
       else {
-        throw new Error("Failed to finalize the order");
+        console.error("Checkout Error:", checkoutResponse.data);
+        toast.error("Error during checkout. Please try again.");
       }
     } catch (error) {
-      console.error("Failed to finalize the order:", error);
-      alert("Error during checkout. Please try again.");
+      console.error("Unexpected Error:", error);
+      toast.error("An unexpected error occurred. Please try again.");
       setShowCheckoutModal(false);
     }
   };
+  
 
   const testSignIn = async (customerLogin) => {
     const signinSuccess = await api.post("/auth/signin/qr", customerLogin);
@@ -468,95 +495,110 @@ function PosMain() {
       </Modal>
 
       <Modal show={showCheckoutModal} onHide={() => setShowCheckoutModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Submit Order #{orderNumber}?</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {beastPoints > 0 && (
-            <div>
-              <p>{firstName} has <strong>{beastPoints}</strong> Beast Points!</p>
-              <div className="d-flex flex-column">
-              <Button
-                variant={selectedDiscount === "20%" ? "success" : "outline-success"}
-                className="mb-2"
-                onClick={() => applyDiscount("20%", 3000)}
-                disabled={beastPoints < 3000}
-              >
-                20% Discount (3000 BPs)
-              </Button>
-              <Button
-                variant={selectedDiscount === "45%" ? "success" : "outline-success"}
-                className="mb-2"
-                onClick={() => applyDiscount("45%", 5000)}
-                disabled={beastPoints < 5000}
-              >
-                45% Discount (5000 BPs)
-              </Button>
-              <Button
-                className="mb-2"
-                variant={selectedDiscount === "75%" ? "success" : "outline-success"}
-                onClick={() => applyDiscount("75%", 8000)}
-                disabled={beastPoints < 8000}
-              >
-                75% Discount (8000 BPs)
-              </Button>
-              </div>
-            </div>
-          )}
-          {(customerId !== 0) && ( <hr /> )}
-          <div style={{ textAlign: "right" }}>
-            <p style={{ display: "flex", justifyContent: "space-between" }}>
-              <span>Subtotal:</span>
-              <span>${originalTotal.toFixed(2)}</span>
-            </p>
-
-            {selectedDiscount && (
-              <p style={{ display: "flex", justifyContent: "space-between", color: "green" }}>
-                <span>
-                  <strong>Discount ({selectedDiscount}):</strong>
-                </span>
-                <span>- ${Math.abs(originalTotal - total).toFixed(2)}</span>
-              </p>
-            )}
-
-            <p style={{ display: "flex", justifyContent: "space-between" }}>
-              <span>Tax:</span>
-              <span>${(total * 0.0625).toFixed(2)}</span>
-            </p>
-
-            <p
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                fontWeight: "bold",
-                fontSize: "1.2em",
-                color: "black",
-                marginBottom: "0px",
-              }}
-            >
-              <span>Total:</span>
-              <span>${(total * 1.0625).toFixed(2)}</span>
-            </p>
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowCheckoutModal(false)}>
-            Cancel
+  <Modal.Header closeButton>
+    <Modal.Title>Submit Order #{orderNumber}?</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    {beastPoints > 0 && (
+      <div>
+        <p>
+          {firstName} has <strong>{beastPoints}</strong> Beast Points!
+        </p>
+        <div className="d-flex flex-column">
+          <Button
+            variant={selectedDiscount === "20%" ? "success" : "outline-success"}
+            className="mb-2"
+            onClick={() => applyDiscount("20%", 3000)}
+            disabled={beastPoints < 3000}
+          >
+            20% Discount (3000 BPs)
           </Button>
-          {(customerId === 0) && (
-            <Button
-              variant="primary"
-              className="btn btn-primary pos-qr-signin-btn"
-              onClick={() => setShowQRScanner(true)}
-            >
-              <i className="bi bi-qr-code-scan"></i>
-            </Button>
-          )}
-          <Button variant="success" onClick={confirmCheckout}>
-            Checkout
+          <Button
+            variant={selectedDiscount === "45%" ? "success" : "outline-success"}
+            className="mb-2"
+            onClick={() => applyDiscount("45%", 5000)}
+            disabled={beastPoints < 5000}
+          >
+            45% Discount (5000 BPs)
           </Button>
-        </Modal.Footer>
-      </Modal>
+          <Button
+            className="mb-2"
+            variant={selectedDiscount === "75%" ? "success" : "outline-success"}
+            onClick={() => applyDiscount("75%", 8000)}
+            disabled={beastPoints < 8000}
+          >
+            75% Discount (8000 BPs)
+          </Button>
+        </div>
+      </div>
+    )}
+    {customerId !== 0 && <hr />}
+    <div style={{ textAlign: "right" }}>
+      <p style={{ display: "flex", justifyContent: "space-between" }}>
+        <span>Subtotal:</span>
+        <span>${originalTotal.toFixed(2)}</span>
+      </p>
+
+      {selectedDiscount && (
+        <p
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            color: "green",
+          }}
+        >
+          <span>
+            <strong>Discount ({selectedDiscount}):</strong>
+          </span>
+          <span>- ${Math.abs(originalTotal - total).toFixed(2)}</span>
+        </p>
+      )}
+
+      <p style={{ display: "flex", justifyContent: "space-between" }}>
+        <span>Tax:</span>
+        <span>${(total * 0.0825).toFixed(2)}</span>
+      </p>
+
+      <p
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          fontWeight: "bold",
+          fontSize: "1.2em",
+          color: "black",
+          marginBottom: "0px",
+        }}
+      >
+        <span>Total:</span>
+        <span>${(total * 1.0825).toFixed(2)}</span>
+      </p>
+    </div>
+
+    {/* Email Input Field */}
+    <div className="mt-4">
+      <label htmlFor="emailInput" className="form-label">
+        Email Receipt (optional):
+      </label>
+      <input
+        type="email"
+        id="emailInput"
+        className="form-control"
+        value={recipientEmail}
+        onChange={(e) => setRecipientEmail(e.target.value)}
+        placeholder="example@example.com"
+      />
+    </div>
+  </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" onClick={() => setShowCheckoutModal(false)}>
+      Cancel
+    </Button>
+    <Button variant="success" onClick={confirmCheckout}>
+      Checkout
+    </Button>
+  </Modal.Footer>
+</Modal>
+
 
       <Modal show={showQRScanner} onHide={handleQRClose}>
         <Modal.Header closeButton>

@@ -117,6 +117,7 @@ def mark_order_ready(order_id):
         db.session.rollback()
         return jsonify({'error': 'An error occurred while updating the order.'}), 500
 
+
 @kitchen_bp.route('/orders/<int:order_id>', methods=['DELETE'])
 def delete_order(order_id):
     """

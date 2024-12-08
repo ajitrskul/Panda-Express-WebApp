@@ -133,3 +133,62 @@
 .sidebar-drop-item:hover{
     background-color:#77070a;
 }
+
+.manager-sidebar {
+    display: flex;
+    flex-direction: column; 
+    justify-content: space-between; 
+    height: 100vh; 
+    color: #fff;
+}
+  
+.sidebar-item {
+    padding: 10px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+  
+.sidebar-item i {
+    margin-right: 10px;
+}
+  
+.sidebar-divider {
+    border-color: #333;
+}
+  
+.logout-container {
+    margin-top: auto;
+    margin-bottom: 20px; 
+}
+  
+.manager-sidebar {
+    display: flex;
+    flex-direction: column; 
+    height: 100vh; 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    z-index: 1000; 
+}
+  
+.logout-container {
+    margin-top: auto; 
+    padding: 10px;
+}
+  
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+  
+.sidebar-item:hover {
+    background-color: #77070a; 
+}
+  
+.manager-sidebar-text2 {
+    margin-left: 10px;
+    color: white;
+}

@@ -1,4 +1,6 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // Import all pages
 import { MenuCarousel } from './pages/menu';
@@ -36,7 +38,6 @@ function App() {
             <Route path="/manager/products" element={<Products/>} />
             <Route path="/manager/inventory" element={<Inventory />} />
             <Route path="/manager/productusage" element={<ProductUsage />} />
-            <Route path="/manager" element={<ManagerMain />} />
             <Route path="/manager/salesreports" element={<SalesReports />} />
 
             <Route path="/kiosk" element={<KioskLanding />} />
@@ -61,6 +62,17 @@ function App() {
             <Route path="/auth/error" element={<AuthError />}></Route>
           </Routes>
         </Router>
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
       </CartProvider>
     </AccountProvider>
   );

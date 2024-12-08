@@ -384,24 +384,44 @@ def create_order():
             for cart_item in cart_items:
                 name = cart_item.get('name')
                 quantity = cart_item.get('quantity', 1)
-                base_price = cart_item.get('basePrice')
+                base_price = float(cart_item.get('basePrice'))
                 premium_multiplier = cart_item.get('premiumMultiplier')
+                try:
+                    premium_addition = float(cart_item.get('premium_addition'))
+                except (TypeError, ValueError):
+                    premium_addition = float(0.0) 
                 components = cart_item.get('components')
 
                 # Get the MenuItem by name
                 menu_item = MenuItem.query.filter_by(item_name=name).first()
                 if not menu_item:
                     return jsonify({'error': f'Menu item "{name}" not found'}), 400
+                
+                premium_count = 0
+                if name == "appetizerSmall":
+                    premium_multiplier = 0
+                if components:
+                    for side in components.get('sides', []):
+                        if side.get('is_premium'):
+                            premium_count += 1
+                            premium_addition = float(side.get('premium_addition'))
+
+                    for entree in components.get('entrees', []):
+                        if entree.get('is_premium'):
+                            premium_count += 1
+                            premium_addition = float(entree.get('premium_addition'))
+                else:
+                    premium_count = 1
 
                 # Calculate subtotal_price for this cart item
-                subtotal_price = get_item_price(cart_item)
+                subtotal_price = base_price + (premium_addition * premium_multiplier * premium_count)
 
                 # Create OrderMenuItem entries based on quantity
                 for _ in range(quantity):
                     order_menu_item = OrderMenuItem(
                         order_id=order.order_id,
                         menu_item_id=menu_item.menu_item_id,
-                        subtotal_price=subtotal_price / quantity
+                        subtotal_price=subtotal_price
                     )
                     db.session.add(order_menu_item)
                     db.session.flush()
@@ -452,25 +472,18 @@ def create_order():
                     # Convert total_price to float
                     total_price_float = float(total_price)
                     # Calculate beastpoints (total_price in cents)
-                    beastpoints_awarded = int(round(total_price_float * 100))
+                    beastpoints_awarded = int(round(total_price_float * 100 / 10))
                     # Update customer's beastpoints
                     customer.beast_points += beastpoints_awarded
                     db.session.add(customer)  # Add customer back to session
                 else:
                     print(f"Customer with ID {customer_id} not found.")
             
-            # Apply deal if any
             if customer_id and applied_deal:
                 customer = Customer.query.get(customer_id)
                 if customer:
-                    # Check if customer has enough beast points
                     if customer.beast_points >= applied_deal['cost']:
-                        # Deduct beast points
                         customer.beast_points -= applied_deal['cost']
-                        # Adjust total price
-                        total_price_float = float(total_price)
-                        discount_amount = total_price_float * applied_deal['discount']
-                        order.total_price = total_price_float - discount_amount
                         db.session.add(customer)
                     else:
                         return jsonify({'error': 'Not enough beast points for this deal.'}), 400
@@ -484,55 +497,3 @@ def create_order():
         db.session.rollback()
         print('Error creating order:', e)
         return jsonify({'error': 'An error occurred while creating the order.'}), 500
-
-
-def get_item_price(item):
-    quantity = item.get('quantity', 1)
-    if 'basePrice' in item and 'premiumMultiplier' in item and 'components' in item:
-        # Convert base price and premium multiplier with error handling
-        try:
-            base_price = float(item.get('basePrice') or 0)
-        except ValueError:
-            base_price = 0.0
-        try:
-            premium_multiplier = float(item.get('premiumMultiplier') or 1)
-        except ValueError:
-            premium_multiplier = 1.0
-        components = item['components']
-        total_premium_addition = 0.0
-        # Sides
-        for side in components.get('sides', []):
-            is_premium = side.get('is_premium', False)
-            if isinstance(is_premium, str):
-                is_premium = is_premium.lower() == 'true'
-            if is_premium:
-                try:
-                    premium_addition = float(side.get('premium_addition') or 0)
-                except ValueError:
-                    premium_addition = 0.0
-                total_premium_addition += premium_addition
-        # Entrees
-        for entree in components.get('entrees', []):
-            is_premium = entree.get('is_premium', False)
-            if isinstance(is_premium, str):
-                is_premium = is_premium.lower() == 'true'
-            if is_premium:
-                try:
-                    premium_addition = float(entree.get('premium_addition') or 0)
-                except ValueError:
-                    premium_addition = 0.0
-                total_premium_addition += premium_addition
-        total_price = base_price + premium_multiplier * total_premium_addition
-        return round(total_price * quantity, 2)
-    elif 'price' in item:
-        try:
-            return round(float(item.get('price') or 0) * quantity, 2)
-        except ValueError:
-            return 0.0
-    elif 'premium_addition' in item:
-        try:
-            return round(float(item.get('premium_addition') or 0) * quantity, 2)
-        except ValueError:
-            return 0.0
-    else:
-        return 0.0

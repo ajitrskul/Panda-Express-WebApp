@@ -11,6 +11,10 @@ from datetime import datetime
 from sqlalchemy import text
 import re
 from random import randrange
+import os
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
+import re
 
 # Global Variables used for resetting X and Z Reports
 newZ=False
@@ -1068,8 +1072,6 @@ def fireEmployee():
     id = request.get_data()
     id = id.decode('utf-8')
 
-    print(id)
-
     employee = Employee.query.filter_by(employee_id=id).first()
 
     if employee:
@@ -1261,3 +1263,318 @@ def editEmployee():
             "last_name": employee.last_name,
             "role": employee.role
         }}), 200
+
+
+@manager_bp.route('/orders', methods=['GET'])
+def get_past_orders():
+    try:
+        page = request.args.get('page', default=1, type=int)
+        limit = request.args.get('limit', default=10, type=int)
+
+        if page < 1 or limit < 1:
+            return jsonify({"error": "Page and limit must be positive integers"}), 400
+
+        with db.session.begin():
+            query = db.session.query(
+                Order.order_id,
+                Order.total_price,
+                Order.order_date_time,
+                Order.is_ready
+            ).order_by(Order.order_date_time.desc())
+
+            total_orders = query.count()
+            total_pages = (total_orders + limit - 1) // limit 
+
+            orders = query.offset((page - 1) * limit).limit(limit).all()
+
+            order_list = [
+                {
+                    "order_id": order.order_id,
+                    "total_price": f"${order.total_price:,.2f}",
+                    "order_date_time": order.order_date_time.isoformat(),
+                    "status": order.is_ready,
+                }
+                for order in orders
+            ]
+
+        return jsonify({
+            "orders": order_list,
+            "total_pages": total_pages,
+            "total_orders": total_orders,
+            "current_page": page,
+        }), 200
+    except Exception as e:
+        print(f"Error fetching orders: {e}")
+        return jsonify({"error": "An error occurred while retrieving orders"}), 500
+
+
+@manager_bp.route('/orders/<int:order_id>/status', methods=['PUT'])
+def update_order_status(order_id):
+    data = request.get_json()
+    if not data or "status" not in data:
+        return jsonify({"error": "Invalid request data"}), 400
+
+    new_status = data["status"]
+
+    try:
+        order = db.session.query(Order).filter_by(order_id=order_id).first()
+
+        if not order:
+            return jsonify({"error": "Order not found"}), 404
+
+        order.is_ready = new_status
+        db.session.commit()
+
+        return jsonify({"message": "Order status updated successfully", "status": new_status}), 200
+
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        return jsonify({"error": "An error occurred while updating order status", "details": str(e)}), 500
+    
+
+def format_name(name):
+    size_keywords = ["small", "medium", "large"] 
+    words = re.findall(r'[A-Z][a-z]*|[a-z]+', name)
+    size = None
+    for word in words:
+        if word.lower() in size_keywords:
+            size = word.capitalize()
+            words.remove(word)
+            break
+    formatted_words = " ".join(word.capitalize() for word in words)
+    
+    return f"{size} {formatted_words}" if size else formatted_words
+
+
+@manager_bp.route('/orders/<int:order_id>/details', methods=['GET'])
+def get_order_details(order_id):
+    try:
+        order_query = text("""
+            SELECT order_id, order_date_time, employee_id, total_price, is_ready
+            FROM public."order"
+            WHERE order_id = :order_id
+        """)
+        order = db.session.execute(order_query, {"order_id": order_id}).fetchone()
+
+        if not order:
+            return jsonify({"error": "Order not found"}), 404
+
+        menu_items_query = text("""
+            SELECT omi.order_menu_item_id, mi.item_name, omi.subtotal_price
+            FROM public.order_menu_item omi
+            JOIN public.menu_item mi ON omi.menu_item_id = mi.menu_item_id
+            WHERE omi.order_id = :order_id
+        """)
+        menu_items = db.session.execute(menu_items_query, {"order_id": order_id}).fetchall()
+
+        detailed_menu_items = []
+
+        for menu_item in menu_items:
+            order_menu_item_id = menu_item.order_menu_item_id
+
+            products_query = text("""
+                SELECT p.product_id, p.product_name
+                FROM public.order_menu_item_product op
+                JOIN public.product_item p ON op.product_id = p.product_id
+                WHERE op.order_menu_item_id = :order_menu_item_id
+            """)
+            products = db.session.execute(
+                products_query, {"order_menu_item_id": order_menu_item_id}
+            ).fetchall()
+
+            detailed_menu_items.append({
+                "item_name": format_name(menu_item.item_name), 
+                "subtotal_price": f"${menu_item.subtotal_price:,.2f}",
+                "products": [
+                    {"product_id": product.product_id, "product_name": format_name(product.product_name)} 
+                    for product in products
+                ]
+            })
+
+        order_details = {
+            "order_id": order.order_id,
+            "order_date_time": order.order_date_time.isoformat(),
+            "employee_id": order.employee_id,
+            "total_price": f"${order.total_price:,.2f}",
+            "status": order.is_ready,
+            "items": detailed_menu_items,
+        }
+
+        return jsonify(order_details), 200
+
+    except Exception as e:
+        print(f"Failed to fetch order details: {e}")
+        return jsonify({"error": "Failed to fetch order details"}), 500
+
+
+@manager_bp.route('/orders/<int:order_id>', methods=['DELETE'])
+def delete_order(order_id):
+    """
+    Delete an order by ID.
+    ---
+    tags:
+      - Kitchen
+      - Orders
+    parameters:
+      - in: path
+        name: order_id
+        required: true
+        schema:
+          type: integer
+        description: ID of the order to delete.
+    responses:
+      200:
+        description: Order deleted successfully.
+      404:
+        description: Order not found.
+      500:
+        description: Internal server error.
+    """
+    try:
+        order = Order.query.get(order_id)
+        if not order:
+            return jsonify({'error': f'Order with ID {order_id} not found.'}), 404
+
+        db.session.delete(order)
+        db.session.commit()
+        return jsonify({'message': f'Order {order_id} deleted successfully.'}), 200
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        print('Error deleting order:', e)
+        return jsonify({'error': 'An error occurred while deleting the order.'}), 500
+
+
+@manager_bp.route('/orders/<int:order_id>/email', methods=['POST'])
+def send_receipt(order_id):
+    data = request.get_json()
+    recipient_email = data.get("email")
+
+    if not recipient_email:
+        return jsonify({"error": "Recipient email is required"}), 400
+
+    try:
+        order_query = text("""
+            SELECT order_id, order_date_time, total_price
+            FROM public."order"
+            WHERE order_id = :order_id
+        """)
+        order = db.session.execute(order_query, {"order_id": order_id}).fetchone()
+
+        if not order:
+            return jsonify({"error": "Order not found"}), 404
+
+        menu_items_query = text("""
+            SELECT omi.order_menu_item_id, mi.item_name, omi.subtotal_price
+            FROM public.order_menu_item omi
+            JOIN public.menu_item mi ON omi.menu_item_id = mi.menu_item_id
+            WHERE omi.order_id = :order_id
+        """)
+        menu_items = db.session.execute(menu_items_query, {"order_id": order_id}).fetchall()
+
+        subitem_query = text("""
+            SELECT op.order_menu_item_id, pi.product_name
+            FROM public.order_menu_item_product op
+            JOIN public.product_item pi ON op.product_id = pi.product_id
+            WHERE op.order_menu_item_id = :order_menu_item_id
+        """)
+
+        grouped_items = []
+        for item in menu_items:
+            subitems = db.session.execute(
+                subitem_query, {"order_menu_item_id": item.order_menu_item_id}
+            ).fetchall()
+            subitem_names = [format_name(sub.product_name) for sub in subitems]
+
+            existing_item = next(
+                (group for group in grouped_items
+                 if group["item_name"] == format_name(item.item_name) and group["subitems"] == subitem_names),
+                None
+            )
+
+            if existing_item:
+                existing_item["quantity"] += 1
+                existing_item["subtotal_price"] += float(item.subtotal_price)
+            else:
+                grouped_items.append({
+                    "item_name": format_name(item.item_name),
+                    "subtotal_price": float(item.subtotal_price),
+                    "subitems": subitem_names,
+                    "quantity": 1
+                })
+
+        subtotal_sum = sum(item["subtotal_price"] for item in grouped_items)
+        tax_rate = 0.0825
+        tax_amount = round(subtotal_sum * tax_rate, 2)
+        total_price = float(order.total_price)
+        discount_amount = round((subtotal_sum + tax_amount) - total_price, 2)
+        discount_percentage = round((discount_amount / (subtotal_sum + tax_amount)) * 100) if discount_amount > 0 else 0
+        order_items_html = "".join(
+            f"""
+            <tr>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: left;">
+                    <strong>{item['quantity']}x {item['item_name']}</strong>
+                    <ul style="list-style: none; padding: 0; margin: 5px 0 0 15px;">
+                        {"".join(f"<li style='font-size: 0.9em;'>- {subitem}</li>" for subitem in item['subitems'])}
+                    </ul>
+                </td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">
+                    ${item['subtotal_price']:.2f}
+                </td>
+            </tr>
+            """ for item in grouped_items
+        )
+
+        email_content = f"""
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
+            <div style="background-color: #a3080c; color: white; padding: 20px; text-align: center;">
+                <h1 style="margin: 0;">Order #{order.order_id} Receipt</h1>
+            </div>
+            <div style="padding: 20px;">
+                <p style="margin: 0 0 20px; text-align: center; font-size: 16px; font-weight: bold; color: #000000;">
+                    <span style="display: inline-block; padding: 5px 10px; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 5px;">
+                        Placed At: {order.order_date_time.strftime("%B %d, %Y at %I:%M %p")}
+                    </span>
+                </p>
+                <h3 style="margin: 20px 0 10px; border-bottom: 1px solid #ddd; padding-bottom: 10px;">Order Summary</h3>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background-color: #f2f2f2;">
+                            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Item</th>
+                            <th style="padding: 8px; border: 1px solid #ddd; text-align: right;">Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {order_items_html}
+                    </tbody>
+                </table>
+                <div style="margin-top: 20px; text-align: right;">
+                    <p style="margin: 5px 0; font-size: 14px;"><strong>Subtotal:</strong> ${subtotal_sum:.2f}</p>
+                    <p style="margin: 5px 0; font-size: 14px;"><strong>Tax:</strong> ${tax_amount:.2f}</p>
+                    {f'<p style="margin: 5px 0; font-size: 14px; color: green;"><strong>Discount ({discount_percentage}%):</strong> -${discount_amount:.2f}</p>' if discount_amount > 0 else ''}
+                    <p style="margin: 10px 0; font-size: 16px; border-top: 1px solid #ddd; padding-top: 10px;"><strong>Total:</strong> ${total_price:.2f}</p>
+                </div>
+            </div>
+            <div style="background-color: #f2f2f2; padding: 10px; text-align: center;">
+                <p style="font-size: 12px; margin: 0;">BeastMode Inc - Thank you for your order!</p>
+            </div>
+        </div>
+        """
+
+        message = Mail(
+            from_email='beastmode1inc@gmail.com',
+            to_emails=recipient_email,
+            subject=f'Order #{order.order_id} Receipt from BeastMode Inc',
+            html_content=email_content
+        )
+
+        sg = SendGridAPIClient(os.getenv('SENDGRID_API_KEY'))
+        response = sg.send(message)
+
+        if response.status_code not in range(200, 300):
+            return jsonify({"error": "Failed to send email"}), 500
+
+        return jsonify({"message": "Receipt sent successfully"}), 200
+
+    except Exception as e:
+        print(f"Error sending email: {e}")
+        return jsonify({"error": "An error occurred while sending the receipt"}), 500

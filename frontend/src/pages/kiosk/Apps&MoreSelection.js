@@ -7,6 +7,7 @@ import SizeSelectionDialog from './components/SizeSelectionDialog';
 import api from '../../services/api';
 import { CartContext } from './components/CartContext';
 import { NavBar } from "./components/NavBar";
+import { useNavigate } from 'react-router-dom';
 
 const formatProductName = (name) => {
   return name.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();
@@ -18,12 +19,10 @@ const AppsAndMoreSelection = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedInfo, setSelectedInfo] = useState(null);
-
-  // State variables for size selection
   const [showSizeDialog, setShowSizeDialog] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [selectedItemType, setSelectedItemType] = useState(null);
-
+  const navigate = useNavigate();
   const { cartItems, setCartItems } = useContext(CartContext);
 
   useEffect(() => {
@@ -53,7 +52,7 @@ const AppsAndMoreSelection = () => {
           item_name: 'appetizerSmall',
           display_name: 'Small',
           menu_item_base_price: 2.00,
-          premium_multiplier: 1,
+          premium_multiplier: 0,
         },
         {
           item_name: 'appetizerLarge',
@@ -88,9 +87,7 @@ const AppsAndMoreSelection = () => {
     // Calculate total price for each size option
     const calculatedSizeOptions = sizeOptions.map((sizeOption) => {
       let totalPrice = sizeOption.menu_item_base_price;
-      if (selectedItem.is_premium) {
-        totalPrice += sizeOption.premium_multiplier * selectedItem.premium_addition;
-      }
+      totalPrice += sizeOption.premium_multiplier * selectedItem.premium_addition;
       return {
         ...sizeOption,
         total_price: totalPrice,
@@ -101,7 +98,6 @@ const AppsAndMoreSelection = () => {
   };
 
   const handleItemSelect = (item, type) => {
-    console.log('Selected item:', item);
     setSelectedItem(item);
     setSelectedItemType(type);
     setShowSizeDialog(true);
@@ -123,6 +119,7 @@ const AppsAndMoreSelection = () => {
       // Add to cart with quantity 1
       setCartItems([...cartItems, { ...item, quantity: 1 }]);
     }
+    navigate('/kiosk/order');
   };
 
   const handleSizeSelect = (size) => {
