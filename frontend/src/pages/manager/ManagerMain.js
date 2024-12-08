@@ -4,6 +4,8 @@ import { SidebarManager } from "./components/SidebarManager";
 import "../../styles/manager/main.css";
 import StatusBadge from "./components/StatusBadge";
 import { Modal, Button } from "react-bootstrap";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function ManagerMain() {
   const [orders, setOrders] = useState([]); 
@@ -18,29 +20,30 @@ function ManagerMain() {
   const [confirmDeleteOrderId, setConfirmDeleteOrderId] = useState(null); 
   const [updatingOrderId, setUpdatingOrderId] = useState(null);
   const [emailSending, setEmailSending] = useState(false);
+  const [recipientEmail, setRecipientEmail] = useState("");
 
   const handleEmailReceipt = async () => {
-    if (!selectedOrder) return;
+    if (!selectedOrder || !recipientEmail) {
+      toast.error("Please select an order and provide a valid email address.");
+      return;
+    }
 
-    const email = prompt("Enter the recipient's email address:");
-    if (!email) return;
-
-    setEmailSending(true); 
+    setEmailSending(true);
     try {
-      const response = await api.post(`/manager/orders/${selectedOrder.order_id}/email`, { email });
+      const response = await api.post(`/manager/orders/${selectedOrder.order_id}/email`, { email: recipientEmail });
       if (response.status === 200) {
-        alert("Receipt emailed successfully!");
+        toast.success("Receipt emailed successfully!");
+        setRecipientEmail("");
       } 
       else {
-        alert("Failed to send email. Please try again.");
+        toast.error("Failed to send email. Please try again.");
       }
-    } 
-    catch (error) {
+    } catch (error) {
       console.error("Error sending email:", error);
-      alert("An error occurred while sending the email.");
+      toast.error("An error occurred while sending the email.");
     } 
     finally {
-      setEmailSending(false); 
+      setEmailSending(false);
     }
   };
 
@@ -125,6 +128,7 @@ function ManagerMain() {
     setShowModal(false); 
     setSelectedOrder(null);
     setConfirmDeleteOrderId(null);
+    setRecipientEmail("");
   };
 
   const areProductsEqual = (products1, products2) => {
@@ -326,10 +330,10 @@ function ManagerMain() {
                       return groupedItems.map((item, index) => (
                         <tr key={index}>
                           <td style={{ padding: "5px", textAlign: "left" }}>
-                            <strong>{`${item.quantity} ${item.item_name}`}</strong>
+                            <strong style={{ fontSize: "0.95em" }}>{`${item.quantity} ${item.item_name}`}</strong>
                             <ul style={{ margin: "5px 0 0 15px", padding: "0" }}>
                               {item.products.map((product, idx) => (
-                                <li key={idx} style={{ fontSize: "0.9em" }}>
+                                <li key={idx} style={{ fontSize: "0.75em" }}>
                                   {product.product_name}
                                 </li>
                               ))}
@@ -403,12 +407,22 @@ function ManagerMain() {
         </Modal.Body>
 
         <Modal.Footer>
-          <Button
-            variant="primary"
-            onClick={handleEmailReceipt}
-            disabled={emailSending}
-          >
-            {emailSending ? "Sending..." : "✉"}
+          <div style={{ flexGrow: 1 }}>
+            <input
+              type="email"
+              value={recipientEmail}
+              onChange={(e) => setRecipientEmail(e.target.value)}
+              placeholder="Enter email"
+              style={{
+                width: "100%",
+                padding: "5px",
+                borderRadius: "4px",
+                border: "1px solid #ddd",
+              }}
+            />
+          </div>
+          <Button variant="primary" onClick={handleEmailReceipt} disabled={emailSending || !recipientEmail}>
+            {emailSending ? "Sending..." : <i class="bi bi-envelope"></i>}
           </Button>
           <Button
             variant={
@@ -420,13 +434,25 @@ function ManagerMain() {
           >
             {selectedOrder && confirmDeleteOrderId === selectedOrder.order_id
               ? "Confirm Delete"
-              : "Delete"}
+              : "Delete Order"}
           </Button>
           <Button variant="secondary" onClick={closeModal}>
             Close
           </Button>
         </Modal.Footer>
       </Modal>
+
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </div>
   );
 }

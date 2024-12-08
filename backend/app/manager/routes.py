@@ -14,6 +14,7 @@ from random import randrange
 import os
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
+import re
 
 # Global Variables used for resetting X and Z Reports
 newZ=False
@@ -1331,6 +1332,20 @@ def update_order_status(order_id):
         return jsonify({"error": "An error occurred while updating order status", "details": str(e)}), 500
     
 
+def format_name(name):
+    size_keywords = ["small", "medium", "large"] 
+    words = re.findall(r'[A-Z][a-z]*|[a-z]+', name)
+    size = None
+    for word in words:
+        if word.lower() in size_keywords:
+            size = word.capitalize()
+            words.remove(word)
+            break
+    formatted_words = " ".join(word.capitalize() for word in words)
+    
+    return f"{size} {formatted_words}" if size else formatted_words
+
+
 @manager_bp.route('/orders/<int:order_id>/details', methods=['GET'])
 def get_order_details(order_id):
     try:
@@ -1368,10 +1383,10 @@ def get_order_details(order_id):
             ).fetchall()
 
             detailed_menu_items.append({
-                "item_name": menu_item.item_name,
+                "item_name": format_name(menu_item.item_name), 
                 "subtotal_price": f"${menu_item.subtotal_price:,.2f}",
                 "products": [
-                    {"product_id": product.product_id, "product_name": product.product_name}
+                    {"product_id": product.product_id, "product_name": format_name(product.product_name)} 
                     for product in products
                 ]
             })
@@ -1427,18 +1442,17 @@ def delete_order(order_id):
         db.session.rollback()
         print('Error deleting order:', e)
         return jsonify({'error': 'An error occurred while deleting the order.'}), 500
-    
+
 
 @manager_bp.route('/orders/<int:order_id>/email', methods=['POST'])
 def send_receipt(order_id):
     data = request.get_json()
-    recipient_email = data.get("recipient_email")
+    recipient_email = data.get("email")
 
     if not recipient_email:
         return jsonify({"error": "Recipient email is required"}), 400
 
     try:
-        # Fetch order details
         order_query = text("""
             SELECT order_id, order_date_time, total_price
             FROM public."order"
@@ -1450,34 +1464,110 @@ def send_receipt(order_id):
             return jsonify({"error": "Order not found"}), 404
 
         menu_items_query = text("""
-            SELECT mi.item_name, omi.subtotal_price
+            SELECT omi.order_menu_item_id, mi.item_name, omi.subtotal_price
             FROM public.order_menu_item omi
             JOIN public.menu_item mi ON omi.menu_item_id = mi.menu_item_id
             WHERE omi.order_id = :order_id
         """)
         menu_items = db.session.execute(menu_items_query, {"order_id": order_id}).fetchall()
 
+        subitem_query = text("""
+            SELECT op.order_menu_item_id, pi.product_name
+            FROM public.order_menu_item_product op
+            JOIN public.product_item pi ON op.product_id = pi.product_id
+            WHERE op.order_menu_item_id = :order_menu_item_id
+        """)
+
+        grouped_items = []
+        for item in menu_items:
+            subitems = db.session.execute(
+                subitem_query, {"order_menu_item_id": item.order_menu_item_id}
+            ).fetchall()
+            subitem_names = [format_name(sub.product_name) for sub in subitems]
+
+            existing_item = next(
+                (group for group in grouped_items
+                 if group["item_name"] == format_name(item.item_name) and group["subitems"] == subitem_names),
+                None
+            )
+
+            if existing_item:
+                existing_item["quantity"] += 1
+                existing_item["subtotal_price"] += float(item.subtotal_price)
+            else:
+                grouped_items.append({
+                    "item_name": format_name(item.item_name),
+                    "subtotal_price": float(item.subtotal_price),
+                    "subitems": subitem_names,
+                    "quantity": 1
+                })
+
+        subtotal_sum = sum(item["subtotal_price"] for item in grouped_items)
+        tax_rate = 0.0825
+        tax_amount = round(subtotal_sum * tax_rate, 2)
+        total_price = float(order.total_price)
+        discount_amount = round((subtotal_sum + tax_amount) - total_price, 2)
+        discount_percentage = round((discount_amount / (subtotal_sum + tax_amount)) * 100) if discount_amount > 0 else 0
         order_items_html = "".join(
-            f"<li>{item.item_name} - ${item.subtotal_price:,.2f}</li>" for item in menu_items
+            f"""
+            <tr>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: left;">
+                    <strong>{item['quantity']}x {item['item_name']}</strong>
+                    <ul style="list-style: none; padding: 0; margin: 5px 0 0 15px;">
+                        {"".join(f"<li style='font-size: 0.9em;'>- {subitem}</li>" for subitem in item['subitems'])}
+                    </ul>
+                </td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">
+                    ${item['subtotal_price']:.2f}
+                </td>
+            </tr>
+            """ for item in grouped_items
         )
+
         email_content = f"""
-        <h1>Your Order Receipt</h1>
-        <p>Order ID: {order.order_id}</p>
-        <p>Date: {order.order_date_time.isoformat()}</p>
-        <p>Items:</p>
-        <ul>{order_items_html}</ul>
-        <p><strong>Total: ${order.total_price:,.2f}</strong></p>
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
+            <div style="background-color: #a3080c; color: white; padding: 20px; text-align: center;">
+                <h1 style="margin: 0;">Order #{order.order_id} Receipt</h1>
+            </div>
+            <div style="padding: 20px;">
+                <p style="margin: 0 0 20px; text-align: center; font-size: 16px; font-weight: bold; color: #000000;">
+                    <span style="display: inline-block; padding: 5px 10px; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 5px;">
+                        Placed At: {order.order_date_time.strftime("%B %d, %Y at %I:%M %p")}
+                    </span>
+                </p>
+                <h3 style="margin: 20px 0 10px; border-bottom: 1px solid #ddd; padding-bottom: 10px;">Order Summary</h3>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background-color: #f2f2f2;">
+                            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Item</th>
+                            <th style="padding: 8px; border: 1px solid #ddd; text-align: right;">Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {order_items_html}
+                    </tbody>
+                </table>
+                <div style="margin-top: 20px; text-align: right;">
+                    <p style="margin: 5px 0; font-size: 14px;"><strong>Subtotal:</strong> ${subtotal_sum:.2f}</p>
+                    <p style="margin: 5px 0; font-size: 14px;"><strong>Tax:</strong> ${tax_amount:.2f}</p>
+                    {f'<p style="margin: 5px 0; font-size: 14px; color: green;"><strong>Discount ({discount_percentage}%):</strong> -${discount_amount:.2f}</p>' if discount_amount > 0 else ''}
+                    <p style="margin: 10px 0; font-size: 16px; border-top: 1px solid #ddd; padding-top: 10px;"><strong>Total:</strong> ${total_price:.2f}</p>
+                </div>
+            </div>
+            <div style="background-color: #f2f2f2; padding: 10px; text-align: center;">
+                <p style="font-size: 12px; margin: 0;">BeastMode Inc - Thank you for your order!</p>
+            </div>
+        </div>
         """
-        print(email_content)
 
         message = Mail(
             from_email='beastmode1inc@gmail.com',
             to_emails=recipient_email,
-            subject='Your Receipt from BeastMode Inc',
+            subject=f'Order #{order.order_id} Receipt from BeastMode Inc',
             html_content=email_content
         )
 
-        sg = SendGridAPIClient(os.getenv('SENDGRID_API_KEY')) 
+        sg = SendGridAPIClient(os.getenv('SENDGRID_API_KEY'))
         response = sg.send(message)
 
         if response.status_code not in range(200, 300):
