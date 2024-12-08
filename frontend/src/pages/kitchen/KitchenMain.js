@@ -133,7 +133,6 @@ function KitchenMain() {
     setShowReadyModal(true);
   };
 
-  // Function to cancel deletion
   const handleCancelDelete = () => {
     setShowDeleteModal(false);
     setSelectedOrderId(null);
@@ -142,6 +141,23 @@ function KitchenMain() {
   const handleCancelReady = () => {
     setShowReadyModal(false);
     setSelectedOrderId(null);
+  };
+
+  const groupMenuItems = (menuItems) => {
+    return menuItems.reduce((acc, menuItem) => {
+      const existingItem = acc.find(
+        (groupedItem) =>
+          groupedItem.menu_item_name === menuItem.menu_item_name &&
+          JSON.stringify(groupedItem.components) === JSON.stringify(menuItem.components)
+      );
+  
+      if (existingItem) {
+        existingItem.quantity += 1;
+      } else {
+        acc.push({ ...menuItem, quantity: 1 }); 
+      }
+      return acc;
+    }, []);
   };
 
   return (
@@ -161,13 +177,15 @@ function KitchenMain() {
                 <p>Order Time: {new Date(order.order_date_time).toLocaleTimeString()}</p>
                 <p>Elapsed Time: {elapsedMinutes}m {elapsedSeconds}s</p>
                 <div className="order-items">
-                  {order.order_menu_items.map(omi => (
-                    <div key={omi.order_menu_item_id} className="order-item">
-                      <h4>{formatName(omi.menu_item_name)}</h4>
+                  {groupMenuItems(order.order_menu_items).map((groupedItem, index) => (
+                    <div key={index} className="order-item">
+                      <h4>
+                        {formatName(groupedItem.menu_item_name)} ({groupedItem.quantity})
+                      </h4>
                       <div className="components">
-                        {omi.components.map((comp, index) => (
-                          <p key={index}>
-                            <strong>{formatName(comp.type)}:</strong> {formatName(comp.product_name)}
+                        {groupedItem.components.map((comp, idx) => (
+                          <p style={{fontSize: '0.9rem'}} key={idx}>
+                            - <strong>{formatName(comp.type)}:</strong> {formatName(comp.product_name)}
                           </p>
                         ))}
                       </div>
