@@ -411,7 +411,7 @@ function ManagerMain() {
               type="email"
               value={recipientEmail}
               onChange={(e) => setRecipientEmail(e.target.value)}
-              placeholder="Enter email"
+              placeholder="example@example.com"
               style={{
                 width: "100%",
                 padding: "5px",
