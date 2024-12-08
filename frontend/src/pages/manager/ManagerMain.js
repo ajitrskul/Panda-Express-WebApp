@@ -4,8 +4,7 @@ import { SidebarManager } from "./components/SidebarManager";
 import "../../styles/manager/main.css";
 import StatusBadge from "./components/StatusBadge";
 import { Modal, Button } from "react-bootstrap";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
 
 function ManagerMain() {
   const [orders, setOrders] = useState([]); 
@@ -441,18 +440,6 @@ function ManagerMain() {
           </Button>
         </Modal.Footer>
       </Modal>
-
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
     </div>
   );
 }
