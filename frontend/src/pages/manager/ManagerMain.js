@@ -98,6 +98,17 @@ function ManagerMain() {
     setSelectedOrder(null);
   };
 
+  const areProductsEqual = (products1, products2) => {
+    if (products1.length !== products2.length) return false;
+
+    return products1.every((product, index) => {
+      return (
+        product.product_name === products2[index].product_name &&
+        product.product_id === products2[index].product_id
+      );
+    });
+  };
+
   const toggleStatus = async (order) => {
     if (!order) return;
   
@@ -232,87 +243,112 @@ function ManagerMain() {
                   <thead>
                     <tr style={{ borderBottom: "1px solid #ddd" }}>
                       <th style={{ textAlign: "left", padding: "5px" }}>Item</th>
+                      <th style={{ textAlign: "center", padding: "5px" }}>Quantity</th>
                       <th style={{ textAlign: "right", padding: "5px" }}>Subtotal</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {selectedOrder.items.map((item, index) => (
-                      <tr key={index}>
-                        <td style={{ padding: "5px", textAlign: "left" }}>
-                          <strong>{item.item_name}</strong>
-                          <ul style={{ margin: "5px 0 0 15px", padding: "0" }}>
-                            {item.products.map((product, idx) => (
-                              <li key={idx} style={{ fontSize: "0.9em" }}>
-                                {product.product_name}
-                              </li>
-                            ))}
-                          </ul>
-                        </td>
-                        <td style={{ textAlign: "right", padding: "5px" }}>
-                          {item.subtotal_price}
-                        </td>
-                      </tr>
-                    ))}
+                    {(() => {
+                      const groupedItems = selectedOrder.items.reduce((acc, item) => {
+                        const existingItem = acc.find(
+                          (groupedItem) =>
+                            groupedItem.item_name === item.item_name &&
+                            areProductsEqual(groupedItem.products, item.products)
+                        );
+                        if (existingItem) {
+                          existingItem.quantity += 1;
+                          existingItem.subtotal_price += parseFloat(
+                            item.subtotal_price.replace("$", "")
+                          );
+                        } else {
+                          acc.push({
+                            ...item,
+                            quantity: 1,
+                            subtotal_price: parseFloat(item.subtotal_price.replace("$", "")),
+                          });
+                        }
+                        return acc;
+                      }, []);
+
+                      return groupedItems.map((item, index) => (
+                        <tr key={index}>
+                          <td style={{ padding: "5px", textAlign: "left" }}>
+                            <strong>{`${item.quantity} ${item.item_name}`}</strong>
+                            <ul style={{ margin: "5px 0 0 15px", padding: "0" }}>
+                              {item.products.map((product, idx) => (
+                                <li key={idx} style={{ fontSize: "0.9em" }}>
+                                  {product.product_name}
+                                </li>
+                              ))}
+                            </ul>
+                          </td>
+                          <td style={{ textAlign: "center", padding: "5px" }}>{item.quantity}</td>
+                          <td style={{ textAlign: "right", padding: "5px" }}>
+                            ${item.subtotal_price.toFixed(2)}
+                          </td>
+                        </tr>
+                      ));
+                    })()}
                   </tbody>
                 </table>
               </div>
+
               <div style={{ borderBottom: "1px solid #ddd" }}></div>
+              
               <div style={{ textAlign: "right", marginTop: "10px", fontSize: "1.1em" }}>
-  {(() => {
-    const subtotalSum = selectedOrder.items.reduce(
-      (sum, item) => sum + parseFloat(item.subtotal_price.replace("$", "")),
-      0
-    );
+                {(() => {
+                  const subtotalSum = selectedOrder.items.reduce(
+                    (sum, item) => sum + parseFloat(item.subtotal_price.replace("$", "")),
+                    0
+                  );
 
-    const totalPrice = parseFloat(selectedOrder.total_price.replace("$", ""));
-    const taxRate = 0.0825;
-    const taxAmount = Math.round(subtotalSum * taxRate * 100) / 100;
-    const discountPercentage = Math.round(
-      ((1 - totalPrice / (subtotalSum + taxAmount)) * 100)
-    );
-    const discountAmount = Math.round(
-      (subtotalSum + taxAmount) * (discountPercentage / 100) * 100
-    ) / 100;
+                  const totalPrice = parseFloat(selectedOrder.total_price.replace("$", ""));
+                  const taxRate = 0.0825;
+                  const taxAmount = Math.round(subtotalSum * taxRate * 100) / 100;
+                  const discountPercentage = Math.round(
+                    ((1 - totalPrice / (subtotalSum + taxAmount)) * 100)
+                  );
+                  const discountAmount = Math.round(
+                    (subtotalSum + taxAmount) * (discountPercentage / 100) * 100
+                  ) / 100;
 
-    return (
-      <div style={{ display: "inline-block", textAlign: "right" }}>
-        <div style={{ marginBottom: "5px", fontSize: "0.9em" }}>
-          <span style={{ fontWeight: "bold" }}>Subtotal:</span>{" "}
-          ${subtotalSum.toFixed(2)}
-        </div>
-        <div style={{ marginBottom: "5px", fontSize: "0.9em" }}>
-          <span style={{ fontWeight: "bold" }}>Tax:</span> ${taxAmount.toFixed(2)}
-        </div>
-        {discountPercentage > 0 && (
-          <div style={{ marginBottom: "5px", color: "green", fontSize: "0.9em" }}>
-            <span style={{ fontWeight: "bold" }}>
-              Discount ({discountPercentage}%):
-            </span>{" "}
-            -${discountAmount.toFixed(2)}
-          </div>
-        )}
-        <div
-          style={{
-            marginTop: "10px",
-            fontWeight: "bold",
-            fontSize: "1.2em",
-            borderTop: "1px solid #ddd",
-            paddingTop: "5px",
-          }}
-        >
-          <span>Total:</span> ${totalPrice.toFixed(2)}
-        </div>
-      </div>
-    );
-  })()}
-</div>
-
+                  return (
+                    <div style={{ display: "inline-block", textAlign: "right" }}>
+                      <div style={{ marginBottom: "5px", fontSize: "0.9em" }}>
+                        <span style={{ fontWeight: "bold" }}>Subtotal:</span>{" "}
+                        ${subtotalSum.toFixed(2)}
+                      </div>
+                      <div style={{ marginBottom: "5px", fontSize: "0.9em" }}>
+                        <span style={{ fontWeight: "bold" }}>Tax:</span> ${taxAmount.toFixed(2)}
+                      </div>
+                      {discountPercentage > 0 && (
+                        <div style={{ marginBottom: "5px", color: "green", fontSize: "0.9em" }}>
+                          <span style={{ fontWeight: "bold" }}>
+                            Discount ({discountPercentage}%):
+                          </span>{" "}
+                          -${discountAmount.toFixed(2)}
+                        </div>
+                      )}
+                      <div
+                        style={{
+                          marginTop: "10px",
+                          fontWeight: "bold",
+                          fontSize: "1.2em",
+                          borderTop: "1px solid #ddd",
+                          paddingTop: "5px",
+                        }}
+                      >
+                        <span>Total:</span> ${totalPrice.toFixed(2)}
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
             </>
           ) : (
             <p>Loading order details...</p>
           )}
         </Modal.Body>
-
 
         <Modal.Footer>
           <Button variant="danger" onClick={closeModal}>
