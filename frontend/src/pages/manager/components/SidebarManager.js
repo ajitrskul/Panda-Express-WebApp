@@ -155,14 +155,7 @@ export function SidebarManager(){
             <img className="logo-image" src={beastLogo} alt="Beastmode logo"></img>
             <div class="manager-sidebar-text">Manager View</div>
           </div>
-          
-          <hr class="sidebar-divider"></hr>
-  
-          <div class="sidebar-item" id="login" onClick={SidebarClick}>
-            <i class="bi bi-person-circle sidebar-icon"></i>
-            <div class="manager-sidebar-text2">Logout</div>
-          </div>
-    
+
           <hr class="sidebar-divider"></hr>
         
           <div class="sidebar-item" id="pos" onClick={SidebarClick}>
@@ -171,17 +164,23 @@ export function SidebarManager(){
             {/*<i class="bi bi-lock-fill sidebar-icon-right"></i>*/}
           </div>
     
+          <hr class="sidebar-divider"></hr>
+
           <div class="sidebar-item" id="kiosk" onClick={SidebarClick}>
             <i class="bi bi-shop sidebar-icon"></i>
             <div class="manager-sidebar-text2">Kiosk</div>
             {/*<i class="bi bi-lock-fill sidebar-icon-right"></i>*/}
           </div>
           
+          <hr class="sidebar-divider"></hr>
+
           <div class="sidebar-item" id="menu" onClick={SidebarClick}>
             <i class="bi bi-card-heading sidebar-icon"></i>
             <div class="manager-sidebar-text2">Menu Boards</div>
             {/*<i class="bi bi-lock-fill sidebar-icon-right"></i>*/}
           </div>
+
+          <hr class="sidebar-divider"></hr>
 
           <div class="sidebar-item" id="kitchen" onClick={SidebarClick}>
             <i class="bi bi-menu-button-wide sidebar-icon"></i>
@@ -223,24 +222,35 @@ export function SidebarManager(){
             <div class="sidebar-drop-item"  id="salesreports" onClick={SidebarClick}>
               <div class="manager-sidebar-text3">Sales Reports</div>
             </div>
-
           </div>
+
+          <hr class="sidebar-divider"></hr>
 
           <div class="sidebar-item" id="employees" onClick={SidebarClick}>
             <i class="bi bi-people-fill sidebar-icon"></i>
             <div class="manager-sidebar-text2">Employees</div>
           </div>
           
+          <hr class="sidebar-divider"></hr>
+
           <div class="sidebar-item" id="products" onClick={SidebarClick}>
             <i class="bi bi-cup-straw sidebar-icon"></i>
             <div class="manager-sidebar-text2">Products</div>
           </div>
+
+          <hr class="sidebar-divider"></hr>
           
           <div class="sidebar-item" id="inventory" onClick={SidebarClick}>
             <i class="bi bi-box-seam sidebar-icon"></i>
             <div class="manager-sidebar-text2">Inventory</div>
           </div>
-        
+
+          <hr class="sidebar-divider"></hr>
+
+          <div className="sidebar-item logout-container" id="login" onClick={SidebarClick}>
+              <i className="bi bi-person-circle sidebar-icon"></i>
+            <div className="manager-sidebar-text2">Logout</div>
+          </div>
         </div>
     );
 };

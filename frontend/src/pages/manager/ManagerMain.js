@@ -199,7 +199,7 @@ function ManagerMain() {
         style={{ height: "100vh", paddingRight: '60px'}}
         ref={tableContainerRef}
       >
-        <h1>Past Orders</h1>
+        <h1 className="my-3">Order History</h1>
         {isLoading ? (
           <div>Loading...</div>
         ) : orders.length > 0 ? (
