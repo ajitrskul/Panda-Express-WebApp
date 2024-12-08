@@ -16,6 +16,7 @@ function ManagerMain() {
   const [selectedOrder, setSelectedOrder] = useState(null); 
   const [showModal, setShowModal] = useState(false); 
   const [confirmDeleteOrderId, setConfirmDeleteOrderId] = useState(null); 
+  const [updatingOrderId, setUpdatingOrderId] = useState(null);
 
   const fetchOrders = async (page = 1, limit = rowsPerPage) => {
     setIsLoading(true);
@@ -114,8 +115,9 @@ function ManagerMain() {
   const toggleStatus = async (order) => {
     if (!order) return;
   
+    setUpdatingOrderId(order.order_id);
     try {
-      const updatedStatus = !order.status; 
+      const updatedStatus = !order.status;
       const response = await api.put(`/manager/orders/${order.order_id}/status`, {
         status: updatedStatus,
       });
@@ -126,15 +128,16 @@ function ManagerMain() {
             o.order_id === order.order_id ? { ...o, status: updatedStatus } : o
           )
         );
-  
         fetchOrderDetails(order.order_id);
       } else {
         console.error("Failed to update order status:", response.data.error);
       }
     } catch (error) {
       console.error("Error toggling status:", error);
+    } finally {
+      setUpdatingOrderId(null); 
     }
-  };  
+  };
 
   const handleDeleteClick = async (orderId) => {
     if (confirmDeleteOrderId === orderId) {
@@ -238,9 +241,9 @@ function ManagerMain() {
             {"Order Details "}
             {selectedOrder && (
               <StatusBadge
-                status= {selectedOrder.status}
+                status={selectedOrder.status}
+                isLoading={updatingOrderId === selectedOrder.order_id}
                 onClick={() => toggleStatus(selectedOrder)}
-                style={{ cursor: "pointer", marginLeft: "10px" }}
               />
             )}
           </Modal.Title>
