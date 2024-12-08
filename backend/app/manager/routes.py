@@ -1261,3 +1261,70 @@ def editEmployee():
             "last_name": employee.last_name,
             "role": employee.role
         }}), 200
+
+
+@manager_bp.route('/orders', methods=['GET'])
+def get_past_orders():
+    try:
+        page = request.args.get('page', default=1, type=int)
+        limit = request.args.get('limit', default=10, type=int)
+
+        if page < 1 or limit < 1:
+            return jsonify({"error": "Page and limit must be positive integers"}), 400
+
+        with db.session.begin():
+            query = db.session.query(
+                Order.order_id,
+                Order.total_price,
+                Order.order_date_time,
+                Order.is_ready
+            ).order_by(Order.order_date_time.desc())
+
+            total_orders = query.count()
+            total_pages = (total_orders + limit - 1) // limit 
+
+            orders = query.offset((page - 1) * limit).limit(limit).all()
+
+            order_list = [
+                {
+                    "order_id": order.order_id,
+                    "total_price": f"${order.total_price:,.2f}",
+                    "order_date_time": order.order_date_time.isoformat(),
+                    "status": order.is_ready,
+                }
+                for order in orders
+            ]
+
+        return jsonify({
+            "orders": order_list,
+            "total_pages": total_pages,
+            "total_orders": total_orders,
+            "current_page": page,
+        }), 200
+    except Exception as e:
+        print(f"Error fetching orders: {e}")
+        return jsonify({"error": "An error occurred while retrieving orders"}), 500
+
+
+@manager_bp.route('/orders/<int:order_id>/status', methods=['PUT'])
+def update_order_status(order_id):
+    data = request.get_json()
+    if not data or "status" not in data:
+        return jsonify({"error": "Invalid request data"}), 400
+
+    new_status = data["status"]
+
+    try:
+        order = db.session.query(Order).filter_by(order_id=order_id).first()
+
+        if not order:
+            return jsonify({"error": "Order not found"}), 404
+
+        order.is_ready = new_status
+        db.session.commit()
+
+        return jsonify({"message": "Order status updated successfully", "status": new_status}), 200
+
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        return jsonify({"error": "An error occurred while updating order status", "details": str(e)}), 500

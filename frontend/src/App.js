@@ -36,7 +36,6 @@ function App() {
             <Route path="/manager/products" element={<Products/>} />
             <Route path="/manager/inventory" element={<Inventory />} />
             <Route path="/manager/productusage" element={<ProductUsage />} />
-            <Route path="/manager" element={<ManagerMain />} />
             <Route path="/manager/salesreports" element={<SalesReports />} />
 
             <Route path="/kiosk" element={<KioskLanding />} />

@@ -444,7 +444,7 @@ def confirm_checkout():
     try:
         order_data = request.get_json()
         order_items = order_data.get("items", [])
-        total_price = order_data.get("total", 0.0)
+        total_price = float(order_data.get("total"))
         customer_id = order_data.get("customer_id", None)
         beast_points_used = order_data.get("beast_points_used", 0)
         order_date_time = datetime.now(pytz.timezone('America/Chicago')).strftime('%Y-%m-%d %H:%M:%S')
@@ -471,7 +471,7 @@ def confirm_checkout():
         # order
         for item_idx, item in enumerate(order_items):
             item_name = item.get("name")
-            item_price = item.get("price")
+            item_price = float(item.get("price"))
             quantity = item.get("quantity", 1)
             
             # Get the menu item ID
@@ -534,14 +534,16 @@ def confirm_checkout():
                     )
 
         if customer_id:
+            beast_points_earned = int(total_price * 100)  # 1 point per cent
             update_beast_points_query = text("""
                 UPDATE public.customer_info
-                SET beast_points = beast_points - :beast_points_used
+                SET beast_points = beast_points + :beast_points_earned - :beast_points_used
                 WHERE customer_id = :customer_id
             """)
             db.session.execute(
                 update_beast_points_query,
                 {
+                    "beast_points_earned": beast_points_earned,
                     "beast_points_used": beast_points_used,
                     "customer_id": customer_id
                 }
