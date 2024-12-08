@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom';
 
 const OrderSelection = () => {
   const location = useLocation();
-  const { numSides, numEntrees, itemName, realItemName, itemImage, basePrice, premiumMultiplier } = location.state;
+  const { numSides, numEntrees, realItemName, itemImage, basePrice, premiumMultiplier } = location.state;
 
   const [selectedSection, setSelectedSection] = useState(null);
   const [selectedSideIndex, setSelectedSideIndex] = useState(null);

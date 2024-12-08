@@ -479,18 +479,11 @@ def create_order():
                 else:
                     print(f"Customer with ID {customer_id} not found.")
             
-            # Apply deal if any
             if customer_id and applied_deal:
                 customer = Customer.query.get(customer_id)
                 if customer:
-                    # Check if customer has enough beast points
                     if customer.beast_points >= applied_deal['cost']:
-                        # Deduct beast points
                         customer.beast_points -= applied_deal['cost']
-                        # Adjust total price
-                        total_price_float = float(total_price)
-                        discount_amount = total_price_float * applied_deal['discount']
-                        order.total_price = total_price_float - discount_amount
                         db.session.add(customer)
                     else:
                         return jsonify({'error': 'Not enough beast points for this deal.'}), 400

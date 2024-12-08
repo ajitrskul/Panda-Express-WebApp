@@ -42,48 +42,36 @@ function Cart({ isOpen, toggleCart, cartItems }) {
     );
   }
 
+  function calculateTax(cartItems) {
+    const subtotal = calculateSubtotal(cartItems);
+    const taxRate = 0.0825; 
+    return subtotal * taxRate;
+  }
+
   function calculateDiscountAmount(cartItems) {
     const subtotal = calculateSubtotal(cartItems);
+    const tax = calculateTax(cartItems);
+    const totalBeforeDiscount = subtotal + tax;
+  
     if (selectedDeal && selectedDeal.discount) {
-      return subtotal * selectedDeal.discount;
+      return totalBeforeDiscount * selectedDeal.discount;
     }
     return 0;
   }
 
   function calculateDiscountedSubtotal(cartItems) {
     const subtotal = calculateSubtotal(cartItems);
+    const tax = calculateTax(cartItems);
+    const totalBeforeDiscount = subtotal + tax;
+  
     if (selectedDeal && selectedDeal.discount) {
-      return subtotal - calculateDiscountAmount(cartItems);
+      return totalBeforeDiscount - calculateDiscountAmount(cartItems);
     }
-    return subtotal;
-  }
-
-  function calculateTax(cartItems) {
-    const discountedSubtotal = calculateDiscountedSubtotal(cartItems);
-    const taxRate = 0.0825;
-    return discountedSubtotal * taxRate;
+    return totalBeforeDiscount; 
   }
 
   function calculateTotal(cartItems) {
-    const discountedSubtotal = calculateDiscountedSubtotal(cartItems);
-    return discountedSubtotal + calculateTax(cartItems);
-  }
-
-  function calculateSubtotal(cartItems) {
-    return cartItems.reduce(
-      (acc, item) => acc + getItemPrice(item) * item.quantity,
-      0
-    );
-  }
-  // Existing functions (getItemImage, formatProductName, getItemPrice)
-  function getItemImage(item) {
-    // Return the main item's image if available
-    if (item.image) {
-      return item.image;
-    } else {
-      // Fallback to a placeholder image
-      return '/path/to/placeholder-image.png';
-    }
+    return calculateDiscountedSubtotal(cartItems);
   }
 
   function formatProductName(name) {
@@ -197,8 +185,6 @@ function Cart({ isOpen, toggleCart, cartItems }) {
       setErrorMessage('Unable to process your order. Please try again.');
     }
   };
-  
-  
 
   useEffect(() => {
     if (isOpen) {
@@ -463,64 +449,5 @@ function getItemImage(item) {
     return '/path/to/placeholder-image.png';
   }
 }
-
-function formatProductName(name) {
-  return name.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();
-}
-
-function getItemPrice(item) {
-  if (item.basePrice !== undefined && item.premiumMultiplier !== undefined) {
-    // Complex item (e.g., Bowl, Plate, Drink)
-    const basePrice = parseFloat(item.basePrice) || 0;
-    const premiumMultiplier = parseFloat(item.premiumMultiplier) || 1;
-    let totalPremiumAddition = 0;
-
-    // For drinks and fountain drinks
-    if (item.is_premium) {
-      const premiumAddition = parseFloat(item.premium_addition) || 0;
-      totalPremiumAddition += premiumAddition;
-    }
-
-    // Process components if they exist
-    if (item.components) {
-      // Sum premium additions for sides
-      if (item.components.sides && item.components.sides.length > 0) {
-        item.components.sides.forEach(side => {
-          let isPremium = side.is_premium;
-          if (typeof isPremium === 'string') {
-            isPremium = isPremium.toLowerCase() === 'true';
-          }
-          if (isPremium) {
-            const premiumAddition = parseFloat(side.premium_addition) || 0;
-            totalPremiumAddition += premiumAddition;
-          }
-        });
-      }
-
-      // Sum premium additions for entrees
-      if (item.components.entrees && item.components.entrees.length > 0) {
-        item.components.entrees.forEach(entree => {
-          let isPremium = entree.is_premium;
-          if (typeof isPremium === 'string') {
-            isPremium = isPremium.toLowerCase() === 'true';
-          }
-          if (isPremium) {
-            const premiumAddition = parseFloat(entree.premium_addition) || 0;
-            totalPremiumAddition += premiumAddition;
-          }
-        });
-      }
-    }
-
-    const totalPrice = basePrice + premiumMultiplier * totalPremiumAddition;
-    return totalPrice;
-  } else if (item.price !== undefined) {
-    // Simple item with a direct price
-    return parseFloat(item.price) || 0;
-  } else {
-    return 0;
-  }
-}
-
 
 export default Cart;
