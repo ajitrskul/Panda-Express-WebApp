@@ -97,25 +97,20 @@ function Cart({ isOpen, toggleCart, cartItems }) {
       let premiumMultiplier = parseFloat(item.premiumMultiplier) || 1;
       let totalPremiumAddition = 0;
 
-      if (item.type == "drink" || item.type == "fountainDrink" || item.name.startsWith("aLaCarte")) {
-        const premiumAddition = parseFloat(item.premium_addition) || 0;
-        totalPremiumAddition += (premiumAddition * premiumMultiplier);
+      if (item.type === "drink" || item.type === "fountainDrink" || item.name.startsWith("aLaCarte") || item.name === "appetizerLarge") {
+        totalPremiumAddition += (parseFloat(item.premium_addition) * premiumMultiplier);
       }
       else if (item.components) {
         if (item.components.sides && item.components.sides.length > 0) {
           item.components.sides.forEach(side => {
             if (side.is_premium) {
-              const premiumAddition = parseFloat(side.premium_addition) || 0;
-              totalPremiumAddition += premiumAddition * premiumMultiplier;
+              totalPremiumAddition += parseFloat(side.premium_addition) * premiumMultiplier;
             }
           });
         }
         if (item.components.entrees && item.components.entrees.length > 0) {
           item.components.entrees.forEach(entree => {
             if (entree.is_premium) {
-              console.log()
-              const premiumAddition = parseFloat(entree.premium_addition);
-              console.log(premiumAddition);
               totalPremiumAddition += (parseFloat(entree.premium_addition) * premiumMultiplier);
             }
           });
@@ -127,7 +122,6 @@ function Cart({ isOpen, toggleCart, cartItems }) {
     } 
     else if (item.price !== undefined) {
       // Simple item with a direct price
-      console.log("wtf")
       return parseFloat(item.price) || 0;
     } else {
       return 0;

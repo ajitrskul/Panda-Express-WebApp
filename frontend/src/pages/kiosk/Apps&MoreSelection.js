@@ -52,7 +52,7 @@ const AppsAndMoreSelection = () => {
           item_name: 'appetizerSmall',
           display_name: 'Small',
           menu_item_base_price: 2.00,
-          premium_multiplier: 1,
+          premium_multiplier: 0,
         },
         {
           item_name: 'appetizerLarge',
@@ -87,9 +87,7 @@ const AppsAndMoreSelection = () => {
     // Calculate total price for each size option
     const calculatedSizeOptions = sizeOptions.map((sizeOption) => {
       let totalPrice = sizeOption.menu_item_base_price;
-      if (selectedItem.is_premium) {
-        totalPrice += sizeOption.premium_multiplier * selectedItem.premium_addition;
-      }
+      totalPrice += sizeOption.premium_multiplier * selectedItem.premium_addition;
       return {
         ...sizeOption,
         total_price: totalPrice,

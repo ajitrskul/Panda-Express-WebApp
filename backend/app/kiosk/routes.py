@@ -382,7 +382,6 @@ def create_order():
             db.session.flush()
 
             for cart_item in cart_items:
-                print(cart_item)
                 name = cart_item.get('name')
                 quantity = cart_item.get('quantity', 1)
                 base_price = float(cart_item.get('basePrice'))
@@ -399,6 +398,8 @@ def create_order():
                     return jsonify({'error': f'Menu item "{name}" not found'}), 400
                 
                 premium_count = 0
+                if name == "appetizerSmall":
+                    premium_multiplier = 0
                 if components:
                     for side in components.get('sides', []):
                         if side.get('is_premium'):
