@@ -32,12 +32,12 @@ function ManagerMain() {
       setIsLoading(false);
     }
   };
-
+  
   const fetchOrderDetails = async (orderId) => {
     try {
       const response = await api.get(`/manager/orders/${orderId}/details`);
       setSelectedOrder(response.data); 
-      setShowModal(true); 
+      setShowModal(true);
     } catch (error) {
       console.error("Error fetching order details:", error);
     }
@@ -99,11 +99,12 @@ function ManagerMain() {
   };
 
   const toggleStatus = async (order) => {
-    try {
-      const updatedStatus = !order.status;
+    if (!order) return;
   
+    try {
+      const updatedStatus = !order.status; 
       const response = await api.put(`/manager/orders/${order.order_id}/status`, {
-        status: updatedStatus, 
+        status: updatedStatus,
       });
   
       if (response.status === 200) {
@@ -113,17 +114,14 @@ function ManagerMain() {
           )
         );
   
-        if (selectedOrder && selectedOrder.order_id === order.order_id) {
-          setSelectedOrder((prev) => ({ ...prev, status: updatedStatus }));
-        }
+        fetchOrderDetails(order.order_id);
       } else {
         console.error("Failed to update order status:", response.data.error);
       }
     } catch (error) {
       console.error("Error toggling status:", error);
     }
-  };
-  
+  };  
 
   return (
     <div className="container-fluid" style={{ paddingRight: "0px" }}>
@@ -201,18 +199,17 @@ function ManagerMain() {
       <Modal show={showModal} onHide={closeModal}>
         <Modal.Header closeButton>
           <Modal.Title>
-            {selectedOrder
-              ? `Order #${selectedOrder.order_id} ` 
-              : "Order Details "}
+            {"Order Details "}
             {selectedOrder && (
               <StatusBadge
                 status={selectedOrder.status === false ? "In-Progress" : "Completed"}
                 onClick={() => toggleStatus(selectedOrder)}
-                style={{ cursor: "pointer" }}
+                style={{ cursor: "pointer", marginLeft: "10px" }}
               />
             )}
           </Modal.Title>
         </Modal.Header>
+
         <Modal.Body
           style={{
             maxHeight: "70vh",
@@ -226,13 +223,11 @@ function ManagerMain() {
               <div style={{ textAlign: "center", marginBottom: "20px" }}>
                 <h5>Order #{selectedOrder.order_id} Receipt</h5>
                 <p>
-                  <strong>Order Date:</strong>{" "}
                   {new Date(selectedOrder.order_date_time).toLocaleString()}
                 </p>
               </div>
 
               <div style={{ marginBottom: "10px" }}>
-                <h6>Items</h6>
                 <table style={{ width: "100%", borderCollapse: "collapse" }}>
                   <thead>
                     <tr style={{ borderBottom: "1px solid #ddd" }}>
