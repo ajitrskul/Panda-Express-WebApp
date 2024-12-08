@@ -33,6 +33,16 @@ function ManagerMain() {
     }
   };
 
+  const fetchOrderDetails = async (orderId) => {
+    try {
+      const response = await api.get(`/manager/orders/${orderId}/details`);
+      setSelectedOrder(response.data); 
+      setShowModal(true); 
+    } catch (error) {
+      console.error("Error fetching order details:", error);
+    }
+  };  
+
   const adjustRowsPerPage = () => {
     if (tableContainerRef.current) {
       const containerHeight = tableContainerRef.current.offsetHeight; 
@@ -79,7 +89,7 @@ function ManagerMain() {
   };
 
   const handleRowClick = (order) => {
-    setSelectedOrder(order); 
+    fetchOrderDetails(order.order_id);
     setShowModal(true); 
   };
 
@@ -191,25 +201,97 @@ function ManagerMain() {
       <Modal show={showModal} onHide={closeModal}>
         <Modal.Header closeButton>
           <Modal.Title>
-            {selectedOrder ? `Order #${selectedOrder.order_id}` : "Order Details"}
+            {selectedOrder
+              ? `Order #${selectedOrder.order_id} ` 
+              : "Order Details "}
+            {selectedOrder && (
+              <StatusBadge
+                status={selectedOrder.status === false ? "In-Progress" : "Completed"}
+                onClick={() => toggleStatus(selectedOrder)}
+                style={{ cursor: "pointer" }}
+              />
+            )}
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          {selectedOrder && (
+        <Modal.Body
+          style={{
+            maxHeight: "70vh",
+            overflowY: "auto",
+            fontFamily: "monospace",
+            backgroundColor: "#f9f9f9",
+          }}
+        >
+          {selectedOrder ? (
             <>
-              <p><strong>Total Price:</strong> {selectedOrder.total_price}</p>
-              <p>
-                <strong>Status:</strong>{" "}
-                <StatusBadge
-                  status={selectedOrder.status === false ? "In-Progress" : "Completed"}
-                  onClick={() => toggleStatus(selectedOrder)}
-                  style={{ cursor: "pointer" }}
-                />
-              </p>
-              <p><strong>Order Date:</strong> {new Date(selectedOrder.order_date_time).toLocaleString()}</p>
+              <div style={{ textAlign: "center", marginBottom: "20px" }}>
+                <h5>Order #{selectedOrder.order_id} Receipt</h5>
+                <p>
+                  <strong>Order Date:</strong>{" "}
+                  {new Date(selectedOrder.order_date_time).toLocaleString()}
+                </p>
+              </div>
+
+              <div style={{ marginBottom: "10px" }}>
+                <h6>Items</h6>
+                <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                  <thead>
+                    <tr style={{ borderBottom: "1px solid #ddd" }}>
+                      <th style={{ textAlign: "left", padding: "5px" }}>Item</th>
+                      <th style={{ textAlign: "right", padding: "5px" }}>Subtotal</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selectedOrder.items.map((item, index) => (
+                      <tr key={index} style={{ borderBottom: "1px solid #ddd" }}>
+                        <td style={{ padding: "5px", textAlign: "left" }}>
+                          <strong>{item.item_name}</strong>
+                          <ul style={{ margin: "5px 0 0 15px", padding: "0" }}>
+                            {item.products.map((product, idx) => (
+                              <li key={idx} style={{ fontSize: "0.9em" }}>
+                                {product.product_name}
+                              </li>
+                            ))}
+                          </ul>
+                        </td>
+                        <td style={{ textAlign: "right", padding: "5px" }}>
+                          {item.subtotal_price}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div style={{ textAlign: "right", marginTop: "10px" }}>
+                {(() => {
+                  const subtotalSum = selectedOrder.items.reduce(
+                    (sum, item) => sum + parseFloat(item.subtotal_price.replace("$", "")),
+                    0
+                  );
+                  const totalPrice = parseFloat(selectedOrder.total_price.replace("$", ""));
+                  const discount = (subtotalSum - totalPrice).toFixed(2);
+
+                  if (discount > 0) {
+                    return (
+                      <>
+                        <h6>
+                          <strong>Discount:</strong> -${discount}
+                        </h6>
+                      </>
+                    );
+                  }
+                })()}
+                <h6>
+                  <strong>Total:</strong> {selectedOrder.total_price}
+                </h6>
+              </div>
             </>
+          ) : (
+            <p>Loading order details...</p>
           )}
         </Modal.Body>
+
+
         <Modal.Footer>
           <Button variant="danger" onClick={closeModal}>
             Delete

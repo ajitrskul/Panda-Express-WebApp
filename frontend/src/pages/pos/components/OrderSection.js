@@ -13,7 +13,7 @@ function OrderSection({
   onQRSignInToggle,
   customerId
 }) {
-  const taxAmount = parseFloat(total) * 0.0625;
+  const taxAmount = parseFloat(total) * 0.0825;
   const totalWithTax = parseFloat(total) + taxAmount;
 
   const formatOrderNames = (item) => {

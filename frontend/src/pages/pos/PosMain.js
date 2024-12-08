@@ -316,7 +316,7 @@ function PosMain() {
     try {
       const response = await api.post("/pos/checkout/confirm", {
         items: currentOrder,
-        total: (total*1.0625).toFixed(2),
+        total: (total*1.0825).toFixed(2),
         customer_id: customerId,
         beast_points_used: beastPointsUsed,
       });
@@ -521,7 +521,7 @@ function PosMain() {
 
             <p style={{ display: "flex", justifyContent: "space-between" }}>
               <span>Tax:</span>
-              <span>${(total * 0.0625).toFixed(2)}</span>
+              <span>${(total * 0.0825).toFixed(2)}</span>
             </p>
 
             <p
@@ -535,7 +535,7 @@ function PosMain() {
               }}
             >
               <span>Total:</span>
-              <span>${(total * 1.0625).toFixed(2)}</span>
+              <span>${(total * 1.0825).toFixed(2)}</span>
             </p>
           </div>
         </Modal.Body>

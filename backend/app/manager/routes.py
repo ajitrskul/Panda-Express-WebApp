@@ -1068,8 +1068,6 @@ def fireEmployee():
     id = request.get_data()
     id = id.decode('utf-8')
 
-    print(id)
-
     employee = Employee.query.filter_by(employee_id=id).first()
 
     if employee:
@@ -1328,3 +1326,65 @@ def update_order_status(order_id):
     except SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({"error": "An error occurred while updating order status", "details": str(e)}), 500
+    
+
+@manager_bp.route('/orders/<int:order_id>/details', methods=['GET'])
+def get_order_details(order_id):
+    try:
+        order_query = text("""
+            SELECT order_id, order_date_time, employee_id, total_price, is_ready
+            FROM public."order"
+            WHERE order_id = :order_id
+        """)
+        order = db.session.execute(order_query, {"order_id": order_id}).fetchone()
+
+        if not order:
+            return jsonify({"error": "Order not found"}), 404
+
+        menu_items_query = text("""
+            SELECT omi.order_menu_item_id, mi.item_name, omi.subtotal_price
+            FROM public.order_menu_item omi
+            JOIN public.menu_item mi ON omi.menu_item_id = mi.menu_item_id
+            WHERE omi.order_id = :order_id
+        """)
+        menu_items = db.session.execute(menu_items_query, {"order_id": order_id}).fetchall()
+
+        detailed_menu_items = []
+
+        for menu_item in menu_items:
+            order_menu_item_id = menu_item.order_menu_item_id
+
+            products_query = text("""
+                SELECT p.product_id, p.product_name
+                FROM public.order_menu_item_product op
+                JOIN public.product_item p ON op.product_id = p.product_id
+                WHERE op.order_menu_item_id = :order_menu_item_id
+            """)
+            products = db.session.execute(
+                products_query, {"order_menu_item_id": order_menu_item_id}
+            ).fetchall()
+
+            detailed_menu_items.append({
+                "item_name": menu_item.item_name,
+                "subtotal_price": f"${menu_item.subtotal_price:,.2f}",
+                "products": [
+                    {"product_id": product.product_id, "product_name": product.product_name}
+                    for product in products
+                ]
+            })
+
+        # Construct the full order details
+        order_details = {
+            "order_id": order.order_id,
+            "order_date_time": order.order_date_time.isoformat(),
+            "employee_id": order.employee_id,
+            "total_price": f"${order.total_price:,.2f}",
+            "status": "Completed" if order.is_ready else "In-Progress",
+            "items": detailed_menu_items,
+        }
+
+        return jsonify(order_details), 200
+
+    except Exception as e:
+        print(f"Failed to fetch order details: {e}")
+        return jsonify({"error": "Failed to fetch order details"}), 500
