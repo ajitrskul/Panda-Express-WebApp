@@ -46,6 +46,13 @@ const HomeScreen = ({ route, navigation }) => {
     fetchCustomerInfo();
   };
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchCustomerInfo();
+    }, 5000); 
+    return () => clearInterval(interval); 
+  }, [customerId]);
+
   if (loading) {
     return (
       <ImageBackground
