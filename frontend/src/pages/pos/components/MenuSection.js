@@ -4,6 +4,8 @@ import api from "../../../services/api";
 function MenuSection({ currentWorkflow, apiEndpoint, onAddToOrder, onSubitemSelect, onHalfSide, onCancelHalfSide, halfSideActivated, setHalfSideActivated }) {
   const [menuItems, setMenuItems] = useState([]);
   const [error, setError] = useState(null);
+  console.log("Current Workflow", currentWorkflow);
+  console.log("Api endpoint", apiEndpoint);
 
   useEffect(() => {
     const fetchMenuItems = async () => {
@@ -59,6 +61,24 @@ function MenuSection({ currentWorkflow, apiEndpoint, onAddToOrder, onSubitemSele
 
   return (
     <div className="menu-section">
+      {apiEndpoint.includes("sides") && currentWorkflow?.name !== "familyMeal" && (
+        <div className="half-side-row">
+          <button
+            className={`half-side-btn ${halfSideActivated ? "active" : ""}`}
+            onClick={handleHalfSideButtonClick}
+            style={{
+              textDecoration: halfSideActivated ? "none" : "line-through",
+              color: halfSideActivated ? "inherit" : "black",
+              cursor: "pointer",
+              width: "100%", 
+              padding: "10px",
+              marginBottom: "10px",
+            }}
+          >
+            {halfSideActivated ? "Half & Half" : "Half & Half"}
+          </button>
+        </div>
+      )}
       <div className="menu-grid">
         {menuItems.length > 0 ? (
           menuItems.map((item, index) => (
@@ -74,19 +94,6 @@ function MenuSection({ currentWorkflow, apiEndpoint, onAddToOrder, onSubitemSele
           <div className="menu-loading">Loading menu items...</div>
         )}
       </div>
-        {apiEndpoint.includes("sides") && currentWorkflow?.name !== "familyMeal" && (
-          <button
-          className={`half-side-btn ${halfSideActivated ? 'active' : ''}`}
-          onClick={handleHalfSideButtonClick}
-          style={{
-            textDecoration: halfSideActivated ? 'none' : 'line-through', 
-            color: halfSideActivated ? 'inherit' : 'black',
-            cursor: 'pointer',
-          }}
-        >
-          {halfSideActivated ? "Half & Half" : "Half & Half"}
-        </button>
-        )}
     </div>
   );
 }
