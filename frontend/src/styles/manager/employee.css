@@ -110,15 +110,6 @@
   margin-bottom:10px;
 }
 
-.employee-row-bg {
-  background-color: rgb(121, 121, 121);
-  border-radius: 10px;
-  padding: 8px 10px;
-  color:white;
-
-  margin-right: 10px;
-}
-
 .fire-button {
   color:white;
   background-color:red;
@@ -318,4 +309,48 @@
   .employee-edit-popup {
     margin-left: 300px;
   }
+}
+
+.employee-container {
+  margin-left: 0;
+  margin-right: 0;
+  padding: 15px;
+  max-width: 100%; 
+}
+.employee-row {
+  display: flex;
+  flex-wrap: wrap; 
+  margin-bottom: 10px;
+  gap: 10px; 
+}
+.employee-row-bg {
+  flex: 1 1 100%; 
+  padding: 8px 10px;
+  background-color: rgb(121, 121, 121);
+  border-radius: 10px;
+  padding: 8px 10px;
+  color:white;
+}
+.employee-card {
+  padding: 15px;
+}
+
+.employee-container {
+  margin-left: 350px; 
+  padding: 20px; 
+  max-width: calc(100vw - 300px); 
+  margin-right: 20px;
+}
+
+.add-employee-icon-button {
+  background-color: #A3080C;
+  border: none; 
+  color: white;
+  margin-right: 0.5rem;
+}
+
+.add-employee-icon-button:hover {
+  background-color: #cd0c13;
+  border: none; 
+  color: white;
 }

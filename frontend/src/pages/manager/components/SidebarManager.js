@@ -13,32 +13,32 @@ export function SidebarManager(){
     const InitColors = async () =>{
       if ((location.pathname)==="/manager/xreports"){
         dropdownFunction();
-        document.getElementById("xreports").style.backgroundColor="#77070a";
+        document.getElementById("xreports").style.backgroundColor="#8c070c";
         document.getElementById("reports").style.backgroundColor="#8c070c";
       }
       if ((location.pathname)==="/manager/zreports"){
         dropdownFunction();
-        document.getElementById("zreports").style.backgroundColor="#77070a";
+        document.getElementById("zreports").style.backgroundColor="#8c070c";
         document.getElementById("reports").style.backgroundColor="#8c070c";
       }
       if ((location.pathname)==="/manager/pairreports"){
         dropdownFunction();
-        document.getElementById("pairreports").style.backgroundColor="#77070a";
+        document.getElementById("pairreports").style.backgroundColor="#8c070c";
         document.getElementById("reports").style.backgroundColor="#8c070c";
       }
       if ((location.pathname)==="/manager/restockreports"){
         dropdownFunction();
-        document.getElementById("restockreports").style.backgroundColor="#77070a";
+        document.getElementById("restockreports").style.backgroundColor="#8c070c";
         document.getElementById("reports").style.backgroundColor="#8c070c";
       }
       if ((location.pathname)==="/manager/productusage"){
         dropdownFunction();
-        document.getElementById("productusage").style.backgroundColor="#77070a";
+        document.getElementById("productusage").style.backgroundColor="#8c070c";
         document.getElementById("reports").style.backgroundColor="#8c070c";
       }
       if ((location.pathname)==="/manager/salesreports"){
         dropdownFunction();
-        document.getElementById("salesreports").style.backgroundColor="#77070a";
+        document.getElementById("salesreports").style.backgroundColor="#8c070c";
         document.getElementById("reports").style.backgroundColor="#8c070c";
       }
       if ((location.pathname)==="/manager/employees"){

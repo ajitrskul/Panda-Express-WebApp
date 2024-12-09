@@ -118,7 +118,6 @@
 .sidebar-drop-items{
     background:transparent;
     text-decoration: none;
-    background-color:#8c070c ;
     display: none;
 }
 
@@ -131,7 +130,7 @@
 }
 
 .sidebar-drop-item:hover{
-    background-color:#77070a;
+    background-color:#8c070c;
 }
 
 .manager-sidebar {
@@ -185,7 +184,7 @@
 }
   
 .sidebar-item:hover {
-    background-color: #77070a; 
+    background-color: #8c070c; 
 }
   
 .manager-sidebar-text2 {

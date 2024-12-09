@@ -371,8 +371,6 @@ function Employees() {
     if (currentEmployee) {
       setNewEmployee(currentEmployee);
     }
-    
-
     setPopUp({
       addEmployee: false,
       editEmployee: true
@@ -524,7 +522,7 @@ function Employees() {
 
     if (!isInvalid) {
       //send request to server
-      await editEmployee();
+        await editEmployee();
     }
     setSubmitClass({
       button_class: "submit-employee-button",
@@ -594,7 +592,7 @@ function Employees() {
               <button className="employee-close-button" onClick={closePopUp}>
                 <i class="bi bi-x-lg"></i>
               </button>
-              <form onSubmit={validateEmployeeChanges} className="employee-form">
+              <form onSubmit={validateEmployeeInput} className="employee-form">
                 <div className="row justify-content-center align-items-center" style={{ marginBottom: "30px" }}>
                   <label className="employee-add-label text-center">Email:</label>
                   <input
@@ -711,6 +709,18 @@ function Employees() {
               <div className="col-3 employee-table-bg">
                 Employee Role
               </div>
+              <div className="col pt-2 text-end">
+                <button
+                  id="add-employee"
+                  className="add-employee-icon-button"
+                  onClick={openAddEmployee}
+                  aria-label="Add Employee"
+                >
+                  <i 
+                    className="bi bi-plus-lg"
+                  ></i>
+                </button>
+              </div>
             </div>
             <hr className="report-divider"></hr>
 
@@ -739,13 +749,6 @@ function Employees() {
                 </div>
               </div>
             ))}
-
-            <div className="row" style={{minWidth:"900px", marginRight:"10px"}}>
-              <button id="add-employee" className="col text-center add-employee-button" onClick={openAddEmployee}>
-                Add Employee
-                <i className="bi bi-plus-lg" style={{marginLeft:"10px"}}></i>
-              </button>
-            </div>
           </div>
         </div>
       </div>
