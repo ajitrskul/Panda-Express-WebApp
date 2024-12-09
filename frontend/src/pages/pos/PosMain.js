@@ -325,6 +325,7 @@ function PosMain() {
   
       if (checkoutResponse.status === 201) {
         toast.success("Order successfully processed!");
+        setShowCheckoutModal(false);
         if (recipientEmail) {
           try {
             const newOrderNumber = checkoutResponse.data.order_number || orderNumber;
