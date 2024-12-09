@@ -11,7 +11,7 @@ function ManagerMain() {
   const [currentPage, setCurrentPage] = useState(1); 
   const [totalPages, setTotalPages] = useState(1); 
   const [isLoading, setIsLoading] = useState(true); 
-  const [rowsPerPage, setRowsPerPage] = useState(null);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const tableContainerRef = useRef(null); 
   const [inputPage, setInputPage] = useState(1); 
   const [selectedOrder, setSelectedOrder] = useState(null); 
@@ -78,24 +78,36 @@ function ManagerMain() {
       const containerHeight = tableContainerRef.current.offsetHeight; 
       const rowHeight = 55; 
       const calculatedRows = Math.floor(containerHeight / rowHeight); 
-      setRowsPerPage(calculatedRows); 
-      setCurrentPage(1); 
+      return calculatedRows > 0 ? calculatedRows : 10; // Return the calculated value
     }
+    return 10; // Fallback if tableContainerRef is not ready
   };
-
+  
   useEffect(() => {
-    if (rowsPerPage > 0) { 
+    const initialRowsPerPage = adjustRowsPerPage(); // Calculate rows per page immediately
+    setRowsPerPage(initialRowsPerPage); // Set rows per page state
+    fetchOrders(1, initialRowsPerPage); // Fetch orders with the calculated rows per page
+  
+    window.addEventListener("resize", handleResize);
+  
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  
+    function handleResize() {
+      const updatedRowsPerPage = adjustRowsPerPage();
+      setRowsPerPage(updatedRowsPerPage); // Dynamically adjust rows per page on resize
+    }
+  }, []); // Runs once on mount
+  
+  useEffect(() => {
+    // Refetch orders whenever rowsPerPage or currentPage changes
+    if (rowsPerPage > 0) {
       fetchOrders(currentPage, rowsPerPage);
     }
-  }, [currentPage, rowsPerPage]);
-
-  useEffect(() => {
-    adjustRowsPerPage(); 
-    window.addEventListener("resize", adjustRowsPerPage); 
-    return () => {
-      window.removeEventListener("resize", adjustRowsPerPage); 
-    };
-  }, []);
+  }, [rowsPerPage, currentPage]);
+  
+  
 
   const handlePageChange = (page) => {
     if (page > 0 && page <= totalPages) {
@@ -199,7 +211,15 @@ function ManagerMain() {
         style={{ height: "100vh", paddingRight: '60px', paddingLeft: "350px"}}
         ref={tableContainerRef}
       >
-        <h1 className="my-3">Order History</h1>
+        <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <h1 className="my-3">Order History</h1>
+          <i 
+            className="bi bi-arrow-clockwise"
+            style={{ cursor: "pointer", marginLeft: "10px" }}
+            onClick={() => fetchOrders(1, rowsPerPage)}
+            title="Reload Orders"
+          ></i>
+        </span>
         {isLoading ? (
           <div>Loading...</div>
         ) : orders.length > 0 ? (

@@ -1,4 +1,4 @@
-import React, { useState, useRef, lazy } from "react";
+import React, { Suspense, useState, useRef, lazy } from "react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
@@ -33,13 +33,13 @@ const MenuCarousel = () => {
 
   return (
     <div className="fullscreen-menu">
-      {
+      <Suspense fallback={<div>Loading menu...</div>}>
         <Slider ref={carouselRef} {...settings}>
           <div><MenuMain1 /></div>
           <div><MenuMain2 /></div>
           <div><MenuMain3 /></div>
         </Slider>
-      }
+      </Suspense>
 
       <button className="carousel-button" onClick={toggleAutoplay}>
         {play ? "Autoplay On" : "Autoplay Off"}
