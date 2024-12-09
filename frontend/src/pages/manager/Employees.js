@@ -371,8 +371,6 @@ function Employees() {
     if (currentEmployee) {
       setNewEmployee(currentEmployee);
     }
-    
-
     setPopUp({
       addEmployee: false,
       editEmployee: true
@@ -524,7 +522,7 @@ function Employees() {
 
     if (!isInvalid) {
       //send request to server
-      await editEmployee();
+        await editEmployee();
     }
     setSubmitClass({
       button_class: "submit-employee-button",
@@ -594,7 +592,7 @@ function Employees() {
               <button className="employee-close-button" onClick={closePopUp}>
                 <i class="bi bi-x-lg"></i>
               </button>
-              <form onSubmit={validateEmployeeChanges} className="employee-form">
+              <form onSubmit={validateEmployeeInput} className="employee-form">
                 <div className="row justify-content-center align-items-center" style={{ marginBottom: "30px" }}>
                   <label className="employee-add-label text-center">Email:</label>
                   <input
@@ -673,79 +671,72 @@ function Employees() {
           </h1>
           <hr className="col-12 employee-divider"></hr>
         </div>
-        <div className="row justify-content-start employee-card" style={{marginBottom:"25px", minWidth:"1000px"}}>
-          <div className="col-11" style={{minWidth:"950px"}}>
-            <form onSubmit={searchEmployee}>
-              <label htmlFor="employee-search" style={{fontSize:"25px", display:"inline-block", marginRight:"15px"}}>Search Employees:</label>
-              <input 
-                type="text" 
-                id="employee-search" 
-                placeholder="e.g., John Smith" 
+        <div className="employee-card employee-search-container">
+          <form onSubmit={searchEmployee} className="employee-search-form">
+            <div className="employee-search-left">
+              <label htmlFor="employee-search" className="employee-search-label">
+                Search:
+              </label>
+              <input
+                type="text"
+                id="employee-search"
+                placeholder="e.g., John Smith"
                 className="employee-search"
-                value={search} 
-                onChange={(e) => setSearch(e.target.value)}>
-              </input>
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
               <button className="employee-search-button" type="submit">
                 <i className="bi bi-search"></i>
               </button>
-            </form>
-          </div>
-          <div className="col-1 text-end">
-            <button className="employee-refresh" onClick={fetchEmployees}>
-              <i class="bi bi-arrow-clockwise employee-refresh-icon"></i>
-            </button>
-          </div>
+              <button className="employee-refresh" onClick={fetchEmployees}>
+                <i className="bi bi-arrow-clockwise"></i>
+              </button>
+            </div>
+            <div className="employee-actions-right">
+              <button
+                id="add-employee"
+                className="add-employee-button"
+                onClick={openAddEmployee}
+                type="button"
+              >
+                <i className="bi bi-plus-lg"></i>
+              </button>
+            </div>
+          </form>
         </div>
         <div className="row justify-content-center employee-card" styles={{minWidth:"900px"}}>
           <div className="col-12 fluid-container">
-            <div className="row justify-content-start text-center" style={{minWidth: "900px"}}>
-              <div className="col-1 employee-table-bg">
-                ID
-              </div>
-              <div className="col-3 employee-table-bg">
-                Employee Name
-              </div>
-              <div className="col-3 employee-table-bg">
-                Employee Email
-              </div>
-              <div className="col-3 employee-table-bg">
-                Employee Role
-              </div>
+          <div className="employee-table">
+            <div className="employee-header">
+              <div className="employee-cell">ID</div>
+              <div className="employee-cell">Name</div>
+              <div className="employee-cell">Email</div>
+              <div className="employee-cell">Role</div>
+              <div className="employee-cell">Actions</div>
             </div>
-            <hr className="report-divider"></hr>
-
-            
-            {employeeDisplay.map(employee => (
-              <div className="row employee-row align-items-center text-center">
-                <div className="col-1 employee-row-bg">
-                  {employee.id}
-                </div>
-                <div className="col-3 employee-row-bg">
-                  {employee.name}
-                </div>
-                <div className="col-3 employee-row-bg">
-                  {employee.email}
-                </div>
-                <div className="col-3 employee-row-bg">
-                  {employee.role}
-                </div>
-                <div className="col text-center employee-button-row">
-                  <button className="edit-employee-button mx-2" onClick={() => {openEditEmployee(employee.id)}}>
-                    <i class="bi bi-pencil-square"></i>
+            {employeeDisplay.map((employee) => (
+              <div className="employee-row" key={employee.id}>
+                <div className="employee-cell">{employee.id}</div>
+                <div className="employee-cell">{employee.name}</div>
+                <div className="employee-cell">{employee.email}</div>
+                <div className="employee-cell">{employee.role}</div>
+                <div className="employee-cell employee-actions">
+                  <button
+                    className="edit-employee-button"
+                    onClick={() => openEditEmployee(employee.id)}
+                  >
+                    <i className="bi bi-pencil-square"></i>
                   </button>
-                  <button className="fire-button" onClick={() => {fireEmployee(employee.id)}}>
-                    <i class="bi bi-x-lg"></i>
+                  <button
+                    className="fire-button"
+                    onClick={() => fireEmployee(employee.id)}
+                  >
+                    <i className="bi bi-x-lg"></i>
                   </button>
                 </div>
               </div>
             ))}
-
-            <div className="row" style={{minWidth:"900px", marginRight:"10px"}}>
-              <button id="add-employee" className="col text-center add-employee-button" onClick={openAddEmployee}>
-                Add Employee
-                <i className="bi bi-plus-lg" style={{marginLeft:"10px"}}></i>
-              </button>
-            </div>
+          </div>
           </div>
         </div>
       </div>

@@ -31,6 +31,7 @@ create table if not exists product_item
 	quantity_in_cases integer,
 	servings_per_case integer,
 	cost_per_case double precision,
+	in_season boolean default true,
 	primary key (product_id)
 );
 

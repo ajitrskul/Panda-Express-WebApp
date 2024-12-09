@@ -3,7 +3,7 @@ values
 (1, 'bowl', 1, 1, 8.3, 1, '1 Side & 1 Entree', '280-1130 Cal per serving', 'https://i.imgur.com/MJcKJXZ.png'),
 (2, 'plate', 2, 1, 9.8, 1, '1 Side & 2 Entrees', '430-1640 Cal per serving', 'https://i.imgur.com/aGNosMQ.png'),
 (3, 'biggerPlate', 3, 1, 11.3, 1, '1 Side & 3 Entrees', '580-2150 Cal per serving', 'https://i.imgur.com/NSQDvyG.png'),
-(4, 'familyMeal', 3, 2, 43, 1, '2 Large Sides & 3 Large Entrees', '430-1640 Cal per serving', 'https://i.imgur.com/rIOIRCH.png'),
+(4, 'familyMeal', 3, 2, 43, 3, '2 Large Sides & 3 Large Entrees', '430-1640 Cal per serving', 'https://i.imgur.com/rIOIRCH.png'),
 (5, 'appetizerSmall', null, null, 2, 0, 'Something Extra with Your Meal', '150-240 Cal per serving', 'https://i.imgur.com/ADqBpI6.png'),
 (6, 'appetizerLarge', null, null, 8, 1, null, null, null),
 (7, 'aLaCarteSideMedium', 1, 1, 4.4, 1, 'Individual Entrees & Sides', '130-620 Cal per serving', 'https://i.imgur.com/MsZtPIz.png'),
