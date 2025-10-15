@@ -1,4 +1,6 @@
-﻿# project-3-01-beastmode
+﻿# Panda Express WebApp
+## Description
+All in one web application encompassing the web infrastructure required to run a single location of Panda Express as estimated by our team. Created as the final project for CSCE 331 - Foundations of Software Engineering at Texas A&M University.
 
 ## Compiling and Running Project:
 Frontend:
